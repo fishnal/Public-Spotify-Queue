@@ -20,11 +20,11 @@ function Generator(spotifyWrapper) {
 /**
 * Gets all of user's playlists (public, private, collaborative)
 */
-Generator.getMyPlaylists = function() {
+Generator.prototype.getMyPlaylists = function() {
 	/* want to retrieve all playlists, not just a couple (it caps at 50) */
 	
 	/* using callbacks over promises */
-	this.wrapper.getUserPlaylists(null, (err, data) => {
+	this.wrapper.getUserPlaylists(null, null, (err, data) => {
 		if (err) {
 			/* TODO handle error */
 			console.log(err);
