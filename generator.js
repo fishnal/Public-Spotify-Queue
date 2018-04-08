@@ -185,6 +185,8 @@ function Generator(api) {
 				}
 			}
 
+			require('fs').writeFileSync('db.json', JSON.stringify({songs: uris}));
+
 			callback();
 		});
 	}
