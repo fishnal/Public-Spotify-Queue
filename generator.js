@@ -14,26 +14,29 @@ function Generator(spotifyWrapper) {
 		throw new TypeError('invalid spotify wrapper');
 	}
 
-	this.wrapper = spotifyWrapper;
-}
+	var userPlaylists = [];
 
-/**
-* Gets all of user's playlists (public, private, collaborative)
-*/
-Generator.prototype.getMyPlaylists = function() {
-	/* want to retrieve all playlists, not just a couple (it caps at 50) */
-	
-	/* using callbacks over promises */
-	this.wrapper.getUserPlaylists(null, null, (err, data) => {
-		if (err) {
-			/* TODO handle error */
-			console.log(err);
-		} else {
-			/* successful call */
-			/* TODO understand how data is returned, pretty sure its JSON */
-			console.log(data);
-		}
-	});
+	function getMyPlaylists0(limit, offset) {
+		/* using callbacks over promises */
+		spotifyWrapper.getUserPlaylists(null, { 'limit': limit, 'offset': offset }, (err, data) => {
+			if (err) {
+				throw err;
+			} else {
+				/* successful call */
+				for (let i in data.body.items) {
+					userPlaylists.push(data.body.items[i]);
+				}
+
+				if (data.body.total == limit) {
+					getMyPlaylists0(limit, offset + limit);
+				}
+			}
+		});
+	}
+
+	this.getMyPlaylists = function(limit=20) {
+		getMyPlaylists0(limit, 0);
+	}
 }
 
 module.exports = Generator;

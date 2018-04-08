@@ -1,22 +1,35 @@
-var SpotifyWebApi = require ('spotify-web-api-node');
-var opn = require ('opn')
+const SpotifyWebApi = require('spotify-web-api-node');
+const opn = require('opn');
 
-function auth() {
-	//scope array holds possible scope parameters
-	const state = 'YXJyyvYXlzc3RhcnRhdDA='
-		_scope = ['user-read-private', 'playlist-read-private', 'playlist-read-collaborative', 'user-read-currently-playing', 'streaming', 'user-read-playback-state']
-		
+/**
+ * Authorizes the Spotify application with a client id, client secret, redirect URI,
+ * and an option to have user approve of the application every time or not (showDialog).
+ * @param {string} clientId the client id.
+ * @param {string} clientSecret the client secret.
+ * @param {string} redirectURI  the redirect URI.
+ * @param {boolean} showDialog whether or not to approve application every time.
+ */
+function auth(clientId, clientSecret, redirectURI, showDialog=false) {
+	// scope array holds possible scope parameters
+	const state = 'our_secret_state'; /* TODO generate from the random generator api */
+	const scopes = ['user-read-private', 'playlist-read-private', 'playlist-read-collaborative',
+		'user-read-currently-playing', 'streaming', 'user-read-playback-state'];
+	
+	/* init wrapper api with id, secret, uri, and response type */
 	var spotifyApi = new SpotifyWebApi({
-		clientId :  'acd0f18a3e124101af31f9b3582130c6',
-		clientSecret : '276a4580f7e94dd1a20f5d797b95dbba',
-		redirectUri : 'https://www.google.com/',
+		'clientId' : clientId,
+		'clientSecret' : clientSecret,
+		'redirectUri' : redirectURI,
 		response_type : 'code'
-	})
+	});
 
-	var authURL = spotifyApi.createAuthorizeURL(_scope, state, true)
+	/* get auth url */
+	var authURL = spotifyApi.createAuthorizeURL(scopes, state, showDialog);
 
-	console.log(authURL)
-	opn(authURL)
+	/* log url and open it in default browser */
+	console.log('Open the link below in your browser if it doesn\'t automatically do so');
+	console.log(authURL);
+	opn(authURL);
 
 	return spotifyApi;
 }
