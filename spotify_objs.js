@@ -1,6 +1,6 @@
-function Track(trackName, trackId, artists, albumName, albumImages, duration) {
-    this.trackName = trackName;
-	this.trackId = trackId;
+function Track(name, id, artists, albumName, albumImages, duration) {
+    this.name = name;
+	this.id = id;
 	
 	/* comma separating artists into one string */
 	this.artists = '';
@@ -17,10 +17,11 @@ function Track(trackName, trackId, artists, albumName, albumImages, duration) {
 	this.duration = duration;
 }
 
-function Playlist(playlistName, playlistId, playlistImages) {
-	this.playlistName = playlistName;
-	this.playlistId = this.playlistId;
-	this.playlistImages = this.playlistImages;
+function Playlist(name, id, ownerId, images) {
+	this.name = name;
+	this.id = id;
+	this.ownerId = ownerId;
+	this.images = images;
 }
 
 module.exports = {

@@ -5,7 +5,6 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const SpotifyObj = require('./spotify_objs.js');
 const Utils = require('./utils.js');
 
-
 /**
  * Constructs a Generator given an authenticated SpotifyWebApi wrapper
  * 
@@ -17,8 +16,12 @@ function Generator(api) {
 		throw new TypeError('invalid spotify wrapper');
 	}
 
-	var userPlaylists = null;
+	var playlists = null;
 	var selectedPlaylist = null;
+	var orderedSongs = null;
+	var shuffledSongs = null;
+	var isShuffled;
+	var repeatMode;
 
 	/**
 	 * Gets this user's playlists recursively
@@ -29,32 +32,30 @@ function Generator(api) {
 	function getMyPlaylists0(limit, offset, callback) {
 		/* using callbacks over promises */
 		api.getUserPlaylists(null, { 'limit': limit, 'offset': offset }, (err, data) => {
-			if (err) {
-				throw err;
+			if (err) throw err;
+
+			/* save all of these playlists (with a couple pieces of info though) */
+			for (let i in data.body.items) {
+				let playlist = data.body.items[i];
+
+				/* only need name, id, and images (thumbnail) of the playlist */
+				playlists.push(new SpotifyObj.Playlist(
+					playlist.name,
+					playlist.id,
+					playlist.owner.id,
+					playlist.images	
+				));
+			}
+
+			/* base case */
+			if (data.body.total == limit) {
+				/* since the amount of playlists we got was limited by 'limit',
+				 * we need to recurse and get th rest of the playlists
+				 */
+				getMyPlaylists0(limit, offset + limit);
 			} else {
-				/* successful call */
-
-				/* save all of these playlists (with a couple pieces of info though) */
-				for (let i in data.body.items) {
-					let playlist = data.body.items[i];
-
-					/* only need name, id, and images (thumbnail) of the playlist */
-					userPlaylists.push(new SpotifyObj.Playlist(
-						playlist.name,
-						playlist.id,
-						playlist.images	
-					));
-				}
-
-				/* base case */
-				if (data.body.total == limit) {
-					/* since the amount of playlists we got was limited by 'limit',
-					 * we need to recurse and get th rest of the playlists */
-					getMyPlaylists0(limit, offset + limit);
-				} else {
-					/* execute callback */
-					callback(new Utils.SafeList(userPlaylists));
-				}
+				/* execute callback */
+				callback(new Utils.SafeList(playlists));
 			}
 		});
 	}
@@ -69,46 +70,90 @@ function Generator(api) {
 			limit = 20;
 		}
 
-		userPlaylists = [];
+		playlists = [];
 		getMyPlaylists0(limit, 0, callback);
 	}
 
-	this.selectPlaylist = function(index) {
-		if (!userPlaylists) {
+	function getSongs0(ownerId, playlistId, limit, offset, callback) {
+		api.getPlaylistTracks(ownerId, playlistId, { 'limit': limit, 'offset': offset }, (err, data) => {
+			if (err) throw err;
+
+			/* add songs */
+			for (let i in data.body.items) {
+				let track = data.body.items[i].track;
+
+				orderedSongs.push(new SpotifyObj.Track(
+					track.name,
+					track.id,
+					track.artists,
+					track.album.name,
+					track.album.images,
+					track['duration_ms']
+				));
+			}
+
+			/* base case recursion */
+			if (data.body.total == limit) {
+				getSongs0(ownerId, playlistId, limit, offset + limit, callback);
+			} else {
+				orderedSongs.sort((a, b) => a.name.localeCompare(b.name));
+				callback();
+			}
+		});
+	}
+
+	/**
+	 * Select a playlist.
+	 * @param {Number} index index of the playlist 
+	 */
+	this.selectPlaylist = function(index, limit=20, callback) {
+		if (!playlists) {
 			/* user playlists not defined yet */
 			console.log("Load user's playlists first");
-		} else if (index < 0 || index >= userPlaylists.length) {
+		} else if (index < 0 || index >= playlists.length) {
 			console.log("Out of bounds index");
-		} else {
-			/* update selected playlist, get tracks, generate queue */
-			selectedPlaylist = userPlaylists[index];
-			/* get shuffle state */
-			api.getMyCurrentPlaybackState(null, (err, data) => {
-				if (err) throw err;
-
-				generateQueue(data['shuffle_state']);
-			});
+		} else if (limit < 0) {
+			console.log("Invalid limit");
+		} else if (limit > 100) {
+			limit = 100;
+		} else if (limit instanceof Function) {
+			callback = limit;
+			limit = 100;
 		}
+		
+		/* update selected playlist */
+		selectedPlaylist = playlists[index];
+		/* get songs from this playlist, order by name */
+		orderedSongs = [];
+		getSongs0(selectedPlaylist.ownerId, selectedPlaylist.id, limit, 0, callback);
 	}
-}
-
-generateQueue(true, [1,2,3,4]);
 	
-function generateQueue(isShuffled, plist) {
-	var original = [1,2,3,4,5,6,7,8,9,10]
-	var yatesShuffle = original.slice(0)
+	/**
+	 * Generate the queue to be used by host and listeners from the selected playlist.
+	 */
+	this.generateQueue = function(callback) {
+		/* get shuffle state */
+		api.getMyCurrentPlaybackState(null, (err, data) => {
+			if (err) throw err;
 
-	if(isShuffled){
-		for(let i = original.length-1; i >=0; i--){
-			let j = Math.floor(Math.random()*(i+1))
-			let temp = ''
-			temp = yatesShuffle[j]
-			yatesShuffle[j] = yatesShuffle[i]
-			yatesShuffle[i] = temp
-		}
-		console.log(yatesShuffle)
-	} else {
-		console.log(original)
+			isShuffled = data.body['shuffle_state'];
+			repeatMode = data.body['repeat_state'];
+
+			if (isShuffled) {
+				shuffledSongs = orderedSongs.slice(0);
+
+				for (let i = shuffledSongs.length - 1; i > -1; i--) {
+					let j = Math.floor(Math.random() * (i + 1));
+					let temp = shuffledSongs[j];
+					shuffledSongs[j] = shuffledSongs[i];
+					shuffledSongs[i] = temp;
+				}
+
+				callback(new Utils.SafeList(shuffledSongs));
+			} else {
+				callback(new Utils.SafeList(orderedSongs));
+			}
+		}); 
 	}
 }
 

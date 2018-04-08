@@ -9,9 +9,11 @@ const clientId = 'acd0f18a3e124101af31f9b3582130c6';
 const clientSecret = '276a4580f7e94dd1a20f5d797b95dbba';
 const redirectURI = 'http://127.0.0.1:8080/'
 /* our spotify wrapper */
-var spotifyApiWrapper = auth(clientId, clientSecret, redirectURI, true);
+var spotifyApiWrapper = auth(clientId, clientSecret, redirectURI, false);
 /* refreshInterval serves to refresh our access token based on when the most recent access token expires */
 var refreshInterval = null;
+/* used to generate queue */
+var generator;
 
 /* start our local server, after having opened up our authorization url; 
  * the local server will basically start up as soon sa the auth url is opened
@@ -25,7 +27,7 @@ startServer((url) => {
 	var match = url.match('\\/\\?code=(.*)&state=(.*)');
 	
 	/* issue occurred if we didn't match properly */
-	if (match.length != 3) {
+	if (match == null) {
 		/* same idea as before, but code is now error */
 		match = url.match('\\/\\?error=(.*)&state(.*)');
 		console.log('There was an issue authorizing');
@@ -58,15 +60,32 @@ function accessTokenCallback(err, data) {
 	}, data.body['expires_in'] * 1000);
 
 	/* now we can do what we want to hear with the spotify api */
-	var generator = new Generator(spotifyApiWrapper);
+	generator = new Generator(spotifyApiWrapper);
 
 	/* get user playlists */
-	generator.getMyPlaylists((playlists) => {
-		playlists.forEach(playlist => {
-			console.log(playlist.playlistName);
-		});
+	generator.getMyPlaylists(afterPlaylists);
+}
+
+function afterPlaylists(playlists) {
+	/* print all playlissts */
+	playlists.forEach(playlist => {
+		console.log(playlist.name);
 	});
 
-	/* stop refresh interval and terminate */
+	console.log("================================");
+	
+	/* select a playlist, then generate queue based off of it */
+	generator.selectPlaylist(1, () => {
+		generator.generateQueue(afterGeneration);
+	});
+}
+
+function afterGeneration(songs) {
+	/* print all songs */
+	songs.forEach(song => {
+		console.log(song.name);
+	});
+
+	/* stop refresh interval */
 	clearInterval(refreshInterval);
 }

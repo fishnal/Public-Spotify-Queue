@@ -13,7 +13,7 @@ function auth(clientId, clientSecret, redirectURI, showDialog=false) {
 	// scope array holds possible scope parameters
 	const state = 'our_secret_state'; /* TODO generate from the random generator api */
 	const scopes = ['user-read-private', 'playlist-read-private', 'playlist-read-collaborative',
-		'user-read-currently-playing', 'streaming', 'user-read-playback-state'];
+		'user-read-currently-playing', 'user-modify-playback-state', 'user-read-playback-state'];
 	
 	/* init wrapper api with id, secret, uri, and response type */
 	var spotifyApi = new SpotifyWebApi({
