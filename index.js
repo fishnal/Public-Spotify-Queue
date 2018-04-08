@@ -56,6 +56,17 @@ startServer((url) => {
 
 		/* now we can do what we want to hear with the spotify api */
 		var generator = new Generator(spotifyApiWrapper);
-		generator.getMyPlaylists();
+
+		/* get user playlists */
+		var playlists = generator.getMyPlaylists();
+		
+		/* print playlists */
+		for (let i in playlists) {
+			let playlist = playlists[i];
+
+			console.log(`${i+1}: ${playlist.playlistName}`);
+		}
+
+		/* select a playlist */
 	});
 });
