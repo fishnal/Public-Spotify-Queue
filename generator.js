@@ -5,6 +5,7 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const SpotifyObj = require('./spotify_objs.js');
 const Utils = require('./utils.js');
 
+
 /**
  * Constructs a Generator given an authenticated SpotifyWebApi wrapper
  * 
@@ -89,9 +90,25 @@ function Generator(api) {
 			});
 		}
 	}
+}
 
-	function generateQueue() {
+generateQueue(true, [1,2,3,4]);
+	
+function generateQueue(isShuffled, plist) {
+	var original = [1,2,3,4,5,6,7,8,9,10]
+	var yatesShuffle = original.slice(0)
 
+	if(isShuffled){
+		for(let i = original.length-1; i >=0; i--){
+			let j = Math.floor(Math.random()*(i+1))
+			let temp = ''
+			temp = yatesShuffle[j]
+			yatesShuffle[j] = yatesShuffle[i]
+			yatesShuffle[i] = temp
+		}
+		console.log(yatesShuffle)
+	} else {
+		console.log(original)
 	}
 }
 
