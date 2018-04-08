@@ -199,7 +199,7 @@ function Generator(api) {
 			require('fs').writeFileSync('db.json', 
 				JSON.stringify(
 					{
-						songs: uris, 
+						song_uris: uris, 
 						host_access_token: [ api.getAccessToken() ]
 					})
 			);

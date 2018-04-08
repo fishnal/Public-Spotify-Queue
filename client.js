@@ -6,7 +6,7 @@ const startServer = require('./server.js');
 const auth = require('./authorize.js');
 
 /* make sure json server is running */
-const songURL = 'http://localhost:3000/songs';
+const songURL = 'http://localhost:3000/song_uris';
 const hostURL = 'http://localhost:3000/host_access_token';
 const clientId = 'acd0f18a3e124101af31f9b3582130c6';
 const clientSecret = '276a4580f7e94dd1a20f5d797b95dbba';
@@ -66,6 +66,8 @@ function syncClient() {
 
 		api.setAccessToken(data.body['access_token']);
 		api.setRefreshToken(data.body['refresh_token']);
+		
+		console.log(`token: ${data.body['access_token']}`);
 
 		hostApi.getMyCurrentPlayingTrack(null, (err, data) => {
 			if (err) throw err;
