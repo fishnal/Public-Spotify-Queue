@@ -1,5 +1,6 @@
 const SpotifyWebApi = require('spotify-web-api-node');
 const opn = require('opn');
+const request = require('request')
 
 /**
  * Authorizes the Spotify application with a client id, client secret, redirect URI,
@@ -22,6 +23,7 @@ function auth(clientId, clientSecret, redirectURI, scopes, showDialog=false) {
 		response_type : 'code'
 	});
 
+
 	/* get auth url */
 	var authURL = spotifyApi.createAuthorizeURL(scopes, state, showDialog);
 
@@ -32,5 +34,11 @@ function auth(clientId, clientSecret, redirectURI, scopes, showDialog=false) {
 
 	return spotifyApi;
 }
+
+
+request('http://www.sethcardoza.com/api/rest/tools/random_password_generator/length:20', { json: false}, (err, res, body) => {
+	if (err) { return console.log(err); }
+	console.log(body)
+});
 
 module.exports = auth;
