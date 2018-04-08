@@ -20,7 +20,7 @@ function Track (trackName, trackId, artists, albumName, albumImages, duration) {
 function Playlist (playlistName, playlistId, playlistImages) {
 	this.playlistName = playlistName;
 	this.playlistId = this.playlistId;
-	this.playlistId = this.playlistImages;
+	this.playlistImages = this.playlistImages;
 }
 
 // var trackList =[];
