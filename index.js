@@ -33,40 +33,40 @@ startServer((url) => {
 	}
 
 	/* get access and refresh tokens */
-	spotifyApiWrapper.authorizationCodeGrant(match[1], (err, data) => {
-		if (err) throw err;
-
-		/* setting access and refresh tokens */
-		spotifyApiWrapper.setAccessToken(data.body['access_token']);
-		spotifyApiWrapper.setRefreshToken(data.body['refresh_token']);
-
-		refreshInterval = setInterval(() => {
-			/* refresh access token every X seconds, where X is determined by spotify's api;
-			 * convert X into ms (so multiply by 1000)
-			 */
-
-			spotifyApiWrapper.refreshToken((err, data) => {
-				if (err) throw err;
-
-				/* setting new access token and expiration time */
-				spotifyApiWrapper.setAccessToken(data.body['access_token']);
-				refreshInterval._repeat = data.body['expires_in'] * 1000;
-			});
-		}, data.body['expires_in'] * 1000);
-
-		/* now we can do what we want to hear with the spotify api */
-		var generator = new Generator(spotifyApiWrapper);
-
-		/* get user playlists */
-		var playlists = generator.getMyPlaylists();
-		
-		/* print playlists */
-		for (let i in playlists) {
-			let playlist = playlists[i];
-
-			console.log(`${i+1}: ${playlist.playlistName}`);
-		}
-
-		/* select a playlist */
-	});
+	spotifyApiWrapper.authorizationCodeGrant(match[1], accessTokenCallback);
 });
+
+function accessTokenCallback(err, data) {
+	if (err) throw err;
+
+	/* setting access and refresh tokens */
+	spotifyApiWrapper.setAccessToken(data.body['access_token']);
+	spotifyApiWrapper.setRefreshToken(data.body['refresh_token']);
+
+	refreshInterval = setInterval(() => {
+		/* refresh access token every X seconds, where X is determined by spotify's api;
+		 * convert X into ms (so multiply by 1000)
+		 */
+
+		spotifyApiWrapper.refreshToken((err, data) => {
+			if (err) throw err;
+
+			/* setting new access token and expiration time */
+			spotifyApiWrapper.setAccessToken(data.body['access_token']);
+			refreshInterval._repeat = data.body['expires_in'] * 1000;
+		});
+	}, data.body['expires_in'] * 1000);
+
+	/* now we can do what we want to hear with the spotify api */
+	var generator = new Generator(spotifyApiWrapper);
+
+	/* get user playlists */
+	generator.getMyPlaylists((playlists) => {
+		playlists.forEach(playlist => {
+			console.log(playlist.playlistName);
+		});
+	});
+
+	/* stop refresh interval and terminate */
+	clearInterval(refreshInterval);
+}
