@@ -21,7 +21,6 @@ function Generator(api) {
 	var orderedSongs = null;
 	var shuffledSongs = null;
 	var isShuffled;
-	var repeatMode;
 
 	/**
 	 * Gets this user's playlists recursively
@@ -85,6 +84,7 @@ function Generator(api) {
 				orderedSongs.push(new SpotifyObj.Track(
 					track.name,
 					track.id,
+					track.uri,
 					track.artists,
 					track.album.name,
 					track.album.images,
@@ -137,7 +137,6 @@ function Generator(api) {
 			if (err) throw err;
 
 			isShuffled = data.body['shuffle_state'];
-			repeatMode = data.body['repeat_state'];
 
 			if (isShuffled) {
 				shuffledSongs = orderedSongs.slice(0);
@@ -154,6 +153,40 @@ function Generator(api) {
 				callback(new Utils.SafeList(orderedSongs));
 			}
 		}); 
+	}
+
+	/**
+	 * Starts playing songs from this queue.
+	 */
+	this.start = function(callback) {
+		var uris = [];
+
+		/* get uris depending on what shuffled state is */
+		if (isShuffled) {
+			shuffledSongs.forEach(song => {
+				uris.push(song.uri);
+			});
+		} else {
+			orderedSongs.forEach(song => {
+				uris.push(song.uri);
+			});
+		}
+
+		/* play this set of songs, then deal with callback */
+		api.play({
+			uris: uris
+		}, (err, data) => {
+			if (err) throw err;
+			else if (data.body.statusCode >= 400) {
+				if (data.body.statusCode == 404) {
+					console.log("Couldn't find the device");
+				} else if (data.body.statusCode == 403) {
+					console.log("You're not a premium user");
+				}
+			}
+
+			callback();
+		});
 	}
 }
 

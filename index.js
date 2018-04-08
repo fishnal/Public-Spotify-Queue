@@ -83,9 +83,11 @@ function afterPlaylists(playlists) {
 function afterGeneration(songs) {
 	/* print all songs */
 	songs.forEach(song => {
-		console.log(song.name);
+		console.log(`${song.name}:${song.uri}`);
 	});
 
-	/* stop refresh interval */
-	clearInterval(refreshInterval);
+	/* start playing songs, then get rid of refresh interval (effectively terminates program) */
+	generator.start(() => {
+		clearInterval(refreshInterval);
+	});
 }

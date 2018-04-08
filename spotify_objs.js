@@ -1,6 +1,7 @@
-function Track(name, id, artists, albumName, albumImages, duration) {
+function Track(name, id, uri, artists, albumName, albumImages, duration) {
     this.name = name;
 	this.id = id;
+	this.uri = uri;
 	
 	/* comma separating artists into one string */
 	this.artists = '';
