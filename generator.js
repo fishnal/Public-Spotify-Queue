@@ -172,10 +172,21 @@ function Generator(api) {
 			});
 		}
 
-		/* play this set of songs, then deal with callback */
-		api.play({
-			uris: uris
-		}, (err, data) => {
+		api.setShuffle({state: false}, playCallback);
+
+		function playCallback(err, data) {
+			if (err) throw err;
+
+			/* play this set of songs, then deal with callback */
+			api.play({
+				uris: uris,
+				offset: {
+					position: 0
+				}
+			}, transferUserData);
+		}
+
+		function transferUserData(err, data) {
 			if (err) throw err;
 			else if (data.body.statusCode >= 400) {
 				if (data.body.statusCode == 404) {
@@ -185,10 +196,15 @@ function Generator(api) {
 				}
 			}
 
-			require('fs').writeFileSync('db.json', JSON.stringify({songs: uris}));
-
+			require('fs').writeFileSync('db.json', 
+				JSON.stringify(
+					{
+						songs: uris, 
+						host_access_token: [ api.getAccessToken() ]
+					})
+			);
 			callback();
-		});
+		}
 	}
 }
 

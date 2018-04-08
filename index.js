@@ -13,7 +13,7 @@ var spotifyApiWrapper = auth(clientId, clientSecret, redirectURI,
 	['user-read-private', 'playlist-read-private', 'playlist-read-collaborative',
 		'user-read-currently-playing', 'user-modify-playback-state', 
 		'user-read-playback-state'],
-	false);
+	true);
 /* refreshInterval serves to refresh our access token based on when the most recent access token expires */
 var refreshInterval = null;
 /* used to generate queue */
@@ -79,7 +79,7 @@ function afterPlaylists(playlists) {
 	console.log("================================");
 	
 	/* select a playlist, then generate queue based off of it */
-	generator.selectPlaylist(1, () => {
+	generator.selectPlaylist(0, () => {
 		generator.generateQueue(afterGeneration);
 	});
 }
