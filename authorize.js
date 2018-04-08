@@ -7,13 +7,12 @@ const opn = require('opn');
  * @param {string} clientId the client id.
  * @param {string} clientSecret the client secret.
  * @param {string} redirectURI  the redirect URI.
+ * @param {array} scopes authorization scopes.
  * @param {boolean} showDialog whether or not to approve application every time.
  */
-function auth(clientId, clientSecret, redirectURI, showDialog=false) {
+function auth(clientId, clientSecret, redirectURI, scopes, showDialog=false) {
 	// scope array holds possible scope parameters
 	const state = 'our_secret_state'; /* TODO generate from the random generator api */
-	const scopes = ['user-read-private', 'playlist-read-private', 'playlist-read-collaborative',
-		'user-read-currently-playing', 'user-modify-playback-state', 'user-read-playback-state'];
 	
 	/* init wrapper api with id, secret, uri, and response type */
 	var spotifyApi = new SpotifyWebApi({
@@ -29,7 +28,7 @@ function auth(clientId, clientSecret, redirectURI, showDialog=false) {
 	/* log url and open it in default browser */
 	console.log('Open the link below in your browser if it doesn\'t automatically do so');
 	console.log(authURL);
-	opn(authURL);
+	opn(authURL, {app: ['chrome', '--incognito']});
 
 	return spotifyApi;
 }

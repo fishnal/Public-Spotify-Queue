@@ -9,7 +9,11 @@ const clientId = 'acd0f18a3e124101af31f9b3582130c6';
 const clientSecret = '276a4580f7e94dd1a20f5d797b95dbba';
 const redirectURI = 'http://127.0.0.1:8080/'
 /* our spotify wrapper */
-var spotifyApiWrapper = auth(clientId, clientSecret, redirectURI, false);
+var spotifyApiWrapper = auth(clientId, clientSecret, redirectURI, 
+	['user-read-private', 'playlist-read-private', 'playlist-read-collaborative',
+		'user-read-currently-playing', 'user-modify-playback-state', 
+		'user-read-playback-state'],
+	false);
 /* refreshInterval serves to refresh our access token based on when the most recent access token expires */
 var refreshInterval = null;
 /* used to generate queue */
@@ -18,7 +22,7 @@ var generator;
 /* start our local server, after having opened up our authorization url; 
  * the local server will basically start up as soon sa the auth url is opened
  */
-startServer((url) => {
+startServer(url => {
 	/* get auth code in order to get tokens;
 	 * first group will be the match basically,
 	 * second group is the code
