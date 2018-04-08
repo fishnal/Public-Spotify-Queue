@@ -1,6 +1,7 @@
 /* handles main executions and statements */
 
 const superagent = require('superagent');
+const prompt = require('prompt-sync')();
 const startServer = require('./server.js');
 const auth = require('./authorize.js');
 const Generator = require('./generator.js');
@@ -71,23 +72,39 @@ function accessTokenCallback(err, data) {
 }
 
 function afterPlaylists(playlists) {
-	/* print all playlissts */
-	playlists.forEach(playlist => {
-		console.log(playlist.name);
-	});
+	if (!playlists || playlists.size() == 0) {
+		console.log("You have no playlists...");
+		process.exit(0);
+	}
 
-	console.log("================================");
+	console.log('Select a playlist');
+	/* print all playlists */
+	for (var i = 0; i < playlists.size(); i++) {
+		console.log(`${i+1}. ${playlists.get(i).name}`);
+	}
+
+	var input = 4; // prompt();
+
+	while ((input = Number(input)) == null || input < 0 || input > playlists.size()) {
+		input = prompt('Enter a number between 1 and ' + playlists.size());
+	}
 	
 	/* select a playlist, then generate queue based off of it */
-	generator.selectPlaylist(0, () => {
-		generator.generateQueue(afterGeneration);
+	generator.selectPlaylist(input - 1, () => {
+		generator.generateQueue(afterGeneration, process.argv.length >= 3 ? process.argv[2] : null);
 	});
 }
 
 function afterGeneration(songs) {
+	if (!songs || songs.size() == 0) {
+		console.log("There are no songs in this playlist...");
+		process.exit(0);
+	}
+
+	console.log("Here are the songs that are going to be played");
 	/* print all songs */
 	songs.forEach(song => {
-		console.log(`${song.name}:${song.uri}`);
+		console.log(`${song.name} - ${song.artists}`);
 	});
 
 	/* start playing songs, then get rid of refresh interval (effectively terminates program) */

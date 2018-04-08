@@ -131,12 +131,16 @@ function Generator(api) {
 	/**
 	 * Generate the queue to be used by host and listeners from the selected playlist.
 	 */
-	this.generateQueue = function(callback) {
+	this.generateQueue = function(callback, cmdShuffle) {
 		/* get shuffle state */
 		api.getMyCurrentPlaybackState(null, (err, data) => {
 			if (err) throw err;
 
-			isShuffled = data.body['shuffle_state'];
+			if (cmdShuffle != null) {
+				isShuffled = cmdShuffle == 'true' ? true : false
+			} else {
+				isShuffled = data.body['shuffle_state'];
+			}
 
 			if (isShuffled) {
 				shuffledSongs = orderedSongs.slice(0);
