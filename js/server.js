@@ -1,5 +1,5 @@
 const http = require('http');
-const port = 8080;
+const port = 3000;
 
 function startServer(callback) {
 	const server = http.createServer((req, resp) => {
@@ -7,12 +7,12 @@ function startServer(callback) {
 			console.log('Closing server');
 			server.close();
 			req.destroy();
-	
+
 			/* resume other calls */
 			callback(req.url);
 		});
 	});
-	
+
 	server.listen(port, err => {
 		if (err) {
 			throw err;

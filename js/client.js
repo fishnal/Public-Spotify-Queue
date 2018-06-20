@@ -1,7 +1,6 @@
 const request = require('request');
 const opn = require('opn');
 const SpotifyWebApi = require('spotify-web-api-node');
-const http = require('http');
 const startServer = require('./server.js');
 const auth = require('./authorize.js');
 
@@ -34,21 +33,21 @@ function hostURLCallback(err, res, body) {
 }
 
 function syncClient() {
-	var api = auth(clientId, clientSecret, redirectURI, 
+	var api = auth(clientId, clientSecret, redirectURI,
 		['user-read-private', 'playlist-read-private', 'playlist-read-collaborative',
-			'user-read-currently-playing', 'user-modify-playback-state', 
+			'user-read-currently-playing', 'user-modify-playback-state',
 			'user-read-playback-state'],
 		true);
 	startServer(url => {
 		/* get auth code */
-		
+
 		/* get auth code in order to get tokens;
 		* first group will be the match basically,
 		* second group is the code
 		* third group is the state
 		*/
 		var match = url.match('\\/\\?code=(.*)&state=(.*)');
-		
+
 		/* issue occurred if we didn't match properly */
 		if (match == null) {
 			/* same idea as before, but code is now error */
@@ -66,7 +65,7 @@ function syncClient() {
 
 		api.setAccessToken(data.body['access_token']);
 		api.setRefreshToken(data.body['refresh_token']);
-		
+
 		console.log(`token: ${data.body['access_token']}`);
 
 		hostApi.getMyCurrentPlayingTrack(null, (err, data) => {
@@ -75,7 +74,7 @@ function syncClient() {
 			/* retrieve song that's currently playing */
 			// data.item -> track object
 			// data.item.uri is used to offset
-			api.play({ 
+			api.play({
 				uris: song_uris,
 				offset: {
 					uri: data.body.item.uri

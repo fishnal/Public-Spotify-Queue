@@ -10,9 +10,9 @@ const clientId = 'acd0f18a3e124101af31f9b3582130c6';
 const clientSecret = '276a4580f7e94dd1a20f5d797b95dbba';
 const redirectURI = 'http://127.0.0.1:8080/'
 /* our spotify wrapper */
-var spotifyApiWrapper = auth(clientId, clientSecret, redirectURI, 
+var spotifyApiWrapper = auth(clientId, clientSecret, redirectURI,
 	['user-read-private', 'playlist-read-private', 'playlist-read-collaborative',
-		'user-read-currently-playing', 'user-modify-playback-state', 
+		'user-read-currently-playing', 'user-modify-playback-state',
 		'user-read-playback-state'],
 	true);
 /* refreshInterval serves to refresh our access token based on when the most recent access token expires */
@@ -20,7 +20,7 @@ var refreshInterval = null;
 /* used to generate queue */
 var generator;
 
-/* start our local server, after having opened up our authorization url; 
+/* start our local server, after having opened up our authorization url;
  * the local server will basically start up as soon sa the auth url is opened
  */
 startServer(url => {
@@ -30,7 +30,7 @@ startServer(url => {
 	 * third group is the state
 	 */
 	var match = url.match('\\/\\?code=(.*)&state=(.*)');
-	
+
 	/* issue occurred if we didn't match properly */
 	if (match == null) {
 		/* same idea as before, but code is now error */
@@ -55,7 +55,7 @@ function accessTokenCallback(err, data) {
 		 * convert X into ms (so multiply by 1000)
 		 */
 
-		spotifyApiWrapper.refreshToken((err, data) => {
+		spotifyApiWrapper.refreshAccessToken((err, data) => {
 			if (err) throw err;
 
 			/* setting new access token and expiration time */
@@ -88,7 +88,7 @@ function afterPlaylists(playlists) {
 	while ((input = Number(input)) == null || input < 0 || input > playlists.size()) {
 		input = prompt('Enter a number between 1 and ' + playlists.size());
 	}
-	
+
 	/* select a playlist, then generate queue based off of it */
 	generator.selectPlaylist(input - 1, () => {
 		generator.generateQueue(afterGeneration, process.argv.length >= 3 ? process.argv[2] : null);

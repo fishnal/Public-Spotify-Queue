@@ -7,8 +7,8 @@ const Utils = require('./utils.js');
 
 /**
  * Constructs a Generator given an authenticated SpotifyWebApi wrapper
- * 
- * @param {SpotifyWebApi} api the authenticated SpotifyWebApi wrapper. 
+ *
+ * @param {SpotifyWebApi} api the authenticated SpotifyWebApi wrapper.
  */
 function Generator(api) {
 	if (!(api instanceof SpotifyWebApi)) {
@@ -24,7 +24,7 @@ function Generator(api) {
 
 	/**
 	 * Gets this user's playlists recursively
-	 * @param {Number} limit the max amount of playlists to get per request 
+	 * @param {Number} limit the max amount of playlists to get per request
 	 * @param {Number} offset offset of the playlists for the request
 	 * @param {Function} callback called after all playlists have been retrieved
 	 */
@@ -42,7 +42,7 @@ function Generator(api) {
 					playlist.name,
 					playlist.id,
 					playlist.owner.id,
-					playlist.images	
+					playlist.images
 				));
 			}
 
@@ -104,7 +104,7 @@ function Generator(api) {
 
 	/**
 	 * Select a playlist.
-	 * @param {Number} index index of the playlist 
+	 * @param {Number} index index of the playlist
 	 */
 	this.selectPlaylist = function(index, limit=20, callback) {
 		if (!playlists) {
@@ -120,14 +120,14 @@ function Generator(api) {
 			callback = limit;
 			limit = 100;
 		}
-		
+
 		/* update selected playlist */
 		selectedPlaylist = playlists[index];
 		/* get songs from this playlist, order by name */
 		orderedSongs = [];
 		getSongs0(selectedPlaylist.ownerId, selectedPlaylist.id, limit, 0, callback);
 	}
-	
+
 	/**
 	 * Generate the queue to be used by host and listeners from the selected playlist.
 	 */
@@ -156,7 +156,7 @@ function Generator(api) {
 			} else {
 				callback(new Utils.SafeList(orderedSongs));
 			}
-		}); 
+		});
 	}
 
 	/**
@@ -200,10 +200,10 @@ function Generator(api) {
 				}
 			}
 
-			require('fs').writeFileSync('db.json', 
+			require('fs').writeFileSync('db.json',
 				JSON.stringify(
 					{
-						song_uris: uris, 
+						song_uris: uris,
 						host_access_token: [ api.getAccessToken() ]
 					})
 			);

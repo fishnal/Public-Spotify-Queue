@@ -14,7 +14,7 @@ const request = require('sync-request')
 function auth(clientId, clientSecret, redirectURI, scopes, showDialog=false) {
 	var state = '';
 	var res = request('GET', 'http://www.sethcardoza.com/api/rest/tools/random_password_generator/length:20');
-	
+
 	if (res.statusCode < 200 || res.statusCode >= 300) {
 		console.log("Couldn't retrieve a random state, generating one...");
 		for (var i = 0; i < 20; i++) {
@@ -24,7 +24,7 @@ function auth(clientId, clientSecret, redirectURI, scopes, showDialog=false) {
 		console.log("Retrieved a random state");
 		state = res.getBody();
 	}
-	
+
 	/* init wrapper api with id, secret, uri, and response type */
 	var spotifyApi = new SpotifyWebApi({
 		'clientId' : clientId,
