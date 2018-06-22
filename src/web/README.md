@@ -13,6 +13,5 @@
 
 ## Files
 
-+ `server.js` is backend server code, used to retrieve an access token and handle any Spotify API calls
-+ `client.js` is frontend server code, used to redirect to authorization and handle client side interactions
++ `server.js` is backend server code, hosts the website, controls authorization and access token retrieval process
 + `*.html` is frontend HTML code, likely to change
