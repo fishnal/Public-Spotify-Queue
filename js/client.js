@@ -7,9 +7,9 @@ const auth = require('./authorize.js');
 /* make sure json server is running */
 const songURL = 'http://localhost:3000/song_uris';
 const hostURL = 'http://localhost:3000/host_access_token';
-const clientId = 'acd0f18a3e124101af31f9b3582130c6';
-const clientSecret = '276a4580f7e94dd1a20f5d797b95dbba';
-const redirectURI = 'http://127.0.0.1:8080/'
+const clientId = process.env.CLIENT_ID;
+const clientSecret = process.env.CLIENT_SECRET;
+const redirectURI = 'http://127.0.0.1:3000/'
 
 var song_uris;
 var hostToken;

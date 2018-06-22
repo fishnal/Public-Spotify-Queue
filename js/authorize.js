@@ -40,7 +40,7 @@ function auth(clientId, clientSecret, redirectURI, scopes, showDialog=false) {
 	/* log url and open it in default browser */
 	console.log('Open the link below in your browser if it doesn\'t automatically do so');
 	console.log(authURL);
-	opn(authURL, {app: ['chrome', '--incognito']});
+	opn(authURL);
 
 	return spotifyApi;
 }
