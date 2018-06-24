@@ -2,3 +2,4 @@
 db.json
 !.gitignore
 */**/test
+node_modules/
