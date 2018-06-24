@@ -14,7 +14,6 @@ const SCOPES = [
 ];
 
 let server = express();
-let refresher = null;
 
 server.listen(PORT, () => {
 	console.log(`Server hosted on ${HOST}`);
@@ -22,7 +21,13 @@ server.listen(PORT, () => {
 
 server.get('/', (serverRequest, serverResponse) => {
 	console.log('Requested root (/)');
-	serverResponse.status(200).send(fs.readFileSync('src/web/index.html').toString()).end();
+	serverResponse.status(200);
+	serverResponse.send(fs.readFileSync('src/web/index.html').toString()).end();
+});
+
+server.get('/favicon.ico', (serverRequest, serverResponse) => {
+	console.log('Requested favicon (/favicon.ico)');
+	serverResponse.status(200).sendFile(`${process.cwd()}/src/web/favicon.ico`);
 });
 
 // GET request for /token
