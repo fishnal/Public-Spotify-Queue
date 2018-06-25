@@ -22,12 +22,17 @@ server.listen(PORT, () => {
 server.get('/', (serverRequest, serverResponse) => {
 	console.log('Requested root (/)');
 	serverResponse.status(200);
-	serverResponse.send(fs.readFileSync('src/web/index.html').toString()).end();
+	serverResponse.sendFile(`${process.cwd()}/index.html`);
 });
 
 server.get('/favicon.ico', (serverRequest, serverResponse) => {
 	console.log('Requested favicon (/favicon.ico)');
-	serverResponse.status(200).sendFile(`${process.cwd()}/src/web/favicon.ico`);
+	serverResponse.status(200).sendFile(`${process.cwd()}/favicon.ico`);
+});
+
+server.get('/control.js', (serverRequest, serverResponse) => {
+	console.log('Requested control.js (/control.js)');
+	serverResponse.status(200).sendFile(`${process.cwd()}/control.js`);
 });
 
 // GET request for /token
