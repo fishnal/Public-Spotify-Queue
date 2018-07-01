@@ -24,6 +24,12 @@ function getParameterByName(name, url) {
 	else return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+// Returns true if the argument is a literal boolean, the string "true",
+// or the number 1
+function toBoolean(arg) {
+	return (arg === true || arg == "true" || arg == 1) ? true : false;
+}
+
 // server information
 const SERVER_PORT = 3000;
 const HOST = `http://127.0.0.1:${SERVER_PORT}`;
@@ -40,9 +46,6 @@ const SCOPES = [
 	"user-read-email",
 	"user-read-private"
 ];
-
-// dummy function so console doesn't complain about it not being defined
-window.onSpotifyWebPlaybackSDKReady = () => {};
 
 $(document).ready(() => {
 	// retrieve state and any active tokens from cookies
@@ -91,7 +94,7 @@ $(document).ready(() => {
 							tokens.refresh = tokenData["refresh_token"],
 							{ expires: 365 }
 						);
-						// access token expires in (tokenData["expires_in"] - 120 seconds) (just to be safe)
+						// access token cookie expires 2 minutes earlier
 						Cookies.set(
 							"access_token",
 							tokens.access = tokenData["access_token"],
@@ -161,63 +164,59 @@ $(document).ready(() => {
 				);
 				window.location.replace(`${HOST}/`);
 			}
-		});
+		});``
 	} else {
 		// only here if we have all tokens
+		let spotifyApi = new SpotifyWebApi();
+		spotifyApi.setAccessToken(tokens.access);
 
 		$("body").append(
 			$("<p>Application authenticated!</p>")
 			.css("background-color", "green")
 		);
 
-		window.onSpotifyWebPlaybackSDKReady = () => {
-			$("body").append(
-				$("<p>Spotify Web Playback SDK ready!</p>")
-				.css("background-color", "green")
-			)
-
-			let player = new Spotify.Player({
-				name: "Public Spotify Queue Player",
-				getOAuthToken: (cb) => {
-					cb(tokens.access);
+		let recorderBtn = $("<button>Start recording</button>");
+		let recorderText = $("<p>Not recording.</p>");
+		let currentStateInterval = null;
+		let getCurrentState = () => {
+			spotifyApi.getMyCurrentPlaybackState((err, stateData) => {
+				if (stateData) {
+					let time = stateData["progress_ms"];
+					let mins = parseInt((time/(1000*60))%60);
+					let secs = parseInt((time/1000)%60);
+					let track = stateData["item"];
+					recorderText.text(sprintf("%s - %d:%02d", track.name, mins, secs));
+				} else {
+					recorderText.text(err);
+					console.log(err);
 				}
 			});
-
-			let errors = [
-				"initialization_error",
-				"authentication_error",
-				"account_error",
-				"playback_error"
-			];
-
-			errors.forEach((error) => {
-				player.addListener(error, (message) => {
-					message = JSON.stringify(message);
-					console.log(`${error}: ${message}`);
-					$("body").append(
-						$(`<p>${error}: ${message}</p>`)
-						.css("background-color", "red")
-					);
-				});
-			});
-
-			player.addListener("player_state_changed", (state) => {
-				console.log(state);
-
-				let mins = Math.floor(state.position / 60000);
-				let secs = Math.floor((state.position - mins * 60000) / 1000);
-				let time = sprintf("%d:%02d", mins, secs);
-				$("body").append(
-					$(`<p>${state.track_window.current_track.name} (${time})</p>`)
-				);
-			});
-
-			player.connect(() => {
-				$("body").append(
-					$("<p>Local player connected</p>")
-					.css("background-color", "green")
-				)
-			});
 		};
+		recorderBtn.attr("id", "recorderBtn");
+		recorderBtn.attr("isRecording", "false");
+		recorderBtn.click((event) => {
+			if (event.button == 0) {
+				// are we currently recording the state of the player?
+				let currentlyRecording = toBoolean(recorderBtn.attr("isRecording"));
+
+				// if it's currently recording, stop the interval
+				if (currentlyRecording) {
+					// stop recording the state
+					clearInterval(currentStateInterval);
+					recorderBtn.text("Start recording");
+					recorderText.text("Not recording");
+				} else {
+					// record the state every 750ms
+					currentStateInterval = setInterval(getCurrentState, 750);
+					recorderBtn.text("Stop recording");
+				}
+
+				// flip the isRecording attribute
+				recorderBtn.attr("isRecording", currentlyRecording ? false : true);
+			}
+		});
+		recorderText.attr("id", "recorderText");
+		$("body").append(recorderBtn);
+		$("body").append(recorderText);
 	}
 });

@@ -7,7 +7,7 @@
 1. Create a Spotify Developer Application [here](https://developer.spotify.com/dashboard/)
 2. Register `http://127.0.0.1:3000` as a redirect URI in your application
 3. Store your application's client id and secret as the environment variables `CLIENT_ID` and `CLIENT_SECRET`, respectively
-4. Run `src/web/server.js` from the root of the project folder
+4. Run `npm start` to start the local server
 5. Go to http://127.0.0.1:3000
 6. After the page loads, click the `Authorize` button. Should be straight forward from this point. If the authorization was not complete, make sure you actually authorize the application and you don't take too long to authorize it (read the [authorization process](#auth-proc) to see why)
 	+ If there is still an issue authorizing, open an issue with any console output, steps taken to reproduce the issue, as well as your web browser and version.

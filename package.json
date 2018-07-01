@@ -6,7 +6,7 @@
 		"Brian Park"
 	],
 	"version": "1.0.0",
-	"main": "src/refactor/server.js",
+	"main": "server.js",
 	"dependencies": {
 		"express": "^4.16.3",
 		"js-cookie": "^2.2.0",

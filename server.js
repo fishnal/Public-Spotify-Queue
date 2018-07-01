@@ -6,38 +6,50 @@ const PORT = 3000;
 const HOST = `http://127.0.0.1:${PORT}`
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const SCOPES = [
-	'streaming',
-	'user-modify-playback-state',
-	'user-read-currently-playing',
-	'user-read-playback-state'
-];
+
+const SEND_FILE_OPTS = {
+	root: `${process.cwd()}`
+};
 
 let server = express();
 
+// start server
 server.listen(PORT, () => {
 	console.log(`Server hosted on ${HOST}`);
 });
 
+// GET request for /
+// Gets home page
 server.get('/', (serverRequest, serverResponse) => {
 	console.log('Requested root (/)');
 	serverResponse.status(200);
-	serverResponse.sendFile(`${process.cwd()}/index.html`);
+	serverResponse.sendFile('index.html', SEND_FILE_OPTS);
 });
 
+// GET request for /favicon.ico
+// Gets favicon
 server.get('/favicon.ico', (serverRequest, serverResponse) => {
 	console.log('Requested favicon (/favicon.ico)');
-	serverResponse.status(200).sendFile(`${process.cwd()}/favicon.ico`);
+	serverResponse.status(200).sendFile('favicon.ico', SEND_FILE_OPTS);
 });
 
+// GET request for /control.js
+// Gets scripts for front-end control
 server.get('/control.js', (serverRequest, serverResponse) => {
 	console.log('Requested control.js (/control.js)');
-	serverResponse.status(200).sendFile(`${process.cwd()}/control.js`);
+	serverResponse.status(200).sendFile('control.js', SEND_FILE_OPTS);
+});
+
+// GET request for /spotify-web-api.js
+// Gets Spotify Web API JS (frontend) library
+server.get("/spotify-web-api.js", (serverRequest, serverResponse) => {
+	console.log('Requested Spotify Web API (/deps/spotify-web-api.js)');
+	serverResponse.status(200).sendFile('deps/spotify-web-api.js', SEND_FILE_OPTS);
 });
 
 // GET request for /token
-// Used to get an access token. Requires a "code" query parameter,
-// which is retrieved via post-authorization in the redirected URL.
+// Gets access and refresh tokens
+// code query parameter is code returned from authorization request
 server.get('/token', (serverRequest, serverResponse) => {
 	console.log('Requested access token (/token)');
 
@@ -72,8 +84,8 @@ server.get('/token', (serverRequest, serverResponse) => {
 });
 
 // GET request for /refresh
-// Refreshes an access token. Requires a "refresh_token" query
-// parameter.
+// Gets a new access token via an existing and valid refresh token
+// refresh_token query parameter is the refresh token to use
 server.get('/refresh', (serverRequest, serverResponse) => {
 	console.log('Requested to refresh access token (/refresh)');
 
