@@ -4,8 +4,10 @@ var fs = require('fs');
 
 const PORT = 3000;
 const HOST = `http://127.0.0.1:${PORT}`
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const CLIENT_ID = process.argv[2];
+const CLIENT_SECRET = process.argv[3];
+
+console.log(`id=${CLIENT_ID}\nsecret=${CLIENT_SECRET}`);
 
 const SEND_FILE_OPTS = {
 	root: `${process.cwd()}`
