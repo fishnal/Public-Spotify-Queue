@@ -1,14 +1,24 @@
 # Public Spotify Queue
 
+## Requirements
+
++ [nodejs](https://nodejs.org/en/)
++ [npm](https://www.npmjs.com/)
++ [A Spotify developer application](https://developer.spotify.com/dashboard/)
+
 ## Instructions
 
 **Note:** Currently only works on local servers (though could easily be moved to a remote server)
 
 1. Create a Spotify Developer Application [here](https://developer.spotify.com/dashboard/)
 2. Register `http://127.0.0.1:3000` as a redirect URI in your application
-3. Run `node server.js CLIENT_ID CLIENT_SECRET`, passing in your application's id and secret credentials as command line arguments
-4. Go to http://127.0.0.1:3000
-5. After the page loads, click the `Authorize` button. Should be straight forward from this point. If the authorization was not complete, make sure you actually authorize the application and you don't take too long to authorize it (read the [authorization process](#auth-proc) to see why)
+3. Clone or download and extract this repo
+4. Run `npm install` to get the dependencies
+5. Run `node server.js CLIENT_ID CLIENT_SECRET`, passing in your application's id and secret credentials as command line arguments
+6. Go to http://127.0.0.1:3000
+7. After the page loads, click the `Authorize` button. Should be straight forward from this point
+	+ If the authorization was not complete, make sure you actually authorize the application and you don't take too long to authorize it (read the [authorization process](#auth-proc) to see why)
+	+ Try clearing your cookies (just for this local domain)
 	+ If there is still an issue authorizing, open an issue with any console output, steps taken to reproduce the issue, as well as your web browser and version.
 
 ## <a id="auth-proc"></a> Authorization Process
@@ -24,5 +34,11 @@
 
 ## Files
 
-+ `server.js` is backend server code, hosts the website, controls authorization and access token retrieval process
-+ `*.html` is frontend HTML code, likely to change
++ `server.js` is the backend server; it hosts the website, controls authorization and access token retrieval processes
++ `control.js` is frontend scripting and communicates with backend server
++ `index.html` is the homepage, likely to change
++ `favicon.ico` is the website icon (temporary at the moment)
++ `deps/` contains any dependencies that are needed for the frontend (will port to some sort of frontend package manager like Yarn)
++ `src/core/` contains core code for the "public queue" idea, currently being refactored
+	+ The `master` branch has a better organization for the core, and can be tested (though it is poorly documented). The `localdev` branch isn't reliable since it's constantly changing, involving the core being changed and moved around to work with the project's new approach
++ `package.json` and `package-lock.json` are for npm management
