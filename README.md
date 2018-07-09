@@ -2,7 +2,7 @@
 
 ## Requirements
 
-fishnal/Public-Spotify-Queue@aea4cbed1798963c793239f0b8db04fc0d81bacd
+[commit](fishnal/Public-Spotify-Queue@aea4cbed1798963c793239f0b8db04fc0d81bacd)
 
 + [nodejs](https://nodejs.org/en/)
 + [npm](https://www.npmjs.com/)
