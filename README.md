@@ -2,8 +2,6 @@
 
 ## Requirements
 
-[commit](./commit/aea4cbed1798963c793239f0b8db04fc0d81bacd)
-
 + [nodejs](https://nodejs.org/en/)
 + [npm](https://www.npmjs.com/)
 + [A Spotify developer application](https://developer.spotify.com/dashboard/)
