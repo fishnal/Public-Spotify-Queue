@@ -83,7 +83,7 @@ $(document).ready(() => {
 			if (tokenData["status_code"] != 200) {
 				// request isn't good if status code isn't 200
 				status = 4;
-				$("body").append(
+				$("#user-control").append(
 					$(`<p>Couldn't refresh access token (code ${tokenData["status_code"]})\n\
 						Error: ${tokenData["error_description"]}</p>`)
 					.css("backgorund-color", "red")
@@ -117,11 +117,11 @@ $(document).ready(() => {
 		if (state && queryState != state) {
 			// bad query state (either previous state expired or it just doesn't match)
 			status = 1;
-			$("body").append(
+			$("#user-control").append(
 				$("<p>Bad state</p>")
 				.css("background-color", "red")
 			);
-			$("body").append(
+			$("#user-control").append(
 				$("<button>Retry</button>")
 				.click((event) => {
 					if (event.button == 0) {
@@ -132,7 +132,7 @@ $(document).ready(() => {
 		} else {
 			if (error) {
 				status = 2;
-				$("body").append(
+				$("#user-control").append(
 					$(`<p>Error in authorizing this application:\n\t${error}</p>`)
 					.css('background-color', 'red')
 				);
@@ -142,7 +142,7 @@ $(document).ready(() => {
 					if (tokenData["status_code"] != 200) {
 						// request isn't good if status code isn't 200
 						status = 3;
-						$("body").append(
+						$("#user-control").append(
 							$(`<p>Couldn't get access token (code ${tokenData["status_code"]})\n\
 								Error: ${tokenData["error_description"]}</p>`)
 							.css("backgorund-color", "red")
@@ -189,7 +189,7 @@ $(document).ready(() => {
 
 		// present an authorization button
 		// when clicked, it'll start authorization process
-		$("body").append(
+		$("#user-control").append(
 			$("<p>You need to authorize this application first to use it.\n\
 				Click the button below to do so.</p>")
 		);
@@ -210,13 +210,13 @@ $(document).ready(() => {
 			}
 		});
 		authBtn.text("Authorize");
-		$("body").append(authBtn);
+		$("#user-control").append(authBtn);
 	} else if (!tokens.access) {
 		// there's a refresh, but no access token, so get another one
 		refresh(tokens.refresh, {
 			replace: true,
 			err: (req) => {
-				$("body").append(
+				$("#user-control").append(
 					$("<p>Couldn't start the application, see the console for details</p>")
 				);
 				console.log("Couldn't refresh the access token");
@@ -228,7 +228,7 @@ $(document).ready(() => {
 		let spotifyApi = new SpotifyWebApi();
 		spotifyApi.setAccessToken(tokens.access);
 
-		$("body").append(
+		$("#user-control").append(
 			$("<p>Application authenticated!</p>")
 			.css("background-color", "green")
 		);
@@ -258,7 +258,7 @@ $(document).ready(() => {
 						currentTrackRecorder = setInterval(getCurrentTrack, getInfoIntervalTime);
 					},
 					err: (req) => {
-						$("body").append(
+						$("#user-control").append(
 							$("<p>An error occurred, see the console for details</p>")
 						);
 						console.log("Couldn't refresh the access token");
@@ -285,7 +285,7 @@ $(document).ready(() => {
 				// record track name and time elapsed in song
 				recorderText.text(sprintf("%s - [%d:%02d]", track.name, mins, secs));
 			}).catch((err) => {
-				// TODO handle errors through error_handler#spotifyErrorHandler(request, code)
+				// TODO handle errors through error_handler#handleSpotifyError(req)
 				recorderText.text("Couldn't get playback state, see console for details");
 				console.log(err);
 			}).finally(() => {
@@ -327,7 +327,7 @@ $(document).ready(() => {
 				}
 			}
 		});
-		$("body").append(recorderBtn);
-		$("body").append(recorderText);
+		$("#user-control").append(recorderBtn);
+		$("#user-control").append(recorderText);
 	}
 });
