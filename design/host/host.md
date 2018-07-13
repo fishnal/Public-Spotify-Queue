@@ -6,23 +6,29 @@
 	+ Pause/play
 	+ Seek forward/backward (default 5 seconds, customizable in settings)
 	+ Skip forward/backward
+		+ Seek traverses through song, skip changes the playing song
 	+ Change repeat mode (off, single track, context/queue)
 	+ Change the song entirely (should update with the queue)
 + [See who's listening along and broadcast who's listening along](#listeners-area)
-	+ List of listeners can be hidden
 	+ `public`: everyone sees everyone, including names and links to their Spotify profiles (host always has this information)
 	+ `count-only`: everyone sees how many people are listening along
 	+ `private`: only host sees who's listening along
+	+ List of listeners can be hidden
 + [Modify queue](#queue-area)
 	+ Clear the entire queue
 	+ Add songs (batch removal supported)
 	+ Remove songs (batch removal supported)
+	+ Preview songs
 	+ **Note**: can't be modified if the context is null, in which case the queue is effectively disabled
+	+ Can be hidden
 + [Handle song requests](#song-requests-area)
 	+ `public`: everyone can see requests, including who requested it
 	+ `songs-only`: everyone can see just the requests
 	+ `private`: only host can see the requests (displayed as "requests are private")
 	+ `closed`: host isn't taking any song requests
+	+ Queued requested songs will
+		+ Play after current song or most recently queued requested song
+		+ Appear highlighted (what color though?)
 	+ Can be hidden
 
 ## <a id="playback-control-area"></a>Playback Control Area
@@ -58,18 +64,20 @@
 	+ List of listeners
 + Dropdown menu
 	+ Includes `public`, `count-only`, and `private`
+	+ None of these options affect the host's listeners display area
 + List of listeners
 	+ Scrollable
 	+ Profile pictures can be toggled (small circle to the left of the names)
 	+ Names are hyperlinks (link style displayed on hover) to their Spotify profiles
 + Can be minimized
++ Can't be disabled
 
 ## <a id="queue-area"></a>Queue Area
 
 + Simply shows what songs are going to be played next
-+ Right click on a song to show a menu
-	+ Song Preview (popup, disabled if not available) [[preview](song_preview_popup.png)]
-	+ Song information (popup) [[preview](song_info_popup.png)]
++ Right-click on a song to show a menu
+	+ Song Preview (popup, disabled if not available) [[concept preview](song_preview_popup.png)]
+	+ Song information (popup) [[concept preview](song_info_popup.png)]
 		+ Album artwork
 		+ Album type
 		+ Song name
@@ -79,7 +87,18 @@
 		+ Release Date (has to be retrieved from the album object)
 	+ Add song before or after (input song URI or song link, likely to be more expansive)
 	+ Remove song
-+ Double left-click on a song to play it (removes all songs before it from the queue)
++ Control + left-click selects a song for batch selection
++ Batch operations
+	+ Save to library
+	+ Add to *this* playlist (i.e. if a host accepted a requested song, which may not be in the host's current playing playlist)
+		+ "This" playlist refers to the playlist the host is listening
+	+ Add to playlist... (side dropdown menu? not sure what they're called)
+	+ Removal from queue
+	+ Remove from library
+	+ Remove from this playlist (should the removes be grouped?)
++ Double left-click on a song to play it
+	+ Removes all songs before it from the queue
+	+ Can only be undone by skipping backward
 + Can be minimized
 
 ## <a id="song-requests-area"></a>Song Requests Area
@@ -89,6 +108,7 @@
 	+ List of requested songs
 + Dropdown menu
 	+ Includes `public`, `songs-only`, `private`, and `closed`
+	+ `closed` is the only option that affects the host's song requests display area
 + List of requested songs
 	+ Shows who requested it on the right hand side
 		+ Displayed in either
