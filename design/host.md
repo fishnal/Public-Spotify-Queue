@@ -76,8 +76,8 @@
 
 + Simply shows what songs are going to be played next
 + Right-click on a song to show a menu
-	+ Song Preview (popup, disabled if not available) [[concept preview](song_preview_popup.png)]
-	+ Song information (popup) [[concept preview](song_info_popup.png)]
+	+ Song Preview (popup, disabled if not available) [[concept preview](host_song_preview_popup.png)]
+	+ Song information (popup) [[concept preview](host_song_info_popup.png)]
 		+ Album artwork
 		+ Album type
 		+ Song name
