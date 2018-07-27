@@ -34,48 +34,21 @@ The following table details the time and space complexities for these two types 
 
 In the worst case, skip and traditional lists have the same time complexity, but skip lists have a worse space complexity (addressed later). But because skip lists, on average, have smaller time complexities than traditional lists, skip lists are more appealing.
 
-One more thing to note is that skip lists are sorted. For the time being, let's ignore the fact that we're using a skip list, and focus on solely an ordered list. To keep them sorted, we'll use key-value pairs:
+One more thing to note is that skip lists are sorted. For the time being, let's ignore the fact that we're using a skip list, and focus on solely an ordered list. Our ordering is dependent on the positions of the songs, rather than their values (i.e. not the track names), so this essentially leaves our list ordered all the time. When we insert a song, we just have to make sure we insert it in the right place, and similarly for removing a song.
 
-+ Values will be the song URI (for the Spotify API to use)
-+ Keys will be the song's position in the queue, *when the queue was first initialized*
+However, it becomes a slight issue when we need to search for songs. In order to insert songs in the right position, we need to know which songs are around it, along with the queue positions of those neighboring songs. We can't compare song details against each other because they don't determine where the song is in the queue. We'd want to index the songs based on their queue positions (the indexes should be non-negative, but sign doesn't really matter since it won't be showed to the client). But using indices has some limitations:
 
-The last part is emphasized because every song's position gets offset by 1 when we skip to the next song in the queue.
+### Integer Indices
 
-```text
-(0 is current song playing)
-(assuming repeat is on)
-Old Queue: A -> B -> C -> D <--- values
-           0    1    2    3 <--- keys
+If we insert a new element, then all the elements to the right need their index to be offset by 1, which makes our insertion an O(n) operation. Not so great.
 
-(user skips to next song)
-New Queue: B -> C -> D -> A
-           0    1    2    3
-```
+### Float Indices
 
-If we do not change the numbering of the songs when a song is skipped, then song A would still be numbered as 0, B as 1, and so on. This allows us to retain the ordering of the list and avoid unnecessarily shifting the list's elements around.
+If we insert a new element, it's index can be an average of the element's indices that the new element is being inserted into. So if we insert `C` in between `A` (current playing song) and `B` (next and last song in queue), then `C`s index would be an average of `A`s and `B`s indices. This becomes an issue if we repeatedly try to insert an element in between `A` and `x`, where `x` is the element next to `A`. We can only do this so many times because float precision is finite (we can do this ~50 times).
 
-However, this poses an issue when it comes to inserting and removing elements from the list because we still need to keep the list ordered:
+Besides that, we don't have to worry about adding `C` before the current playing song, because that wouldn't make much sense. But, we do have to worry about adding `C` after the last song in the queue. In this case, we can set `C`s index to be one plus `B`s index. What if the user has repeat on? Well even with repeat on, `B` is still considered to be the last song in the queue, we just end up going back to the beginning of the queue after `B` finishes playing. So we'd still set `C`s index directly after `B`s index.
 
-+ Removing: ordering is retained (so long as you don't modify any keys) because an element was removed from a sorted list
-+ Inserting: one or more keys need to change in order to allow for a node to be inserted.
-
-	```text
-	A -> B -> C <-- values
-	0    1    2 <-- keys
-
-	insert value D in between the keys 0 and 1
-
-	A -> D -> B -> C
-	0    ?    1    2
-	```
-
-	If our keys were unsigned integers, D would have to be assigned a key of 1, B's key will become 2, and so on. This then becomes an O(n) operation.
-
-	However, if we make the keys unsigned floats, D can be assigned any value in between 0 and 1. We can assign it a value that's halfway from both ranges, so 0.5 in this case. This retains the list's ordering, while also saving time when it comes to inserting the element.
-
-Putting this in terms of song queues, it doesn't mean that a song will be in position 0.5 in the queue because that doesn't make much sense. Rather, these positions/indices are intended to help us keep our skip list queue sorted, so that we can take advantage of the skip list's improved search.
-
-What does this mean for the client? They won't see any numberings on the queue, so they won't have to worry. But if in the future numberings are displayed, it can be handled by whatever list the queue is displaying the list of songs from (i.e. an HTML list), rather than the song's key in the skip list queue.
+Despite the fact that this can break if someone tries to add 50 songs after one particular song, that isn't a practical case because at that point you may as well just update your playlist. This makes floating indices to be more accurate then integer ones.
 
 ## <a id="space-management"></a> Space Management
 
@@ -93,14 +66,18 @@ Why does the client not have the skip list?
 
 Why not just have the queue stored on the server?
 
-+ Nothing could ever be displayed on the client side, because the client can't have any list of elements resembling that queue.
++ Nothing could ever be displayed on the client side, because the client wouldn't have any list of elements resembling that queue (unless we send that queue data to the client).
+
+*What if the client sends a lot of queue modification requests in a short amount of time?*
+
++ Maybe the first few requests we can process individually, but if we start to notice the same pattern, could probably just suspend the requests until the client stops sending so many requests (maybe a 5 second period), and then process all the requests we just held onto all at once. Hopefully, queue modification doesn't get to expensive so we don't have to rely on this feature.
 
 ### <a id="client-based-queue"></a> Client Based Queue?
 
 *But what if it the queue was local or client-based?*
 
-This actually isn't that bad of an idea, but there are significant trade offs involved. If the client held the queue locally, then in this case it can't be a skip list (explained above). Instead, it would just be an HTML list. This means the server uses less memory, aka more memory for other tasks, which is a huge plus.
++ This actually isn't that bad of an idea, but there are significant trade offs involved. If the client held the queue locally, then in this case it can't be a skip list (explained above). Instead, it would just be an HTML list. This means the server uses less memory, aka more memory for other tasks, which is a huge plus. It could be a peer-to-peer network model.
 
-What if the client modifies the queue a bunch? Those changes can just be sent to the server.
+*What if listeners join in after the host started the session?*
 
-What if listeners join in after the host started the session? This means that listeners need to grab the host's current queue, but how? They have to ask the server for that data. But the server doesn't have that data, so it needs to ask the host client. This is the main issue here. If a group of people join in at once, they all need that queue information. Which means the host client uses up network resources, which can be an issue if the host is attempting to fulfill a bunch of requests at once and/or doesn't have a strong enough internet connection. If instead we had the server hold the queue, the network load will be placed onto the server rather than the host client when a group of listeners request the queue. This is the main reason as to why the queue will not be completely local.
++ This means that listeners need to grab the host's current queue, but how? They have to ask the server for that data. But the server doesn't have that data, so it needs to ask the host client. This is the main issue here. If a group of people join in at once, they all need that queue information. Which means the host client uses up network resources, which can be an issue if the host is attempting to fulfill a bunch of requests at once and/or doesn't have a strong enough internet connection. If instead we had the server hold the queue, the network load will be placed onto the server rather than the host client when a group of listeners request the queue. This is the main reason as to why the queue will not be completely local.
