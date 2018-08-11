@@ -14,5 +14,14 @@
 		"request": "^2.87.0",
 		"spotify-web-api-node": "^3.1.1",
 		"sprintf-js": "^1.1.1"
+	},
+	"scripts": {
+		"start": "./server.js",
+		"test": "mocha"
+	},
+	"devDependencies": {
+		"js-yaml": "^3.12.0",
+		"mocha": "^5.2.0",
+		"should": "^13.2.3"
 	}
 }

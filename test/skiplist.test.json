@@ -1,0 +1,70 @@
+{
+	"expectedSubLists": [
+		[
+			"# a after null - L2",
+			[{"key": 0, "value": "a"}],
+			[{"key": 0, "value": "a"}],
+			[{"key": 0, "value": "a"}]
+		],
+		[
+			"# b after a - L1",
+			[{"key": 0, "value": "a"}],
+			[{"key": 0, "value": "a"}, {"key": 1, "value": "b"}],
+			[{"key": 0, "value": "a"}, {"key": 1, "value": "b"}]
+		],
+		[
+			"# c after null - L0",
+			[{"key": 0, "value": "a"}],
+			[{"key": 0, "value": "a"}, {"key": 1, "value": "b"}],
+			[{"key": -1, "value": "c"}, {"key": 0, "value": "a"}, {"key": 1, "value": "b"}]
+		],
+		[
+			"# d after a - L0",
+			[{"key": 0, "value": "a"}],
+			[{"key": 0, "value": "a"}, {"key": 1, "value": "b"}],
+			[{"key": -1, "value": "c"}, {"key": 0, "value": "a"}, {"key": 0.5, "value": "d"}, {"key": 1, "value": "b"}]
+		],
+		[
+			"# e after -Infinity - L3",
+			[{"key": -2, "value": "e"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}, {"key": 1, "value": "b"}],
+			[{"key": -2, "value": "e"}, {"key": -1, "value": "c"}, {"key": 0, "value": "a"}, {"key": 0.5, "value": "d"}, {"key": 1, "value": "b"}]
+		],
+		[
+			"# f after b - L0",
+			[{"key": -2, "value": "e"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}, {"key": 1, "value": "b"}],
+			[{"key": -2, "value": "e"}, {"key": -1, "value": "c"}, {"key": 0, "value": "a"}, {"key": 0.5, "value": "d"}, {"key": 1, "value": "b"}, {"key": 2, "value": "f"}]
+		],
+		[
+			"# g after f - L2",
+			[{"key": -2, "value": "e"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}, {"key": 3, "value": "g"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}, {"key": 1, "value": "b"}, {"key": 3, "value": "g"}],
+			[{"key": -2, "value": "e"}, {"key": -1, "value": "c"}, {"key": 0, "value": "a"}, {"key": 0.5, "value": "d"}, {"key": 1, "value": "b"}, {"key": 2, "value": "f"}, {"key": 3, "value": "g"}]
+		],
+		[
+			"# h after f - L3",
+			[{"key": -2, "value": "e"}, {"key": 2.5, "value": "h"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}, {"key": 2.5, "value": "h"}, {"key": 3, "value": "g"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}, {"key": 1, "value": "b"}, {"key": 2.5, "value": "h"}, {"key": 3, "value": "g"}],
+			[{"key": -2, "value": "e"}, {"key": -1, "value": "c"}, {"key": 0, "value": "a"}, {"key": 0.5, "value": "d"}, {"key": 1, "value": "b"}, {"key": 2, "value": "f"}, {"key": 2.5, "value": "h"}, {"key": 3, "value": "g"}]
+		],
+		[
+			"# i after g - L0",
+			[{"key": -2, "value": "e"}, {"key": 2.5, "value": "h"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}, {"key": 2.5, "value": "h"}, {"key": 3, "value": "g"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}, {"key": 1, "value": "b"}, {"key": 2.5, "value": "h"}, {"key": 3, "value": "g"}],
+			[{"key": -2, "value": "e"}, {"key": -1, "value": "c"}, {"key": 0, "value": "a"}, {"key": 0.5, "value": "d"}, {"key": 1, "value": "b"}, {"key": 2, "value": "f"}, {"key": 2.5, "value": "h"}, {"key": 3, "value": "g"}, {"key": 4, "value": "i"}]
+		],
+		[
+			"# j after h - L0",
+			[{"key": -2, "value": "e"}, {"key": 2.5, "value": "h"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}, {"key": 2.5, "value": "h"}, {"key": 3, "value": "g"}],
+			[{"key": -2, "value": "e"}, {"key": 0, "value": "a"}, {"key": 1, "value": "b"}, {"key": 2.5, "value": "h"}, {"key": 3, "value": "g"}],
+			[{"key": -2, "value": "e"}, {"key": -1, "value": "c"}, {"key": 0, "value": "a"}, {"key": 0.5, "value": "d"}, {"key": 1, "value": "b"}, {"key": 2, "value": "f"}, {"key": 2.5, "value": "h"}, {"key": 2.75, "value": "j"}, {"key": 3, "value": "g"}, {"key": 4, "value": "i"}]
+		]
+	]
+}
