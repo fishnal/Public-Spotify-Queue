@@ -16,7 +16,7 @@
 		"sprintf-js": "^1.1.1"
 	},
 	"scripts": {
-		"start": "./server.js",
+		"start": "node ./server.js",
 		"test": "mocha"
 	},
 	"devDependencies": {

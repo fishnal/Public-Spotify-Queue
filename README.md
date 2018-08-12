@@ -14,8 +14,8 @@
 2. Register `http://127.0.0.1:3000` as a redirect URI in your application
 3. Clone or download and extract this repo
 4. Run `npm install` to get the dependencies
-5. Run `node server.js CLIENT_ID CLIENT_SECRET`, passing in your application's id and secret credentials as command line arguments
-	+ Alternatively, you can set environment variables for the `CLIENT_ID` and `CLIENT_SECRET` instead of passing in arguments
+5. Run `npm start CLIENT_ID CLIENT_SECRET`, passing in your application's id and secret credentials as command line arguments
+	+ Alternatively, you can set environment variables for the `CLIENT_ID` and `CLIENT_SECRET` instead of passing in the arguments
 6. Go to http://127.0.0.1:3000
 7. After the page loads, click the `Authorize` button. Should be straight forward from this point
 	+ If the authorization was not complete, make sure you actually authorize the application and you don't take too long to authorize it (read the [authorization process](#auth-proc) to see why)
