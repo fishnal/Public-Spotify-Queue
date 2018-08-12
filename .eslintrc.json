@@ -76,12 +76,6 @@
 			"error",
 			"property"
 		],
-		"dot-notation": [
-			"error",
-			{
-				"allowKeywords": false
-			}
-		],
 		"eqeqeq": [
 			"warn",
 			"smart"
@@ -213,11 +207,7 @@
 		],
 		"array-bracket-spacing": [
 			"warn",
-			"always",
-			{
-				"objectsInArrays": false,
-				"arraysInArrays": false
-			}
+			"always"
 		],
 		"array-element-newline": [
 			"warn",
@@ -225,7 +215,6 @@
 		],
 		"block-spacing": "warn",
 		"brace-style": "warn",
-		"camelcase": "warn",
 		"comma-dangle": "warn",
 		"comma-spacing": "warn",
 		"comma-style": "warn",
@@ -306,7 +295,6 @@
 			}
 		],
 		"no-nested-ternary": "warn",
-		"no-new-object": "warn",
 		"no-trailing-spaces": "warn",
 		"no-underscore-dangle": "warn",
 		"no-unneeded-ternary": "warn",
