@@ -1,6 +1,10 @@
+const { isNumber } = require('./utils.js');
+
 /**
  * A doubly-linked node for a skip list. Can traverse forward and backward (for element traversal)
  * and up and down (for list traversal).
+ *
+ * @prop {Function} update
  */
 class SkipNode {
 	/**
@@ -10,7 +14,7 @@ class SkipNode {
 	 * @param {any} value the value for this node.
 	 */
 	constructor(key, value) {
-		if (key == null || typeof key != "number" && !(key instanceof Number)) {
+		if (key == null || !isNumber(key)) {
 			throw new TypeError("key must be a number");
 		}
 
@@ -86,6 +90,29 @@ class SkipNode {
 		}
 
 		/**
+		 * Unlinks this node from it's surrounding nodes.
+		 *
+		 * @returns {void}
+		 */
+		this.unlink = () => {
+			if (this.prev) {
+				this.prev.next = this.next;
+			}
+
+			if (this.next) {
+				this.next.prev = this.prev;
+			}
+
+			if (this.above) {
+				this.above.below = this.below;
+			}
+
+			if (this.below) {
+				this.below.above = this.above;
+			}
+		};
+
+		/**
 		 * Copy the key and value of this node into a new node. Does not copy the links.
 		 *
 		 * @returns {SkipNode} the copied node.
@@ -114,8 +141,6 @@ class SortedLinkedList {
 	 * Constructs a sorted linked list.
 	 */
 	constructor() {
-		// TODO remove and get/search methods
-
 		/**
 		 * The head/first element of the list.
 		 *
@@ -145,13 +170,14 @@ class SortedLinkedList {
 		 *
 		 * @param {function} callback the operation to perform on each element, takes in two
 		 * arguments, the key and the value.
+		 * @param {object} thisArg `this` object that the callback function can refer to.
 		 * @returns {void}
 		 */
-		this.forEach = (callback) => {
+		this.forEach = (callback, thisArg) => {
 			let node = this.head.next;
 
 			while (node && node !== this.tail) {
-				callback(node.key, node.value);
+				callback.call(thisArg, node.key, node.value);
 
 				node = node.next;
 			}
@@ -210,6 +236,50 @@ class SortedLinkedList {
 		}
 
 		/**
+		 * Gets the value associated with the key.
+		 *
+		 * @param {number} key the key to find.
+		 * @returns {any} null if the key doesn't exist; otherwise the value for the key (note this
+		 * value can be null)
+		 */
+		this.get = (key) => {
+			let curr = this.head;
+
+			while (curr && key > curr.key) {
+				curr = curr.next;
+			}
+
+			if (!curr && curr.key === key) {
+				return curr.value;
+			}
+
+			return null;
+		}
+
+		/**
+		 * Removes a key from the list.
+		 *
+		 * @param {number} key the key to remove
+		 * @returns {boolean} true if the key was sucessfully removed.
+		 */
+		this.remove = (key) => {
+			let curr = this.head;
+
+			while (curr && key > curr.key) {
+				curr = curr.next;
+			}
+
+			if (!curr && curr.key === key) {
+				curr.unlink();
+				this.size--;
+
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
 		 * Parses this list's nodes to an array-like string.
 		 *
 		 * @returns {string} a readable string of the list.
@@ -243,8 +313,6 @@ class SkipList {
 	 * Constructs a skip list, with the bottom list being empty.
 	 */
 	constructor() {
-		// TODO remove method
-
 		const BOTTOM_INDEX = 0;
 		const RANDOM_THRESHOLD = 0.5;
 
@@ -255,7 +323,46 @@ class SkipList {
 		const lists = [ new SortedLinkedList() ];
 		const bottomList = lists[BOTTOM_INDEX];
 
+		/**
+		 * Gets the size of the list.
+		 *
+		 * @returns {number} the size.
+		 */
 		this.size = () => lists[BOTTOM_INDEX].size;
+
+		/**
+		 * Iterates over all the elements in this skip list (does not iterate over every single
+		 * node, but rather all the elements that appear in the bottom-list).
+		 *
+		 * @param {function} callback the operation to perform on each element, takes in two
+		 * arguments, the key and the value.
+		 * @param {object} thisArg `this` object that the callback function can refer to
+		 * @returns {void}
+		 */
+		this.forEach = (callback, thisArg) => {
+			lists[BOTTOM_INDEX].forEach(callback, thisArg);
+		}
+
+		/**
+		 * Iterates over all the lists in the skip list, thus over EVERY node present in the skip
+		 * list. Starts with the top-most list.
+		 *
+		 * @param {function} callback the operation to perform on each list, takes in one
+		 * argument, which is an array of the keys and values of iterating list's nodes.
+		 * @param {object} thisArg `this` object that the callback function can refer to
+		 * @returns {void}
+		 */
+		this.forEachList = (callback, thisArg) => {
+			for (let i = lists.length - 1; i > -1; i--) {
+				let safeList = [];
+
+				lists[i].forEach((key, value) => {
+					safeList.push({ key, value });
+				});
+
+				callback.call(thisArg, safeList);
+			}
+		}
 
 		/**
 		 * Recursively searches for a node based on it's key. Additionally, an options object can
@@ -306,45 +413,16 @@ class SkipList {
 		 * @returns {any} null if the element wasn't found; otherwise the element's value (which
 		 * could also be null).
 		 * @throws {RangeError} if the key is infinite
+		 * @throws {TypeError} if the key is not a number
 		 */
 		this.get = (key) => {
-			if (!Number.isFinite(key)) {
-				throw new RangeError();
+			if (!isNumber(key)) {
+				throw new TypeError('key must be a number');
+			} else if (!Number.isFinite(key)) {
+				throw new RangeError('key must be finite');
 			}
 
 			return getNode(key, lists[lists.length - 1].head, { stopImmediately: true }).value;
-		}
-
-		/**
-		 * Iterates over all the elements in this skip list (does not iterate over every single
-		 * node, but rather all the elements that appear in the bottom-list).
-		 *
-		 * @param {function} callback the operation to perform on each element, takes in two
-		 * arguments, the key and the value.
-		 * @returns {void}
-		 */
-		this.forEach = (callback) => {
-			lists[BOTTOM_INDEX].forEach(callback);
-		}
-
-		/**
-		 * Iterates over all the lists in the skip list, thus over EVERY node present in the skip
-		 * list. Starts with the top-most list.
-		 *
-		 * @param {function} callback the operation to perform on each list, takes in one
-		 * argument, which is an array of the keys and values of iterating list's nodes.
-		 * @returns {void}
-		 */
-		this.forEachList = (callback) => {
-			for (let i = lists.length - 1; i > -1; i--) {
-				let safeList = [];
-
-				lists[i].forEach((key, value) => {
-					safeList.push({ key, value });
-				});
-
-				callback(safeList);
-			}
 		}
 
 		/**
@@ -402,14 +480,17 @@ class SkipList {
 		 *
 		 * @param {number} relativeKey the key to add the new element after
 		 * @param {any} newValue the value of the new element
-		 * @returns {void}
+		 * @returns {number} the key of the new element added
 		 * @throws {ReferenceError} if the relativeKey doesn't exist in the list
 		 * @throws {RangeError} if the relativeKey is positive infinity or if there is no suitable
 		 * new key (see special case (3))
+		 * @throws {TypeError} if the relativeKey isn't a number of null/undefined
 		 */
 		this.addAfter = (relativeKey, newValue) => {
-			if (relativeKey === Number.POSITIVE_INFINITY) {
-				throw new RangeError('relative key must be less than positive infinity');
+			if (!isNumber(relativeKey) && relativeKey != null) {
+				throw new TypeError('relativeKey must be a number or null/undefined');
+			} else if (relativeKey === Number.POSITIVE_INFINITY) {
+				throw new RangeError('relativeKey must be less than positive infinity');
 			}
 
 			// add into bottom list first
@@ -431,64 +512,138 @@ class SkipList {
 			let curr = getNode(relativeKey, lists[lists.length - 1].head);
 
 			if (!curr || curr.key !== relativeKey) {
-				throw new ReferenceError("relative key not found");
-			} else {
-				let next = curr.next;
-				let newKey = null;
-
-				// if curr key or next key is infinite, then that means we are inserting after the
-				// head or before the tail (respectively)
-				// because of an error check, we flip the conditions here so we can group some of
-				// the code together in one flow
-				if (Number.isFinite(curr.key) && Number.isFinite(next.key)) {
-					// newKey just needs to be an average of curr's and next's keys
-					newKey = (curr.key + next.key) / 2;
-
-					if (newKey === curr.key || newKey === next.key) {
-						// we've used up all our precision, don't add this element
-						throw new RangeError("not enough precision, add somewhere else");
-					}
-				} else {
-					if (curr.key === Number.NEGATIVE_INFINITY) {
-						// if next key is infinite, that means there are no elements in the list yet
-						// so newKey becomes 0
-						if (!Number.isFinite(next.key)) {
-							newKey = 0;
-						} else {
-							// make newKey a floor of next key
-							// if next key is an integer, then make newKey one less
-							newKey = Number.isInteger(next.key)
-								? curr.next.key - 1
-								: Math.floor(next.key);
-						}
-					} else if (next.key === Number.POSITIVE_INFINITY) {
-						// make newKey a ceil of curr's key
-						// if curr's key is an integer, then make newKey one more
-						newKey = Number.isInteger(curr.key)
-							? curr.key + 1
-							: Math.ceil(curr.key);
-					}
-
-					// newKey could end up being an unsafe integer from above operations
-					if (!Number.isSafeInteger(newKey)) {
-						throw new RangeError("not enough precision, add somewhere else");
-					}
-				}
-
-				// updating node's key
-				node.key = newKey;
-				// updating links with curr
-				curr.next = node;
-				node.prev = curr;
-				// updating links with next
-				next.prev = node;
-				node.next = next;
-
-				// update size of bottom list
-				bottomList.size++;
+				throw new ReferenceError("relativeKey not found");
 			}
 
+			let next = curr.next;
+			let newKey = null;
+
+			// if curr key or next key is infinite, then that means we are inserting after the
+			// head or before the tail (respectively)
+			// because of an error check, we flip the conditions here so we can group some of
+			// the code together in one flow
+			if (Number.isFinite(curr.key) && Number.isFinite(next.key)) {
+				// newKey just needs to be an average of curr's and next's keys
+				newKey = (curr.key + next.key) / 2;
+
+				if (newKey === curr.key || newKey === next.key) {
+					// we've used up all our precision, don't add this element
+					throw new RangeError("not enough precision, too much averaging");
+				}
+			} else {
+				if (curr.key === Number.NEGATIVE_INFINITY) {
+					// if next key is infinite, that means there are no elements in the list yet
+					// so newKey becomes 0
+					if (!Number.isFinite(next.key)) {
+						newKey = 0;
+					} else {
+						// make newKey a floor of next key
+						// if next key is an integer, then make newKey one less
+						newKey = Number.isInteger(next.key)
+							? curr.next.key - 1
+							: Math.floor(next.key);
+					}
+				} else if (next.key === Number.POSITIVE_INFINITY) {
+					// make newKey a ceil of curr's key
+					// if curr's key is an integer, then make newKey one more
+					newKey = Number.isInteger(curr.key)
+						? curr.key + 1
+						: Math.ceil(curr.key);
+				}
+
+				// newKey could end up being an unsafe integer from above operations
+				if (!Number.isSafeInteger(newKey)) {
+					throw new RangeError("not enough precision, unsafe integer");
+				}
+			}
+
+			// updating node's key
+			node.key = newKey;
+			// updating links with curr
+			curr.next = node;
+			node.prev = curr;
+			// updating links with next
+			next.prev = node;
+			node.next = next;
+
+			// update size of bottom list
+			bottomList.size++;
+
 			promote(node);
+
+			return newKey;
+		}
+
+		/**
+		 * Updates a key's value.
+		 *
+		 * @param {number} key the key to update
+		 * @param {any} newValue the new value for the key
+		 * @returns {boolean} true if the key was found and updated
+		 * @throws {TypeError} if key is not a number
+		 * @throws {RangeError} if key is not finite
+		 */
+		this.set = (key, newValue) => {
+			if (!isNumber(key)) {
+				throw new TypeError('key must be a number');
+			} else if (!Number.isFinite(key)) {
+				throw new RangeError('key must be finite');
+			}
+
+			let node = getNode(key, lists[lists.length - 1].head, { stopImmediately: true });
+
+			if (!node) {
+				return false;
+			}
+
+			node.update('value', newValue);
+
+			return true;
+		};
+
+		/**
+		 * Removes a key from the list.
+		 *
+		 * @param {number} key the key to remove
+		 * @returns {boolean} true if the key was found and removed
+		 */
+		this.remove = (key) => {
+			if (!isNumber(key)) {
+				throw new TypeError('key must be a number');
+			} else if (!Number.isFinite(key)) {
+				throw new RangeError('key must be finite');
+			}
+
+			let node = getNode(key, lists[lists.length - 1].head);
+
+			if (!node) {
+				return false;
+			}
+
+			// this is our way of getting to the current node's above link (this above link can
+			// be messed around with in SkipNode#unlink())
+			let next = node.above;
+
+			for (let ind = 0; node; ind++) {
+				node.unlink();
+				lists[ind].size--;
+
+				if (lists[ind].size === 0 && ind !== BOTTOM_INDEX) {
+					// if this list is empty, then all lists above this one should will be empty
+					// after removing this node from those higher-up lists.
+					// BUT, we don't do this if this is the bottom list, because we still need it
+					// in case we ever add more elements later on
+					lists.splice(ind, lists.length - ind);
+				}
+
+				node = next;
+
+				if (next) {
+					next = next.above;
+				}
+			}
+
+			return true;
 		}
 
 		/**

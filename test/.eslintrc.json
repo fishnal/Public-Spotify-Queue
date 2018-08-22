@@ -1,6 +1,10 @@
 {
 	"extends": "../.eslintrc.json",
 	"rules": {
-		"prefer-arrow-callback": "off"
+		"prefer-arrow-callback": "off",
+		"no-loop-func": "off",
+		"object-shorthand": "off",
+		"require-jsdoc": "off",
+		"handle-callback-err": "off"
 	}
 }

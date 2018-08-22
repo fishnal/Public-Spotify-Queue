@@ -33,13 +33,29 @@
 5. Backend retrieves an access token, sends all relevant data back
 6. Perform any Spotify API calls necessary.
 
+## Tests
+
+```shell
+npm test
+```
+
+All tests use the [mocha.js](https://mochajs.org/) unit testing framework.
+
+These tests don't require a valid client id or secret provided by a Spotify developer application. Instead, a local server loosely mocks what Spotify's API endpoints would perform, which `src/server.js` communicates with.
+
 ## Files
 
-+ `server.js` is the backend server; it hosts the website, controls authorization and access token retrieval processes
-+ `control.js` is frontend scripting and communicates with backend server
-+ `index.html` is the homepage, likely to change
-+ `favicon.ico` is the website icon (temporary at the moment)
-+ `deps/` contains any dependencies that are needed for the frontend (will port to some sort of frontend package manager like Yarn)
-+ `src/core/` contains core code for the "public queue" idea, currently being refactored
-	+ The `master` branch has a better organization for the core, and can be tested (though it is poorly documented). The `localdev` branch isn't reliable since it's constantly changing, involving the core being changed and moved around to work with the project's new approach
-+ `package.json` and `package-lock.json` are for npm management
++ [design/](./design/) contains design docs for most of the implemented/future features for the project
++ [docs/](./docs/) contains documentation for the source code useful for development (currently only has RESTful documentation)
+	+ [rest/](./design/rest/) RESTful API documentation for `server.js`
++ [src/](./src/) contains main source code
+	+ [deprecated/](./src/deprecated/) contains old, deprecated code for the "public queue" idea, currently being refactored
+	+ [web/](./src/web/) contains front-end code
+		+ [deps/](./src/web/deps/) contains any dependencies that are needed for the frontend (should be ported to some sort of frontend package manager like Yarn)
+		+ [control.js](./src/web/control.js) frontend scripting and communicates with backend server
+		+ [index.html](./src/web/index.html) homepage
+		+ [favicon.ico](./src/web/favicon.ico) website icon (temporary at the moment)
+	+ [server.js](./src/server.js) the backend server; it hosts the website, controls authorization and access token retrieval processes
+	+ [skiplist.js](./src/skiplist.js) skiplist implementation, used internally on the server
+	+ [utils.js](./src/utils.js) small set of utility functions
++ [index.js](./index.js) what `npm` uses to start the server

@@ -1,33 +1,57 @@
-// Generates a random string, converts a random decimal to base 36,
-// and discards the "0." from the beginning
-// amt represents how many times this is done (results concatenated)
+// TODO switch to request library for HTTP requests
+
+/**
+ * Generates a random string, converts a random decimal to base 36, and discards the "0." from the
+ * beginning amt represents how many times this is done (results concatenated).
+ *
+ * @param {number} amt the number of times to repeat the process.
+ * @returns {string} the random string.
+ */
 function randString(amt) {
-	var str = "";
-	for (var i = 0; i < amt; i++) {
+	let str = "";
+
+	for (let i = 0; i < amt; i++) {
 		str += Math.random().toString(36).substring(2);
 	}
+
 	return str;
 }
 
+/**
+ * Gets a URL's query parameter's value by it's key/name.
+ *
+ * @param {string} name the parameter name
+ * @param {string} url the url to parse
+ * @returns {string} the value of the parameter's value; null if not found
+ */
 function getParameterByName(name, url) {
 	// https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 	if (!url) {
 		url = window.location.href;
 	}
 
-	name = name.replace(/[\[\]]/g, "\\$&");
-	let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+	name = name.replace(/[[\]]/g, "\\$&");
+	let regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
 	let results = regex.exec(url);
 
-	if (!results) return null;
-	else if (!results[2]) return '';
-	else return decodeURIComponent(results[2].replace(/\+/g, " "));
+	if (!results) {
+		return null;
+	} else if (!results[2]) {
+		return '';
+	}
+
+	return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-// Returns true if the argument is a literal boolean, the string "true",
-// or the number 1
+/**
+ * Returns true if the argument is a literal boolean, the string "true",
+ * or the number 1
+ *
+ * @param {boolean|string|number} arg the argument to check
+ * @returns {boolean} true if arg satisfies any of the above conditions
+ */
 function toBoolean(arg) {
-	return (arg === true || arg == "true" || arg == 1) ? true : false;
+	return arg === true || arg === "true" || arg === 1;
 }
 
 // server information
@@ -53,7 +77,7 @@ $(document).ready(() => {
 	// 2 - couldn't authorize
 	// 3 - couldn't get tokens
 	// 4 - couldn't refresh
-	let status = 0;
+	let statusCode = 0;
 	// retrieve state and any active tokens from cookies
 	let state = Cookies.get("state");
 	// tokens variable will not be used in making API calls, because the cookie could expire
@@ -74,19 +98,27 @@ $(document).ready(() => {
 	// options parameter supports the following keys:
 	// 	replace: if true, then replaces the window with the homepage (does not go through any other
 	//		callback functions)
-	//	cb: callback function for when the refresh request succeeds (sends the response data back after
-	//		processing it
-	//	err: callback function for when the refresh request fails (sends the response data back after
-	//		processing it)
+	//	cb: callback function for when the refresh request succeeds (sends the response data back
+	//		after processing it
+	//	err: callback function for when the refresh request fails (sends the response data back
+	//		after processing it)
+
+	/**
+	 * Refreshes/retrieves another access token using an existing refresh token asynchronously.
+	 *
+	 * @param {string} refreshToken the refresh token to use
+	 * @param {object} options additional options
+	 * @returns {void}
+	 */
 	function refresh(refreshToken, options) {
 		$.get(`/refresh?refresh_token=${refreshToken}`, (tokenData) => {
-			if (tokenData["status_code"] != 200) {
+			if (tokenData["status_code"] !== 200) {
 				// request isn't good if status code isn't 200
-				status = 4;
+				statusCode = 4;
 				$("#user-control").append(
 					$(`<p>Couldn't refresh access token (code ${tokenData["status_code"]})\n\
 						Error: ${tokenData["error_description"]}</p>`)
-					.css("backgorund-color", "red")
+						.css("backgorund-color", "red")
 				);
 
 				if (options.err instanceof Function) {
@@ -95,7 +127,8 @@ $(document).ready(() => {
 			} else {
 				// store access and refresh tokens in cookies
 				// access token expires in (tokenData["expires_in"] - 120 seconds)
-				let accessExpireTime = tokenData["expires_in"] - 120; // in seconds
+				let accessExpireTime = tokenData["expires_in"] - 120;
+
 				Cookies.set(
 					"access_token",
 					tokens.access = tokenData["access_token"],
@@ -114,66 +147,62 @@ $(document).ready(() => {
 	if (queryState && (!tokens.access || !tokens.refresh)) {
 		Cookies.remove("state");
 		// state was returned in query, verify it matches the one in the cookie
-		if (state && queryState != state) {
+		if (state && queryState !== state) {
 			// bad query state (either previous state expired or it just doesn't match)
-			status = 1;
+			statusCode = 1;
 			$("#user-control").append(
-				$("<p>Bad state</p>")
-				.css("background-color", "red")
+				$("<p>Bad state</p>").css("background-color", "red")
 			);
 			$("#user-control").append(
-				$("<button>Retry</button>")
-				.click((event) => {
-					if (event.button == 0) {
+				$("<button>Retry</button>").click((event) => {
+					if (event.button === 0) {
 						window.location.replace(`${HOST}/`);
 					}
 				})
 			);
-		} else {
-			if (error) {
-				status = 2;
-				$("#user-control").append(
-					$(`<p>Error in authorizing this application:\n\t${error}</p>`)
+		} else if (error) {
+			statusCode = 2;
+			$("#user-control").append(
+				$(`<p>Error in authorizing this application:\n\t${error}</p>`)
 					.css('background-color', 'red')
-				);
-			} else {
-				// use code from query to get access token
-				$.get(`/token?code=${code}`, (tokenData) => {
-					if (tokenData["status_code"] != 200) {
-						// request isn't good if status code isn't 200
-						status = 3;
-						$("#user-control").append(
-							$(`<p>Couldn't get access token (code ${tokenData["status_code"]})\n\
-								Error: ${tokenData["error_description"]}</p>`)
+			);
+		} else {
+			// use code from query to get access token
+			$.get(`/token?code=${code}`, (tokenData) => {
+				if (tokenData["status_code"] !== 200) {
+					// request isn't good if status code isn't 200
+					statusCode = 3;
+					$("#user-control").append(
+						$(`<p>Couldn't get access token (code ${tokenData["status_code"]})\n'` +
+						`Error: ${tokenData["error_description"]}</p>`)
 							.css("backgorund-color", "red")
-						);
-					} else {
-						// store access and refresh tokens in cookies
+					);
+				} else {
+					// store access and refresh tokens in cookies
 
-						// refresh token cookie expires in 3650 days (10 years), so users don't
-						// have to reauthorize again (unless they logout)
-						Cookies.set(
-							"refresh_token",
-							tokens.refresh = tokenData["refresh_token"],
-							{ expires: 3650 }
-						);
-						// access token cookie expires 4 minutes before the actual token
-						Cookies.set(
-							"access_token",
-							tokens.access = tokenData["access_token"],
-							{ expires: (tokenData["expires_in"] - 240) / 86400 } // converting to days
-						);
+					// refresh token cookie expires in 3650 days (10 years), so users don't
+					// have to reauthorize again (unless they logout)
+					Cookies.set(
+						"refresh_token",
+						tokens.refresh = tokenData["refresh_token"],
+						{ expires: 3650 }
+					);
+					// access token cookie expires 4 minutes before the actual token
+					Cookies.set(
+						"access_token",
+						tokens.access = tokenData["access_token"],
+						{ expires: (tokenData["expires_in"] - 240) / 86400 } // converting to days
+					);
 
-						// go to main page, clears up any query parameters present in URL
-						window.location.replace(`${HOST}/`);
-					}
-				});
-			}
+					// go to main page, clears up any query parameters present in URL
+					window.location.replace(`${HOST}/`);
+				}
+			});
 		}
 	}
 
-	if (status) {
-		console.log(`status=${status}`);
+	if (statusCode) {
+		console.log(`status=${statusCode}`);
 	} else if (!tokens.refresh) {
 		// since there is no refresh token, user must authorize again so we can get one
 
@@ -190,20 +219,22 @@ $(document).ready(() => {
 		// present an authorization button
 		// when clicked, it'll start authorization process
 		$("#user-control").append(
-			$("<p>You need to authorize this application first to use it.\n\
-				Click the button below to do so.</p>")
+			$("<p>You need to authorize this application first to use it.\n" +
+				"Click the button below to do so.</p>")
 		);
+
 		let authBtn = $("<button>");
+
 		authBtn.click((event) => {
 			// only handle left clicks
-			if (event.button == 0) {
-				let authURL = "https://accounts.spotify.com/authorize"
-					+ `?client_id=${CLIENT_ID}`
-					+ "&response_type=code"
-					+ `&redirect_uri=${HOST}/`
-					+ `&state=${state}`
-					+ `&scope=${SCOPES.join("%20")}`
-					+ `&show_dialog=false`;
+			if (event.button === 0) {
+				let authURL = "https://accounts.spotify.com/authorize" +
+					`?client_id=${CLIENT_ID}` +
+					"&response_type=code" +
+					`&redirect_uri=${HOST}/` +
+					`&state=${state}` +
+					`&scope=${SCOPES.join("%20")}` +
+					`&show_dialog=false`;
 
 				// go to authorization page
 				window.location.href = authURL;
@@ -226,11 +257,11 @@ $(document).ready(() => {
 	} else {
 		// only here if we have all tokens
 		let spotifyApi = new SpotifyWebApi();
+
 		spotifyApi.setAccessToken(tokens.access);
 
 		$("#user-control").append(
-			$("<p>Application authenticated!</p>")
-			.css("background-color", "green")
+			$("<p>Application authenticated!</p>").css("background-color", "green")
 		);
 
 		// starts/stops recording playback state
@@ -265,6 +296,7 @@ $(document).ready(() => {
 						console.log(req);
 					}
 				});
+
 				// don't want to indent too far, so just returning now to avoid an else-branch
 				return;
 			}
@@ -282,6 +314,7 @@ $(document).ready(() => {
 				let mins = parseInt(time / 60000);
 				let secs = parseInt((time - mins * 60000) / 1000);
 				let track = stateData["item"];
+
 				// record track name and time elapsed in song
 				recorderText.text(sprintf("%s - [%d:%02d]", track.name, mins, secs));
 			}).catch((err) => {
@@ -293,16 +326,18 @@ $(document).ready(() => {
 				processingCurrentTrack = false;
 			});
 		};
+
 		// html attribute indicating whether or not
 		// we're recording the playback state
 		recorderBtn.attr("is-recording", "false");
 		recorderBtn.click((event) => {
-			if (event.button == 0) {
+			if (event.button === 0) {
 				// are we currently recording the current track progress?
 				let isRecording = toBoolean(recorderBtn.attr("is-recording"));
+
 				// flip the is-recording attribute, since we
 				// already have the original value
-				recorderBtn.attr("is-recording", !isRecording );
+				recorderBtn.attr("is-recording", !isRecording);
 
 				// if it's currently recording, stop the interval
 				if (isRecording) {

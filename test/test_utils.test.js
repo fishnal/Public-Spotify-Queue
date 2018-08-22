@@ -26,5 +26,4 @@ describe('test_utils', function() {
 			}
 		});
 	});
-
 });

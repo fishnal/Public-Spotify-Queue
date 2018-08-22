@@ -1,4 +1,4 @@
-const SkipList = require('./../public/skiplist.js');
+const { SkipList } = require('./../src/skiplist.js');
 const { removeJsonComments } = require('./test_utils.js');
 const fs = require('fs');
 require('should');
@@ -165,7 +165,7 @@ describe('SkipList', function() {
 
 		it('throws a TypeError when the relative key is not a number/null/undefined', function() {
 			(() => list.addAfter('bad type', null)).should.throw(TypeError, {
-				message: 'relativeKey must be a number of null/undefined'
+				message: 'relativeKey must be a number or null/undefined'
 			});
 		});
 
@@ -183,18 +183,9 @@ describe('SkipList', function() {
 
 		addAfterTests.forEach(function(_test, ind) {
 			let args = _test.args;
-			let afterDesc = null;
 
-			if (args[0] == null) {
-				afterDesc = '[KEY NULL]';
-			} else if (args[0] === Number.NEGATIVE_INFINITY) {
-				afterDesc = '[KEY NEGATIVE_INFINITY]';
-			} else {
-				afterDesc = expectedElements.find((elem) => elem.key === args[0]).value;
-			}
-
-			it(`can add ${args[1]} after ${afterDesc}`, function() {
-				(list.addAfter(...args) === undefined).should.be.true();
+			it(`can add '${args[1]}' after key ${args[0]}`, function() {
+				list.addAfter(...args);
 
 				let actualSubLists = getSubLists(list);
 

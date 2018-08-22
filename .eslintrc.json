@@ -1,6 +1,5 @@
 {
 	"env": {
-		"browser": true,
 		"es6": true,
 		"node": true,
 		"mocha": true
@@ -40,7 +39,7 @@
 		"no-unsafe-negation": "warn",
 		"use-isnan": "warn",
 		"valid-jsdoc": [
-			"error",
+			"warn",
 			{
 				"preferType": {
 					"String": "string",
@@ -69,18 +68,17 @@
 		"class-methods-use-this": "warn",
 		"curly": [
 			"warn",
-			"all"
+			"multi-line"
 		],
 		"default-case": "warn",
 		"dot-location": [
-			"error",
+			"warn",
 			"property"
 		],
 		"eqeqeq": [
 			"warn",
 			"smart"
 		],
-		"guard-for-in": "warn",
 		"no-alert": "warn",
 		"no-caller": "error",
 		"no-case-declarations": "error",
@@ -92,7 +90,6 @@
 		"no-extra-label": "warn",
 		"no-floating-decimal": "warn",
 		"no-global-assign": "error",
-		"no-implicit-coercion": "error",
 		"no-implied-eval": "error",
 		"no-iterator": "error",
 		"no-labels": [
@@ -115,7 +112,7 @@
 				}
 			}
 		],
-		"no-multi-str": "warn",
+		"no-multi-str": "error",
 		"no-new": "warn",
 		"no-new-func": "warn",
 		"no-new-wrappers": "warn",
@@ -165,12 +162,6 @@
 		],
 		"no-delete-var": "warn",
 		"no-label-var": "error",
-		"no-shadow": [
-			"error",
-			{
-				"builtinGlobals": true
-			}
-		],
 		"no-shadow-restricted-names": "error",
 		"no-undef": "warn",
 		"no-undef-init": "error",
@@ -277,7 +268,6 @@
 				"max": 3
 			}
 		],
-		"multiline-ternary": "warn",
 		"new-cap": "warn",
 		"new-parens": "warn",
 		"no-array-constructor": "error",
