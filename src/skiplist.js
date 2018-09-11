@@ -483,8 +483,8 @@ class SkipList {
 		 * @returns {number} the key of the new element added
 		 * @throws {ReferenceError} if the relativeKey doesn't exist in the list
 		 * @throws {RangeError} if the relativeKey is positive infinity or if there is no suitable
-		 * new key (see special case (3))
-		 * @throws {TypeError} if the relativeKey isn't a number of null/undefined
+		 * new key
+		 * @throws {TypeError} if the relativeKey isn't a number or null/undefined
 		 */
 		this.addAfter = (relativeKey, newValue) => {
 			if (!isNumber(relativeKey) && relativeKey != null) {
@@ -512,7 +512,7 @@ class SkipList {
 			let curr = getNode(relativeKey, lists[lists.length - 1].head);
 
 			if (!curr || curr.key !== relativeKey) {
-				throw new ReferenceError("relativeKey not found");
+				throw new ReferenceError(`relativeKey ${relativeKey} not found`);
 			}
 
 			let next = curr.next;
@@ -528,7 +528,7 @@ class SkipList {
 
 				if (newKey === curr.key || newKey === next.key) {
 					// we've used up all our precision, don't add this element
-					throw new RangeError("not enough precision, too much averaging");
+					throw new RangeError("too much averaging");
 				}
 			} else {
 				if (curr.key === Number.NEGATIVE_INFINITY) {
@@ -552,8 +552,8 @@ class SkipList {
 				}
 
 				// newKey could end up being an unsafe integer from above operations
-				if (!Number.isSafeInteger(newKey)) {
-					throw new RangeError("not enough precision, unsafe integer");
+				if (!Number.isSafeInteger(newKey, true)) {
+					throw new RangeError("unsafe integer");
 				}
 			}
 
@@ -606,6 +606,8 @@ class SkipList {
 		 *
 		 * @param {number} key the key to remove
 		 * @returns {boolean} true if the key was found and removed
+		 * @throws {TypeError} if key is not a number
+		 * @throws {RangeError} if key isn't finite
 		 */
 		this.remove = (key) => {
 			if (!isNumber(key)) {
@@ -655,6 +657,4 @@ class SkipList {
 	}
 }
 
-module.exports = {
-	SkipList
-};
+module.exports = SkipList;

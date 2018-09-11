@@ -2,8 +2,8 @@ const fs = require('fs');
 const express = require('express');
 const request = require('request-promise-native').defaults({
 	json: true,
-	// if debugging, disable timeout, otherwise set it to 1000ms
-	timeout: process.env.DEBUG ? null : 1000
+	// if in debug mode, turn off timeout
+	timeout: process.env.TEST ? null : 1000
 });
 require('should');
 const mockServer = require('./mockserver.js');
@@ -16,9 +16,15 @@ const data = JSON.parse(fs.readFileSync('test/mockserver.test.json'), (key, valu
 		value = value.replace('process.env.CLIENT_SECRET', process.env.CLIENT_SECRET);
 	}
 
-	// parse authorization header into base64
-	if (key === 'Authorization') {
+	if (key === 'Authorization' && isString(value)) {
+		// parse authorization header into base64
 		value = Buffer.from(value).toString('base64');
+	} else if (key === 'scope' && isString(value)) {
+		// sort scope fields (either from parameters or an expected data set) by splitting them into
+		// an array, sorting them, and then joining them (delimited by spaces)
+		// this lets us declare our scope fields in any valid proper, but when used in comparisons,
+		// their alphabetical order is used
+		value = value.split(' ').sort().join(' ');
 	}
 
 	return value;
@@ -67,15 +73,12 @@ function getSearchParams(urlObj) {
 describe('Mock Server', function() {
 	let tempHost = null;
 
-	this.beforeAll(function(done) {
-		mockServer.start(function() {
-			tempHost = express().listen(3000, function() {
-				done();
-			});
-		});
+	this.beforeAll(async function() {
+		await mockServer.start();
+		tempHost = await express().listen(3000);
 	});
 
-	describe(`${mockAddress}/authorize`, function() {
+	describe('/authorize', function() {
 		let testSet = data['authorize'];
 
 		function authHandler(_test, resp) {
@@ -109,7 +112,7 @@ describe('Mock Server', function() {
 				try {
 					authHandler(_test, await request({
 						uri: `${mockAddress}/authorize`,
-						qs: _test.args[0],
+						qs: _test.args.queries,
 						followRedirect: false
 					}));
 				} catch (requestErr) {
@@ -123,7 +126,7 @@ describe('Mock Server', function() {
 		});
 	});
 
-	describe(`${mockAddress}/token`, function() {
+	describe('/token', function() {
 		function tokenHandler(_test, resp) {
 			// should only get a status code if it wasn't 200
 			if (resp.statusCode) {
@@ -143,10 +146,10 @@ describe('Mock Server', function() {
 				}
 
 				try {
-					tokenHandler(_test, await request({
+					tokenHandler(_test, await request.post({
 						uri: `${mockAddress}/token`,
-						headers: _test.args[0] ? _test.args[0] : {},
-						qs: _test.args[1] ? _test.args[1] : {}
+						headers: _test.args.headers || {},
+						qs: _test.args.queries || {}
 					}));
 				} catch (err) {
 					tokenHandler(_test, err);
@@ -159,9 +162,8 @@ describe('Mock Server', function() {
 		});
 	});
 
-	this.afterAll(function(done) {
-		tempHost.close(function() {
-			mockServer.close(done);
-		});
+	this.afterAll(async function() {
+		await tempHost.close();
+		await mockServer.close();
 	});
 });

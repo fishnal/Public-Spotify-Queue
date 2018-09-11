@@ -7,7 +7,8 @@
 		"$": true,
 		"Cookies": true,
 		"SpotifyWebApi": true,
-		"sprintf": true
+		"sprintf": true,
+		"humps": false
 	},
 	"rules": {
 		"no-shadow": "off"

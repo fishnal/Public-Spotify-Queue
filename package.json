@@ -9,21 +9,20 @@
 	"version": "1.0.0",
 	"dependencies": {
 		"body-parser": "^1.18.3",
-		"csprng": "^0.1.2",
 		"express": "^4.16.3",
-		"get-port": "^4.0.0",
+		"humps": "^2.0.1",
 		"js-cookie": "^2.2.0",
+		"mochawesome": "^3.0.3",
 		"query-string": "^6.1.0",
 		"request": "^2.87.0",
 		"request-promise-native": "^1.0.5",
-		"sjcl": "^1.0.7",
 		"socket.io": "^2.1.1",
 		"spotify-web-api-node": "^3.1.1",
 		"sprintf-js": "^1.1.1"
 	},
 	"scripts": {
 		"start": "node ./index.js",
-		"test": "cross-env TEST_SERVER=\"http://localhost\" TEST_PORT=5000 CLIENT_ID=clientid CLIENT_SECRET=secret mocha --exit"
+		"test": "cross-env TEST_SERVER=\"http://localhost\" TEST_PORT=5000 TEST=true CLIENT_ID=clientid CLIENT_SECRET=secret ./node_modules/mocha/bin/_mocha --no-colors --reporter mochawesome"
 	},
 	"devDependencies": {
 		"mocha": "^5.2.0",
@@ -33,6 +32,17 @@
 	"apidoc": {
 		"name": "Public Spotify Queue",
 		"description": "REST API endpoints for Public Spotify Queue",
-		"title": "Public Spotify Queue API"
+		"title": "Public Spotify Queue API",
+		"order": [
+			"Client",
+			"GetHome",
+			"GetIndex",
+			"SpotifyAuth",
+			"GetTokens",
+			"RefreshToken",
+			"Queue",
+			"AddAfter",
+			"RemoveSong"
+		]
 	}
 }

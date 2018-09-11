@@ -1,11 +1,22 @@
-const { SkipList } = require('./../src/skiplist.js');
-const { removeJsonComments } = require('./test_utils.js');
 const fs = require('fs');
 require('should');
+const SkipList = require('./../src/skiplist.js');
 
-const skiplistTestData = JSON.parse(fs.readFileSync('test/skiplist.test.json'));
+const testData = JSON.parse(fs.readFileSync('test/skiplist.test.json'), (key, value) => {
+	if (value instanceof Array) {
+		// replace stringy Infinity occurrences to their literal counterparts in the array
+		value.forEach((elem, ind) => {
+			if ((/[+-]Infinity/).test(elem)) {
+				value[ind] = Number(elem);
+			}
+		});
+	} else if (key === 'error') {
+		// convert stringy error to it's class counterpart
+		value = global[value];
+	}
 
-removeJsonComments(skiplistTestData);
+	return value;
+});
 
 /**
  * Gets all the lists involved in a skip list.
@@ -48,7 +59,7 @@ function overrideMathRandom(...promotionValues) {
 		}
 
 		pool.push(false);
-	})
+	});
 
 	Math.random = () => {
 		if (index >= pool.length) {
@@ -65,252 +76,147 @@ function overrideMathRandom(...promotionValues) {
 describe('SkipList', function() {
 	const list = new SkipList();
 
-	let expectedElements = [
-		{ key: Number.NEGATIVE_INFINITY, value: null },
-		{ key: 0, value: 'a' },
-		{ key: 1, value: 'b' },
-		{ key: -1, value: 'c' },
-		{ key: 0.5, value: 'd' },
-		{ key: -2, value: 'e' },
-		{ key: 2, value: 'f' },
-		{ key: 3, value: 'g' },
-		{ key: 2.5, value: 'h' },
-		{ key: 4, value: 'i' },
-		{ key: 2.75, value: 'j' },
-		{ key: Number.POSITIVE_INFINITY, value: null }
-	]
-
-	describe("#size()", function() {
-		it('returns 0 when empty', function() {
-			list.size().should.equal(0);
+	describe('empty', function() {
+		testData['empty'].forEach(function(_test) {
+			it(_test.title, function() {
+				list[_test.func](..._test.args).should.equal(_test.expected);
+			});
 		});
 	});
 
-	describe("#toString()", function() {
-		it('returns "[]" when empty', function() {
-			list.toString().should.equal('[]');
-		});
-	});
-
-	describe("#addAfter(number, any)", function() {
-		let expectedSubLists = skiplistTestData.expectedSubLists.addAfter;
-
-		// START--e-----------------h-----------END L3
-		// START--e-----a-----------h-----g-----END L2
-		// START--e-----a-----b-----h-----g-----END L1
-		// START--e--c--a--d--b--f--h--j--g--i--END L0
-		// order:	a (2), b (1), c (0), d (0), e (3)
-		//			f (0), g (2), h (3), i (0), j (0)
-
-		// addAfter args
-		let addAfterTests = [
-			{ args: [ null, 'a' ], expected: undefined },
-			{ args: [ 0, 'b' ], expected: undefined },
-			{ args: [ null, 'c' ], expected: undefined },
-			{ args: [ 0, 'd' ], expected: undefined },
-			{ args: [ -Infinity, 'e' ], expected: undefined },
-			{ args: [ 1, 'f' ], expected: undefined },
-			{ args: [ 2, 'g' ], expected: undefined },
-			{ args: [ 2, 'h' ], expected: undefined },
-			{ args: [ 3, 'i' ], expected: undefined },
-			{ args: [ 2.5, 'j' ], expected: undefined }
-		];
-
+	describe('addAfter', function() {
 		overrideMathRandom(
 			2, 1, 0, 0, 3,
 			0, 2, 3, 0, 0
 		);
 
-		describe("throws a RangeError when there's not enough precision", function() {
-			it('because of key averaging', function() {
+		testData['addAfter'].forEach(function(_test) {
+			if (_test.test_id === 'addAfter_key_avg') {
+				let overriddenRand = Math.random;
 				let tmpList = new SkipList();
 
+				// prevent promotions
+				Math.random = () => 0;
+
 				// adds key 0
-				tmpList.addAfter(null, 0);
+				tmpList.addAfter(null, null);
 				// adds key 1
-				tmpList.addAfter(0, 1);
+				tmpList.addAfter(0, null);
 
 				(() => {
 					for (let i = 0; i < 1075; i++) {
-						tmpList.addAfter(0, 'eventually runs out of precision');
+						tmpList.addAfter(0, null);
 					}
 				}).should.throw(RangeError, {
-					message: 'not enough precision, too much averaging'
+					message: 'too much averaging'
 				});
-			});
 
-			// we're going to override the implementation of Number#isSafeInteger(number) so we can
-			// make the test quicker (a safe integer in this testing environment is within -10 and
-			// 10); the original impl. will be restored after the test
-			it('because of an unsafe integer', function() {
-				let tmpList = new SkipList();
+				Math.random = overriddenRand;
+			} else if (_test.test_id === 'addAfter_unsafe_int') {
 				let isSafeIntegerImpl = Number.isSafeInteger;
+				let overriddenRand = Math.random;
+				let tmpList = new SkipList();
 				let key = 0;
 
+				Math.random = () => 0;
 				Number.isSafeInteger = (number) => Math.abs(number) <= 10;
 
 				(() => {
-					tmpList.addAfter(null, 'start');
+					tmpList.addAfter(null, null);
 
 					for (let i = 0; i < 11; i++) {
-						tmpList.addAfter(key++, 'key eventually becomes unsafe');
+						tmpList.addAfter(key++, null);
 					}
 				}).should.throw(RangeError, {
-					message: 'not enough precision, unsafe integer'
+					message: 'unsafe integer'
 				});
 
+				Math.random = overriddenRand;
 				Number.isSafeInteger = isSafeIntegerImpl;
-			});
-		});
-
-		it('throws a TypeError when the relative key is not a number/null/undefined', function() {
-			(() => list.addAfter('bad type', null)).should.throw(TypeError, {
-				message: 'relativeKey must be a number or null/undefined'
-			});
-		});
-
-		it('throws a ReferenceError when the relative key is not found', function() {
-			(() => list.addAfter(0, null)).should.throw(ReferenceError, {
-				message: 'relativeKey not found'
-			});
-		});
-
-		it('throws a RangeError when adding after Infinity key', function() {
-			(() => list.addAfter(Infinity, "doesn't matter")).should.throw(RangeError, {
-				message: 'relativeKey must be less than positive infinity'
-			});
-		});
-
-		addAfterTests.forEach(function(_test, ind) {
-			let args = _test.args;
-
-			it(`can add '${args[1]}' after key ${args[0]}`, function() {
-				list.addAfter(...args);
-
-				let actualSubLists = getSubLists(list);
-
-				actualSubLists.should.deepEqual(expectedSubLists[ind]);
-			});
-		});
-	});
-
-	describe("#get(number)", function() {
-		expectedElements.forEach(function(expectedElement) {
-			if (!Number.isFinite(expectedElement.key)) {
-				it(`throws RangeError when getting ${expectedElement.key}`, function() {
-					(() => list.get(expectedElement.key)).should.throw(RangeError, {
-						message: 'key must be finite'
-					});
-				});
 			} else {
-				it(`returns ${expectedElement.value} for key ${expectedElement.key}`, function() {
-					list.get(expectedElement.key).should.equal(expectedElement.value);
+				it(_test.title, function() {
+					if (_test.expected.error) {
+						(() => list.addAfter(..._test.args)).should.throw(_test.expected.error, {
+							message: _test.expected.message
+						});
+					} else {
+						list.addAfter(..._test.args).should.equal(_test.expected.returned);
+						getSubLists(list).should.deepEqual(_test.expected.lists);
+					}
 				});
 			}
 		});
-	});
 
-	describe("#size()", function() {
-		it(`returns ${expectedElements.length - 2} after adding the previous elements`, function() {
-			list.size().should.equal(expectedElements.length - 2);
+		this.afterAll(() => {
+			console.log("done with addAfter")
 		});
 	});
 
-	describe("#toString()", function() {
-		it(`returns all ${expectedElements.length - 2} elements correctly`, function() {
-			list.toString().should.equal(
-				'[{-2=e},{-1=c},{0=a},{0.5=d},{1=b},{2=f},{2.5=h},{2.75=j},{3=g},{4=i}]'
-			);
-		});
-	});
-
-	describe("#set(number, any)", function() {
-		let expectedSubLists = skiplistTestData.expectedSubLists.set;
-		let setTests = [
-			{ args: [ -10, 'fails' ], expected: false },
-			{ args: [ 0, 'z' ], expected: true },
-			{ args: [ 2.75, 'y' ], expected: true },
-			{ args: [ -2, 'x' ], expected: true },
-			{ args: [ 4, 'w' ], expected: true }
-		];
-
-		it('throws a TypeError if the key passed in is not a number', function() {
-			(() => list.set('not a number', 'error')).should.throw(TypeError, {
-				message: 'key must be a number'
-			});
-		});
-
-		it('throws a RangeError if the key is not finite', function() {
-			let shouldThrowArgs = [ RangeError, { message: 'key must be finite' } ];
-
-			(() => list.set(Number.POSITIVE_INFINITY, 'error')).should.throw(...shouldThrowArgs);
-			(() => list.set(Number.NEGATIVE_INFINITY, 'error')).should.throw(...shouldThrowArgs);
-		});
-
-		setTests.forEach(function(_test, ind) {
-			let args = _test.args;
-			let title = `returns ${_test.expected} when setting key ${args[0]} to value ${args[1]}`;
-
-			it(title, function() {
-				list.set(...args).should.equal(_test.expected);
-
-				let actualSubLists = getSubLists(list);
-
-				actualSubLists.should.deepEqual(expectedSubLists[ind]);
-			});
-		});
-	});
-
-	describe("#remove(number)", function() {
-		let expectedSubLists = skiplistTestData.expectedSubLists.remove;
-		let removeTests = [
-			{ args: [ -10 ], expected: false },
-			{ args: [ 0 ], expected: true },
-			{ args: [ 4 ], expected: true },
-			{ args: [ -2 ], expected: true },
-			{ args: [ 2.75 ], expected: true },
-			{ args: [ 2.5 ], expected: true },
-			{ args: [ 0 ], expected: false }
-		];
-
-		it('throws a TypeError when the key is not a number', function() {
-			(() => list.remove('not a number')).should.throw(TypeError, {
-				message: 'key must be a number'
-			});
-		});
-
-		it('throws a RangeError when the key is not finite', function() {
-			(() => list.remove(Number.POSITIVE_INFINITY)).should.throw(RangeError, {
-				message: 'key must be finite'
-			});
-			(() => list.remove(Number.NEGATIVE_INFINITY)).should.throw(RangeError, {
-				message: 'key must be finite'
-			});
-		});
-
-		removeTests.forEach(function(_test, ind) {
-			let args = _test.args;
-			let title = `returns ${_test.expected} when removing key ${args[0]}`;
-
-			it(title, function() {
-				let prevSize = list.size();
-
-				list.remove(...args).should.equal(_test.expected);
-
-				// assert that sizes are consistent
-				if (_test.expected) {
-					// expected a removal, so should be 1 less than prevSize
-					list.size().should.equal(prevSize - 1);
+	describe('get', function() {
+		testData['get'].forEach(function(_test) {
+			it(_test.title, function() {
+				if (_test.expected.error) {
+					(() => list.get(..._test.args)).should.throw(_test.expected.error, {
+						message: _test.expected.message
+					});
 				} else {
-					// expected no removal, so size should be the same
-					list.size().should.equal(prevSize);
+					list.get(..._test.args).should.equal(_test.expected);
 				}
-
-				// assert sub lists remain the same
-				let actualSubLists = getSubLists(list);
-
-				actualSubLists.should.deepEqual(expectedSubLists[ind]);
 			});
+		});
+
+		this.afterAll(() => {
+			console.log("done with get")
+		});
+	});
+
+	describe('non-empty', function() {
+		testData['non-empty'].forEach(function(_test) {
+			it(_test.title, function() {
+				list[_test.func](..._test.args).should.equal(_test.expected);
+			});
+		});
+
+		this.afterAll(() => {
+			console.log("done with non-empty")
+		});
+	});
+
+	describe('set', function() {
+		testData['set'].forEach(function(_test) {
+			it(_test.title, function() {
+				if (_test.expected.error) {
+					(() => list.set(..._test.args)).should.throw(_test.expected.error, {
+						message: _test.expected.message
+					});
+				} else {
+					list.set(..._test.args).should.equal(_test.expected.returned);
+					getSubLists(list).should.deepEqual(_test.expected.lists);
+				}
+			});
+		});
+
+		this.afterAll(() => {
+			console.log("done with set")
+		});
+	});
+
+	describe('remove', function() {
+		testData['remove'].forEach(function(_test) {
+			it(_test.title, function() {
+				if (_test.expected.error) {
+					(() => list.remove(..._test.args)).should.throw(_test.expected.error, {
+						message: _test.expected.message
+					});
+				} else {
+					list.remove(..._test.args).should.equal(_test.expected.returned);
+					getSubLists(list).should.deepEqual(_test.expected.lists);
+				}
+			});
+		});
+
+		this.afterAll(() => {
+			console.log("done with remove")
 		});
 	});
 });

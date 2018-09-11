@@ -4,6 +4,9 @@
 		"node": true,
 		"mocha": true
 	},
+	"globals": {
+		"humps": true
+	},
 	"rules": {
 		"for-direction": "error",
 		"getter-return": "error",
@@ -27,10 +30,10 @@
 		],
 		"no-extra-semi": "error",
 		"no-func-assign": "error",
-		"no-invalid-regexp": "error",
+		"no-invalid-regexp": "off",
 		"no-irregular-whitespace": "error",
 		"no-obj-calls": "error",
-		"no-regex-spaces": "warn",
+		"no-regex-spaces": "off",
 		"no-sparse-arrays": "error",
 		"no-template-curly-in-string": "error",
 		"no-unexpected-multiline": "error",
@@ -338,7 +341,6 @@
 			"always"
 		],
 		"unicode-bom": "warn",
-		"wrap-regex": "warn",
 		"arrow-body-style": [
 			"warn",
 			"as-needed"

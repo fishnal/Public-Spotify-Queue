@@ -2,7 +2,7 @@
 	"authorize": [
 		{
 			"title": "(400) missing client id",
-			"args": [ {} ],
+			"args": {},
 			"expected": {
 				"code": 400,
 				"error": "INVALID_CLIENT: Invalid client"
@@ -10,9 +10,11 @@
 		},
 		{
 			"title": "(400) wrong client id",
-			"args": [{
-				"client_id": "DOESNT EXIST"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "DOESNT EXIST"
+				}
+			},
 			"expected": {
 				"code": 400,
 				"error": "INVALID_CLIENT: Invalid client"
@@ -20,9 +22,11 @@
 		},
 		{
 			"title": "(400) missing response type",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID"
+				}
+			},
 			"expected": {
 				"code": 400,
 				"error": "response_type must be code or token"
@@ -30,10 +34,12 @@
 		},
 		{
 			"title": "(400) wrong response type",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "bad response type"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "bad response type"
+				}
+			},
 			"expected": {
 				"code": 400,
 				"error": "response_type must be code or token"
@@ -41,10 +47,12 @@
 		},
 		{
 			"title": "(400) missing redirect uri",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "code"
+				}
+			},
 			"expected": {
 				"code": 400,
 				"error": "INVALID_CLIENT: Invalid redirect URI"
@@ -52,36 +60,27 @@
 		},
 		{
 			"title": "(400) wrong redirect uri",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code",
-				"redirect_uri": "http://badredirect`.com"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "code",
+					"redirect_uri": "http://badredirect`.com"
+				}
+			},
 			"expected": {
 				"code": 400,
 				"error": "INVALID_CLIENT: Invalid redirect URI"
 			}
 		},
 		{
-			"title": "(400) missing user",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code",
-				"redirect_uri": "http://127.0.0.1:3000/"
-			}],
-			"expected": {
-				"code": 400,
-				"error": "INVALID_USER: user must be supplied"
-			}
-		},
-		{
 			"title": "(302) code with no state",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code",
-				"redirect_uri": "http://127.0.0.1:3000/",
-				"user": "fishnal"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "code",
+					"redirect_uri": "http://127.0.0.1:3000/"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://127.0.0.1:3000",
@@ -92,13 +91,14 @@
 		},
 		{
 			"title": "(302) code with state",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code",
-				"redirect_uri": "http://127.0.0.1:3000/",
-				"user": "fishnal",
-				"state": "my state"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "code",
+					"redirect_uri": "http://127.0.0.1:3000/",
+					"state": "my state"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://127.0.0.1:3000",
@@ -110,12 +110,13 @@
 		},
 		{
 			"title": "(302) token with no state",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "token",
-				"redirect_uri": "http://127.0.0.1:3000/",
-				"user": "fishnal"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "token",
+					"redirect_uri": "http://127.0.0.1:3000/"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://127.0.0.1:3000",
@@ -128,13 +129,14 @@
 		},
 		{
 			"title": "(302) token with state",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "token",
-				"redirect_uri": "http://127.0.0.1:3000/",
-				"user": "fishnal",
-				"state": "my state"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "token",
+					"redirect_uri": "http://127.0.0.1:3000/",
+					"state": "my state"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://127.0.0.1:3000",
@@ -148,13 +150,14 @@
 		},
 		{
 			"title": "(302) with redirect http://127.0.0.1:3000",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code",
-				"redirect_uri": "http://127.0.0.1:3000",
-				"user": "fishnal",
-				"state": "my state"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "code",
+					"redirect_uri": "http://127.0.0.1:3000",
+					"state": "my state"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://127.0.0.1:3000",
@@ -166,13 +169,14 @@
 		},
 		{
 			"title": "(302) with redirect http://127.0.0.1:3000/",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code",
-				"redirect_uri": "http://127.0.0.1:3000/",
-				"user": "fishnal",
-				"state": "my state"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "code",
+					"redirect_uri": "http://127.0.0.1:3000/",
+					"state": "my state"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://127.0.0.1:3000",
@@ -184,13 +188,14 @@
 		},
 		{
 			"title": "(302) with redirect http://localhost:3000",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code",
-				"redirect_uri": "http://localhost:3000",
-				"user": "fishnal",
-				"state": "my state"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "code",
+					"redirect_uri": "http://localhost:3000",
+					"state": "my state"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://localhost:3000",
@@ -202,13 +207,14 @@
 		},
 		{
 			"title": "(302) with redirect http://localhost:3000/",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code",
-				"redirect_uri": "http://localhost:3000/",
-				"user": "fishnal",
-				"state": "my state"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "code",
+					"redirect_uri": "http://localhost:3000/",
+					"state": "my state"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://localhost:3000",
@@ -220,13 +226,14 @@
 		},
 		{
 			"title": "(302) code with scopes [user-read-email, user-read-private, streaming]",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code",
-				"redirect_uri": "http://127.0.0.1:3000/",
-				"user": "fishnal",
-				"scope": "user-read-email user-read-private streaming"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "code",
+					"redirect_uri": "http://127.0.0.1:3000/",
+					"scope": "user-read-email user-read-private streaming"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://127.0.0.1:3000",
@@ -237,13 +244,14 @@
 		},
 		{
 			"title": "(302) token with scopes [user-read-email, user-read-private, streaming]",
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "token",
-				"redirect_uri": "http://127.0.0.1:3000/",
-				"user": "fishnal",
-				"scope": "user-read-email user-read-private streaming"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "token",
+					"redirect_uri": "http://127.0.0.1:3000/",
+					"scope": "user-read-email user-read-private streaming"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://127.0.0.1:3000",
@@ -258,14 +266,17 @@
 			"title": "(302) code, but it expires in 1ms",
 			"func": {
 				"name": "setCodeExpiration",
-				"args": [ 1 ]
+				"args": [
+					1
+				]
 			},
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "code",
-				"redirect_uri": "http://127.0.0.1:3000/",
-				"user": "fishnal"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "code",
+					"redirect_uri": "http://127.0.0.1:3000/"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://127.0.0.1:3000",
@@ -278,14 +289,17 @@
 			"title": "(302) token, but it expires in 1ms",
 			"func": {
 				"name": "setAccessTokenExpiration",
-				"args": [ 1 ]
+				"args": [
+					1
+				]
 			},
-			"args": [{
-				"client_id": "process.env.CLIENT_ID",
-				"response_type": "token",
-				"redirect_uri": "http://127.0.0.1:3000/",
-				"user": "fishnal"
-			}],
+			"args": {
+				"queries": {
+					"client_id": "process.env.CLIENT_ID",
+					"response_type": "token",
+					"redirect_uri": "http://127.0.0.1:3000/"
+				}
+			},
 			"expected": {
 				"code": 302,
 				"redirect_base": "http://127.0.0.1:3000",
@@ -300,7 +314,9 @@
 	"token": [
 		{
 			"title": "(400) missing Authorization header",
-			"args": [ {} ],
+			"args": {
+				"headers": {}
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -310,11 +326,11 @@
 		},
 		{
 			"title": "(400) wrong Authorization header",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic fakeid:fakesecret"
 				}
-			],
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -324,11 +340,11 @@
 		},
 		{
 			"title": "(415) missing Content-Type header",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET"
 				}
-			],
+			},
 			"expected": {
 				"code": 415,
 				"data": {
@@ -339,12 +355,12 @@
 		},
 		{
 			"title": "(415) wrong Content-Type header",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "not the right one"
 				}
-			],
+			},
 			"expected": {
 				"code": 415,
 				"data": {
@@ -355,12 +371,12 @@
 		},
 		{
 			"title": "(400) missing grant type parameter",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				}
-			],
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -371,15 +387,15 @@
 		},
 		{
 			"title": "(400) wrong grant type parameter",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "bad grant type"
 				}
-			],
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -390,15 +406,15 @@
 		},
 		{
 			"title": "(400) authorization_code: missing code parameter",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "authorization_code"
 				}
-			],
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -409,16 +425,16 @@
 		},
 		{
 			"title": "(400) authorization_code: wrong code parameter",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "authorization_code",
 					"code": "bad auth code"
 				}
-			],
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -429,16 +445,16 @@
 		},
 		{
 			"title": "(400) authorization_code: auth code expired",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "authorization_code",
 					"code": "8"
 				}
-			],
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -449,16 +465,16 @@
 		},
 		{
 			"title": "(400) authorization_code: missing redirect uri",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "authorization_code",
 					"code": "1"
 				}
-			],
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -469,17 +485,17 @@
 		},
 		{
 			"title": "(400) authorization_code: wrong redirect uri",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "authorization_code",
 					"code": "1",
 					"redirect_uri": "http://127.0.0.1:3000"
 				}
-			],
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -490,15 +506,15 @@
 		},
 		{
 			"title": "(400) refresh_token: missing refresh token",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "refresh_token"
 				}
-			],
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -509,16 +525,16 @@
 		},
 		{
 			"title": "(400) refresh_token: bad refresh token",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "refresh_token",
 					"refresh_token": "bad refresh token"
 				}
-			],
+			},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -529,15 +545,15 @@
 		},
 		{
 			"title": "(200) client_credentials: ok",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "client_credentials"
 				}
-			],
+			},
 			"expected": {
 				"code": 200,
 				"data": {
@@ -550,17 +566,17 @@
 		},
 		{
 			"title": "(200) authorization_code: ok, no scopes",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "authorization_code",
 					"code": "1",
 					"redirect_uri": "http://127.0.0.1:3000/"
 				}
-			],
+			},
 			"expected": {
 				"code": 200,
 				"data": {
@@ -574,17 +590,17 @@
 		},
 		{
 			"title": "(200) authorization_code: ok, with scopes",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "authorization_code",
 					"code": "7",
 					"redirect_uri": "http://127.0.0.1:3000/"
 				}
-			],
+			},
 			"expected": {
 				"code": 200,
 				"data": {
@@ -600,19 +616,21 @@
 			"title": "(200) authorization_code: ok but token expires in 1ms",
 			"func": {
 				"name": "setAccessTokenExpiration",
-				"args": [ 1 ]
+				"args": [
+					1
+				]
 			},
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "authorization_code",
 					"code": "2",
 					"redirect_uri": "http://127.0.0.1:3000/"
 				}
-			],
+			},
 			"expected": {
 				"code": 200,
 				"data": {
@@ -628,18 +646,20 @@
 			"title": "(200) refresh_token: ok, new token expires in 60000ms",
 			"func": {
 				"name": "setAccessTokenExpiration",
-				"args": [ 60000 ]
+				"args": [
+					60000
+				]
 			},
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "refresh_token",
 					"refresh_token": "3"
 				}
-			],
+			},
 			"expected": {
 				"code": 200,
 				"data": {
@@ -652,16 +672,16 @@
 		},
 		{
 			"title": "(200) refresh_token: generates new refresh token",
-			"args": [
-				{
+			"args": {
+				"headers": {
 					"Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
-				{
+				"queries": {
 					"grant_type": "refresh_token",
 					"refresh_token": "3"
 				}
-			],
+			},
 			"expected": {
 				"code": 200,
 				"data": {

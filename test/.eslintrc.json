@@ -5,6 +5,8 @@
 		"no-loop-func": "off",
 		"object-shorthand": "off",
 		"require-jsdoc": "off",
-		"handle-callback-err": "off"
+		"handle-callback-err": "off",
+		"no-eval": "off",
+		"no-await-in-loop": "off"
 	}
 }
