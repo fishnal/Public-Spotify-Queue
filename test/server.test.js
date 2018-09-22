@@ -46,7 +46,7 @@ const mainScopes = [
 	"user-read-birthdate",
 	"user-read-email",
 	"user-read-private"
-].sort(); // sorting list for easier comparison
+].sort(); // sorting list for comparisons
 
 describe('Host Server', async function() {
 	// used for faking the current date in ms

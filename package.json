@@ -22,7 +22,7 @@
 	},
 	"scripts": {
 		"start": "node ./index.js",
-		"test": "cross-env TEST_SERVER=\"http://localhost\" TEST_PORT=5000 TEST=true CLIENT_ID=clientid CLIENT_SECRET=secret ./node_modules/mocha/bin/_mocha --no-colors --reporter mochawesome"
+		"test": "cross-env TEST_SERVER=\"http://localhost\" TEST_PORT=5000 TEST=true CLIENT_ID=clientid CLIENT_SECRET=secret ./node_modules/mocha/bin/_mocha --no-colors --reporter mochawesome ./test/skiplist.test.js ./test/mockserver.test.js ./test/server.test.js"
 	},
 	"devDependencies": {
 		"mocha": "^5.2.0",

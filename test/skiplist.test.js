@@ -62,14 +62,15 @@ function overrideMathRandom(...promotionValues) {
 	});
 
 	Math.random = () => {
+		// Math.random never returns 1, but we do it here just for some clarity
+		let poolValue = pool[index++];
+
 		if (index >= pool.length) {
-			// pool is done, revert
+			// pool is done, revert override
 			Math.random = originalRandom;
-			return Math.random();
 		}
 
-		// Math.random never returns 1, but we do it here just for some clarity
-		return pool[index++];
+		return poolValue;
 	};
 }
 
@@ -146,10 +147,6 @@ describe('SkipList', function() {
 				});
 			}
 		});
-
-		this.afterAll(() => {
-			console.log("done with addAfter")
-		});
 	});
 
 	describe('get', function() {
@@ -164,10 +161,6 @@ describe('SkipList', function() {
 				}
 			});
 		});
-
-		this.afterAll(() => {
-			console.log("done with get")
-		});
 	});
 
 	describe('non-empty', function() {
@@ -175,10 +168,6 @@ describe('SkipList', function() {
 			it(_test.title, function() {
 				list[_test.func](..._test.args).should.equal(_test.expected);
 			});
-		});
-
-		this.afterAll(() => {
-			console.log("done with non-empty")
 		});
 	});
 
@@ -195,10 +184,6 @@ describe('SkipList', function() {
 				}
 			});
 		});
-
-		this.afterAll(() => {
-			console.log("done with set")
-		});
 	});
 
 	describe('remove', function() {
@@ -213,10 +198,6 @@ describe('SkipList', function() {
 					getSubLists(list).should.deepEqual(_test.expected.lists);
 				}
 			});
-		});
-
-		this.afterAll(() => {
-			console.log("done with remove")
 		});
 	});
 });
