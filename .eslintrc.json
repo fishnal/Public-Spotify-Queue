@@ -341,10 +341,6 @@
 			"always"
 		],
 		"unicode-bom": "warn",
-		"arrow-body-style": [
-			"warn",
-			"as-needed"
-		],
 		"arrow-parens": "error",
 		"arrow-spacing": [
 			"error",
@@ -385,7 +381,7 @@
 		"yield-star-spacing": "warn"
 	},
 	"parserOptions": {
-		"ecmaVersion": 8,
+		"ecmaVersion": 2018,
 		"ecmaFeatures": {
 			"globalReturn": true
 		},

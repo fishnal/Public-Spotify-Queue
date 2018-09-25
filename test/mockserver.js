@@ -439,7 +439,7 @@ mockApp.get('/api/tracks', (mockRequest, mockResponse) => {
 				message: 'Only valid bearer authentication supported'
 			}
 		});
-	} else if (!accessTokens[authHeaderMatch.groups['access_token']])  {
+	} else if (!accessTokens[authHeaderMatch.groups['access_token']]) {
 		mockResponse.status(401).json({
 			error: {
 				status: 401,
