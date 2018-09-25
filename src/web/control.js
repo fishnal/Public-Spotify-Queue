@@ -1,5 +1,3 @@
-// TODO switch to request library for HTTP requests
-
 /**
  * Generates a random string, converts a random decimal to base 36, and discards the "0." from the
  * beginning amt represents how many times this is done (results concatenated).
@@ -168,6 +166,7 @@ $(document).ready(() => {
 			);
 		} else {
 			// use code from query to get access token
+
 			$.get(`/token?code=${code}`, (tokenData) => {
 				if (tokenData["status_code"] !== 200) {
 					// request isn't good if status code isn't 200
@@ -227,18 +226,20 @@ $(document).ready(() => {
 
 		authBtn.click((event) => {
 			// only handle left clicks
-			if (event.button === 0) {
-				let authURL = "https://accounts.spotify.com/authorize" +
-					`?client_id=${CLIENT_ID}` +
-					"&response_type=code" +
-					`&redirect_uri=${HOST}/` +
-					`&state=${state}` +
-					`&scope=${SCOPES.join("%20")}` +
-					`&show_dialog=false`;
-
-				// go to authorization page
-				window.location.href = authURL;
+			if (event.button !== 0) {
+				return;
 			}
+
+			let authURL = "https://accounts.spotify.com/authorize" +
+				`?client_id=${CLIENT_ID}` +
+				"&response_type=code" +
+				`&redirect_uri=${HOST}/` +
+				`&state=${state}` +
+				`&scope=${SCOPES.join("%20")}` +
+				`&show_dialog=false`;
+
+			// go to authorization page
+			window.location.href = authURL;
 		});
 		authBtn.text("Authorize");
 		$("#user-control").append(authBtn);
