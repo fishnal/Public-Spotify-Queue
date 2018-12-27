@@ -1,8 +1,8 @@
 const fs = require('fs');
 const request = require('request-promise-native').defaults({
 	json: true,
-	// if in debug mode, turn off timeout
-	timeout: process.env.TEST ? null : 1000
+	// if in debug mode, turn off timeout, otherwise keep it to 2 seconds
+	timeout: process.env.TEST ? null : 2000
 });
 const should = require('should');
 const hostServer = require('../src/server.js');
