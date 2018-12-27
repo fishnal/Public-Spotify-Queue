@@ -47,11 +47,12 @@ let clientCredentialsRefresher = null;
 function getClientCredentialsToken() {
 	return request.post(`${SPOTIFY_ACCOUNTS_URL}/token`, {
 		qs: {
-			grant_type: 'client_credentials'
+			grant_type: 'client_credentials',
+			client_id: CLIENT_ID,
+			client_secret: CLIENT_SECRET
 		},
 		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-			'Authorization': `Basic ${Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64')}`
+			'Content-Type': 'application/x-www-form-urlencoded'
 		}
 	});
 }
