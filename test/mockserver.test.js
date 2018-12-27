@@ -1,3 +1,4 @@
+const URL = require('url').URL;
 const fs = require('fs');
 const express = require('express');
 const request = require('request-promise-native').defaults({
