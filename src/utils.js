@@ -5,7 +5,7 @@
  * @returns {boolean} true if the object is a string.
  */
 function isString(o) {
-	return typeof o === 'string' || o instanceof String;
+    return typeof o === 'string' || o instanceof String;
 }
 
 /**
@@ -15,7 +15,7 @@ function isString(o) {
  * @returns {boolean} true if the object is a number
  */
 function isNumber(o) {
-	return typeof o === 'number' || o instanceof Number;
+    return typeof o === 'number' || o instanceof Number;
 }
 
 /**
@@ -25,11 +25,11 @@ function isNumber(o) {
  * @returns {boolean} true if the object is a function
  */
 function isFunction(o) {
-	return typeof o === 'function' || o instanceof Function;
+    return typeof o === 'function' || o instanceof Function;
 }
 
 module.exports = {
-	isString,
-	isNumber,
-	isFunction
+    isString,
+    isNumber,
+    isFunction
 }
