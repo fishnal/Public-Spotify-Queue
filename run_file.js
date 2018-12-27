@@ -20,7 +20,8 @@ if (useMocha !== 'false' && useMocha !== 'true') {
 let cmd = null;
 
 if (useMocha === 'true') {
-    cmd = 'mocha --inspect-brk ';
+	let env = 'DEBUG=psq:* TEST_SERVER=\"http://localhost\" TEST_PORT=5000 TEST=true CLIENT_ID=clientid CLIENT_SECRET=secret';
+    cmd = `node node_modules/cross-env/dist/bin/cross-env.js ${env} mocha --reporter mochawesome --inspect-brk `;
 } else {
 	cmd = 'node --inspect-brk ';
 }
