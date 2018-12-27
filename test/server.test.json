@@ -21,23 +21,8 @@
 	],
 	"token": [
 		{
-			"title": "(400) missing user id",
-			"args": {},
-			"expected": {
-				"code": 400,
-				"data": {
-					"error": "invalid_request",
-					"error_description": "user_id must be supplied"
-				}
-			}
-		},
-		{
 			"title": "(400) missing auth code",
-			"args": {
-				"queries": {
-					"user_id": "fishnal"
-				}
-			},
+			"args": {},
 			"expected": {
 				"code": 400,
 				"data": {
@@ -50,7 +35,6 @@
 			"title": "(400) wrong auth code",
 			"args": {
 				"queries": {
-					"user_id": "fishnal",
 					"code": "not an actual auth code"
 				}
 			},
@@ -66,7 +50,6 @@
 			"title": "(400) expired auth code",
 			"args": {
 				"queries": {
-					"user_id": "fishnal",
 					"code": "1"
 				}
 			},
@@ -82,7 +65,6 @@
 			"title": "(200) ok",
 			"args": {
 				"queries": {
-					"user_id": "fishnal",
 					"code": "2"
 				}
 			},

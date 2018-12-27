@@ -54,7 +54,7 @@ function toBoolean(arg) {
 
 // server information
 const SERVER_PORT = 3000;
-const HOST = `http://127.0.0.1:${SERVER_PORT}`;
+const HOST = `http://localhost:${SERVER_PORT}`;
 // Spotify App Client Id
 const CLIENT_ID = "acd0f18a3e124101af31f9b3582130c6";
 // scopes required for controlling playback and streaming
@@ -81,10 +81,9 @@ $(document).ready(() => {
 	// tokens variable will not be used in making API calls, because the cookie could expire
 	let tokens = {
 		access: Cookies.get("access_token"),
-		refresh: Cookies.get("refresh_token")
+		refresh: Cookies.get("refresh_token"),
+		psq: Cookies.get("psq_token")
 	};
-	// when the access token expires
-	let accessExpiration = Cookies.get("access_token_life");
 
 	// code only becomes defined when we are redirected from authorization
 	// (assuming state has been verified)
@@ -104,18 +103,18 @@ $(document).ready(() => {
 	/**
 	 * Refreshes/retrieves another access token using an existing refresh token asynchronously.
 	 *
-	 * @param {string} refreshToken the refresh token to use
+	 * @param {string} psqToken the refresh token to use
 	 * @param {object} options additional options
 	 * @returns {void}
 	 */
-	function refresh(refreshToken, options) {
-		$.get(`/refresh?refresh_token=${refreshToken}`, (tokenData) => {
-			if (tokenData["status_code"] !== 200) {
+	function refresh(psqToken, options) {
+		$.post(`/refresh?psq_token=${psqToken}`, (tokenData) => {
+			if (tokenData.status_code && tokenData.status_code !== 200) {
 				// request isn't good if status code isn't 200
 				statusCode = 4;
 				$("#user-control").append(
-					$(`<p>Couldn't refresh access token (code ${tokenData["status_code"]})\n\
-						Error: ${tokenData["error_description"]}</p>`)
+					$(`<p>Couldn't refresh access token (code ${tokenData.status_code})\n\
+						Error: ${tokenData.error_description}</p>`)
 						.css("backgorund-color", "red")
 				);
 
@@ -125,13 +124,19 @@ $(document).ready(() => {
 			} else {
 				// store access and refresh tokens in cookies
 				// access token expires in (tokenData["expires_in"] - 120 seconds)
-				let accessExpireTime = tokenData["expires_in"] - 120;
+				let accessExpireTime = tokenData.expires_in - 120;
 
 				Cookies.set(
 					"access_token",
-					tokens.access = tokenData["access_token"],
+					tokens.access = tokenData.access_token,
 					{ expires: accessExpireTime / 86400 }
 				);
+
+				Cookies.set(
+					"psq_token",
+					tokens.psq = tokenData.psq_token,
+					{ expires: 365 }
+				)
 
 				if (toBoolean(options.replace)) {
 					window.location.replace(`${HOST}/`);
@@ -168,29 +173,37 @@ $(document).ready(() => {
 			// use code from query to get access token
 
 			$.get(`/token?code=${code}`, (tokenData) => {
-				if (tokenData["status_code"] !== 200) {
+				if (tokenData.status_code && tokenData.status_code !== 200) {
 					// request isn't good if status code isn't 200
 					statusCode = 3;
 					$("#user-control").append(
-						$(`<p>Couldn't get access token (code ${tokenData["status_code"]})\n'` +
-						`Error: ${tokenData["error_description"]}</p>`)
+						$(`<p>Couldn't get access token (code ${tokenData.status_code})\n'` +
+						`Error: ${tokenData.error_description}</p>`)
 							.css("backgorund-color", "red")
 					);
 				} else {
 					// store access and refresh tokens in cookies
 
-					// refresh token cookie expires in 3650 days (10 years), so users don't
+					// refresh token cookie expires in 365 days (1 year), so users don't
 					// have to reauthorize again (unless they logout)
 					Cookies.set(
 						"refresh_token",
-						tokens.refresh = tokenData["refresh_token"],
-						{ expires: 3650 }
+						tokens.refresh = tokenData.refresh_token,
+						{ expires: 365 }
 					);
+
 					// access token cookie expires 4 minutes before the actual token
 					Cookies.set(
 						"access_token",
-						tokens.access = tokenData["access_token"],
-						{ expires: (tokenData["expires_in"] - 240) / 86400 } // converting to days
+						tokens.access = tokenData.access_token,
+						{ expires: (tokenData.expires_in - 240) / 86400 } // converting to days
+					);
+
+					// psq token cookie expires in 365 days (same reason as refresh token)
+					Cookies.set(
+						"psq_token",
+						tokens.psq = tokenData.psq_token,
+						{ expires: 365 }
 					);
 
 					// go to main page, clears up any query parameters present in URL
@@ -233,7 +246,7 @@ $(document).ready(() => {
 			let authURL = "https://accounts.spotify.com/authorize" +
 				`?client_id=${CLIENT_ID}` +
 				"&response_type=code" +
-				`&redirect_uri=${HOST}/` +
+				`&redirect_uri=${HOST}` +
 				`&state=${state}` +
 				`&scope=${SCOPES.join("%20")}` +
 				`&show_dialog=false`;
@@ -245,7 +258,7 @@ $(document).ready(() => {
 		$("#user-control").append(authBtn);
 	} else if (!tokens.access) {
 		// there's a refresh, but no access token, so get another one
-		refresh(tokens.refresh, {
+		refresh(tokens.psq, {
 			replace: true,
 			err: (req) => {
 				$("#user-control").append(
@@ -281,7 +294,7 @@ $(document).ready(() => {
 		let getCurrentTrack = () => {
 			if (!Cookies.get("access_token")) {
 				// access token cookie expired, time to get a new access token
-				refresh(tokens.refresh, {
+				refresh(tokens.psq, {
 					cb: (req) => {
 						spotifyApi.setAccessToken(tokens.access);
 						// immediately get current track info, because maybe we lost time while we
@@ -297,35 +310,32 @@ $(document).ready(() => {
 						console.log(req);
 					}
 				});
+			} else {
+				// in the case where the access token cookie expires after the above check, we can
+				// still make a valid request with the current token in tokens.access because the
+				// cookie expires 4 minutes earlier than the actual access token
 
-				// don't want to indent too far, so just returning now to avoid an else-branch
-				return;
+				// processing current track
+				processingCurrentTrack = true;
+
+				spotifyApi.getMyCurrentPlayingTrack().then((stateData) => {
+					let time = stateData["progress_ms"];
+					// get mins and secs from ms time
+					let mins = parseInt(time / 60000);
+					let secs = parseInt((time - mins * 60000) / 1000);
+					let track = stateData["item"];
+
+					// record track name and time elapsed in song
+					recorderText.text(sprintf("%s - [%d:%02d]", track.name, mins, secs));
+				}).catch((err) => {
+					// TODO handle errors through error_handler#handleSpotifyError(req)
+					recorderText.text("Couldn't get playback state, see console for details");
+					console.log(err);
+				}).finally(() => {
+					// no longer processing playback state
+					processingCurrentTrack = false;
+				});
 			}
-
-			// in the case where the access token cookie expires after the above check, we can still
-			// make a valid request with the current token in tokens.access because the cookie
-			// expires 4 minutes earlier than the actual access token
-
-			// processing current track
-			processingCurrentTrack = true;
-
-			spotifyApi.getMyCurrentPlayingTrack().then((stateData) => {
-				let time = stateData["progress_ms"];
-				// get mins and secs from ms time
-				let mins = parseInt(time / 60000);
-				let secs = parseInt((time - mins * 60000) / 1000);
-				let track = stateData["item"];
-
-				// record track name and time elapsed in song
-				recorderText.text(sprintf("%s - [%d:%02d]", track.name, mins, secs));
-			}).catch((err) => {
-				// TODO handle errors through error_handler#handleSpotifyError(req)
-				recorderText.text("Couldn't get playback state, see console for details");
-				console.log(err);
-			}).finally(() => {
-				// no longer processing playback state
-				processingCurrentTrack = false;
-			});
 		};
 
 		// html attribute indicating whether or not
@@ -363,6 +373,8 @@ $(document).ready(() => {
 				}
 			}
 		});
+
+		// add elements to display
 		$("#user-control").append(recorderBtn);
 		$("#user-control").append(recorderText);
 	}

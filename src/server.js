@@ -2,20 +2,21 @@ const humps = require('humps');
 const express = require('express');
 const request = require('request-promise-native');
 const SpotifyWebApi = require('spotify-web-api-node');
-const { isNumber, isString } = require('./utils.js');
+const { isString } = require('./utils.js');
 const SpotifyQueue = require('./spotify_queue.js');
 
 // gather port, host, and client credentials
 const PORT = process.env.PORT || 3000;
-const HOST = `http://localhost:${PORT}`
 const REDIRECT_URI = `http://localhost:${PORT}`
 // spotify web api base url
 const CLIENT_ID = process.env.CLIENT_ID || process.argv[2];
 const CLIENT_SECRET = process.env.CLIENT_SECRET || process.argv[3];
-let SPOTIFY_ACCOUNTS_URL = `${process.env.TEST_SERVER}:${process.env.TEST_PORT}`
-	|| 'https://accounts.spotify.com/api';
-let SPOTIFY_API_URL = `${process.env.TEST_SERVER}:${process.env.TEST_PORT}/api`
-|| 'https://api.spotify.com/v1';
+let SPOTIFY_ACCOUNTS_URL = process.env.TEST
+	? `${process.env.TEST_SERVER}:${process.env.TEST_PORT}`
+	: 'https://accounts.spotify.com/api';
+let SPOTIFY_API_URL = process.env.TEST
+	? `${process.env.TEST_SERVER}:${process.env.TEST_PORT}/api`
+	: 'https://api.spotify.com/v1';
 
 // for verifying track ids
 const spotifyApi = new SpotifyWebApi({});
@@ -207,8 +208,6 @@ app.get('/index.html', (serverRequest, serverResponse) => {
 // 					SPOTIFY AUTHENTICATION ENDPOINTS
 // ==================================================================
 
-// TODO more status codes in api docs for spotify auth endpoints
-
 /**
  * @api {get} /token Requests access and refresh tokens
  * @apiDescription Request access and refresh tokens for Spotify's Web API given an authorization
@@ -217,8 +216,6 @@ app.get('/index.html', (serverRequest, serverResponse) => {
  * @apiGroup SpotifyAuth
  *
  * @apiParam {string} code the code returned from authorization request
- * @apiParam {string} user_id the user's Spotify Id, which will be associated with their access
- * token
  *
  * @apiSuccess (200) {string} access_token a token used for Spotify Web API services
  * @apiSuccess (200) {string} token_type how the token is used (always "Bearer")
@@ -265,12 +262,10 @@ app.get('/index.html', (serverRequest, serverResponse) => {
  * @apiExample {curl} cURL
  * curl -i http://localhost:3000/token
  *			-d code=AQDk2ztJ3...qiNp9WCTI
- *			-d user_id=fishnal
  * @apiExample {javascript} JavaScript (axios)
  * axios.get('http://localhost:3000/token', {
  *	 params: {
  *		 code: 'AQDk2ztJ3...qiNp9WCTI'
- *		 user_id: 'fishnal'
  *	 }
  * });
  *
@@ -278,17 +273,6 @@ app.get('/index.html', (serverRequest, serverResponse) => {
  */
 app.get('/token', (serverRequest, serverResponse) => {
 	let queries = serverRequest.query;
-
-	if (!queries.user_id) {
-		serverResponse.status(400).json({
-			error: 'invalid_request',
-			error_description: 'user_id must be supplied'
-		});
-	}
-
-	if (serverResponse.finished) {
-		return;
-	}
 
 	// make POST request to get access token
 	let tokenRequestQuery = {
@@ -304,19 +288,26 @@ app.get('/token', (serverRequest, serverResponse) => {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
-	}).then((tokenResponse) => {
+	}).then(async(tokenResponse) => {
 		// parse response
 		tokenResponse = JSON.parse(tokenResponse);
+
+		// get user's id
+		let profile = JSON.parse(await request(
+			`${SPOTIFY_API_URL}/me`,
+			{ headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
+		));
+
 		// add psq token to the response
 		tokenResponse.psq_token = Buffer
-			.from(`${queries.user_id};`
+			.from(`${profile.id};`
 				+ `${tokenResponse.access_token};`
 				+ `${tokenResponse.refresh_token || ''};`
 				+ `${Date.now()}`)
 			.toString('base64');
 
 		// make the queue
-		queues[queries.user_id] = queues[queries.user_id] || new SpotifyQueue(queries.user_id);
+		queues[profile.id] = queues[profile.id] || new SpotifyQueue(profile.id);
 
 		serverResponse.status(200).json(tokenResponse);
 	}).catch((tokenError) => {

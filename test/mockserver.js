@@ -426,6 +426,35 @@ mockApp.post('/token', (mockRequest, mockResponse) => {
 	mockResponse.status(200).json(tokenData);
 });
 
+mockApp.get('/api/me', (mockRequest, mockResponse) => {
+	let queries = mockRequest.query || {};
+	let headers = mockRequest.headers || {};
+
+	let authHeaderMatch = /^Bearer (?<access_token>\S+)$/.exec(headers['authorization']);
+
+	if (!authHeaderMatch) {
+		mockResponse.status(400).json({
+			error: {
+				status: 400,
+				message: 'Only valid bearer authentication supported'
+			}
+		});
+	} else if (!accessTokens[authHeaderMatch.groups['access_token']]) {
+		mockResponse.status(401).json({
+			error: {
+				status: 401,
+				message: 'Invalid access token'
+			}
+		});
+	}
+
+	if (mockResponse.finished) {
+		return;
+	}
+
+	mockResponse.status(200).json({ id: 'fishnal' });
+});
+
 mockApp.get('/api/tracks', (mockRequest, mockResponse) => {
 	let queries = mockRequest.query || {};
 	let headers = mockRequest.headers || {};
