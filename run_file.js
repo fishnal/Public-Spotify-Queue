@@ -17,10 +17,12 @@ if (useMocha !== 'false' && useMocha !== 'true') {
     process.exit(1);
 }
 
-let cmd = 'node --inspect-brk ';
+let cmd = null;
 
 if (useMocha === 'true') {
-    cmd += './node_modules/mocha/bin/mocha ';
+    cmd = 'mocha --inspect-brk ';
+} else {
+	cmd = 'node --inspect-brk ';
 }
 
 cmd += `"${file}"`;
