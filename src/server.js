@@ -1,3 +1,4 @@
+const commandArgs = require('commander');
 const humps = require('humps');
 const express = require('express');
 const request = require('request-promise-native');
@@ -5,12 +6,21 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const { isString } = require('./utils.js');
 const SpotifyQueue = require('./spotify_queue.js');
 
+// parse command line options
+commandArgs.version('0.1.0', '-v|--version')
+    .option('-i|--id <client id>', 'Spotify Developer Application client ID', /^[a-zA-Z0-9]+$/)
+    .option('-s|--secret <client secret>', 'Spotify Developer Application client secret', /^[a-zA-Z0-9]+$/)
+    .option('-a|--address <server address>', 'Address that server is hosted on', 'http://localhost')
+    .option('-p|--port [port number]', 'Port for the server', /^[0-9]+$/, 3000)
+    .parse(process.argv);
+
 // gather port, host, and client credentials
-const PORT = process.env.PORT || 3000;
-const REDIRECT_URI = `http://localhost:${PORT}`
+const PORT = process.env.PORT || commandArgs.port;
+const ADDRESS = process.env.ADDRESS || commandArgs.address;
+const REDIRECT_URI = `${ADDRESS}:${PORT}`;
 // spotify web api base url
-const CLIENT_ID = process.env.CLIENT_ID || process.argv[2];
-const CLIENT_SECRET = process.env.CLIENT_SECRET || process.argv[3];
+const CLIENT_ID = process.env.CLIENT_ID || commandArgs.id;
+const CLIENT_SECRET = process.env.CLIENT_SECRET || commandArgs.secret;
 let SPOTIFY_ACCOUNTS_URL = process.env.TEST
     ? `${process.env.TEST_SERVER}:${process.env.TEST_PORT}`
     : 'https://accounts.spotify.com/api';

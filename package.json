@@ -6,9 +6,10 @@
 		"Brian Park"
 	],
 	"license": "MIT",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"dependencies": {
 		"body-parser": "^1.18.3",
+		"commander": "^2.19.0",
 		"express": "^4.16.3",
 		"humps": "^2.0.1",
 		"js-cookie": "^2.2.0",
@@ -17,7 +18,7 @@
 		"request": "^2.87.0",
 		"request-promise-native": "^1.0.5",
 		"socket.io": "^2.1.1",
-		"spotify-web-api-node": "^3.1.1",
+		"spotify-web-api-node": "^4.0.0",
 		"sprintf-js": "^1.1.1"
 	},
 	"scripts": {
