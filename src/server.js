@@ -1,4 +1,3 @@
-const commandArgs = require('commander');
 const humps = require('humps');
 const express = require('express');
 const request = require('request-promise-native');
@@ -6,21 +5,16 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const { isString } = require('./utils.js');
 const SpotifyQueue = require('./spotify_queue.js');
 
-// parse command line options
-commandArgs.version('0.1.0', '-v|--version')
-    .option('-i|--id <client id>', 'Spotify Developer Application client ID', /^[a-zA-Z0-9]+$/)
-    .option('-s|--secret <client secret>', 'Spotify Developer Application client secret', /^[a-zA-Z0-9]+$/)
-    .option('-a|--address <server address>', 'Address that server is hosted on', 'http://localhost')
-    .option('-p|--port [port number]', 'Port for the server', /^[0-9]+$/, 3000)
-    .parse(process.argv);
+// port, address, redirect URI, and application credentials; these are initialized when you start
+// the server by passing in an options argument
+let PORT = null;
+let ADDRESS = null;
+let REDIRECT_URL = null;
+let CLIENT_ID = null;
+let CLIENT_SECRET = null;
 
-// gather port, host, and client credentials
-const PORT = process.env.PORT || commandArgs.port;
-const ADDRESS = process.env.ADDRESS || commandArgs.address;
-const REDIRECT_URI = `${ADDRESS}:${PORT}`;
-// spotify web api base url
-const CLIENT_ID = process.env.CLIENT_ID || commandArgs.id;
-const CLIENT_SECRET = process.env.CLIENT_SECRET || commandArgs.secret;
+// These URLs are dynamic for testing purposxes. A mock test server is used in place of the actual
+// Spotify web servers so we can have predictable outputs.
 let SPOTIFY_ACCOUNTS_URL = process.env.TEST
     ? `${process.env.TEST_SERVER}:${process.env.TEST_PORT}`
     : 'https://accounts.spotify.com/api';
@@ -67,21 +61,40 @@ function getClientCredentialsToken() {
     });
 }
 
+// options for serving static content
 const SEND_FILE_OPTS = {
     root: `${process.cwd()}`
 };
 
+// express.js variables
 const app = express();
 let server = null;
+
+// spotify queues
 let queues = {};
 
 /**
  * Starts the mock server.
  *
+ * @param opts options for the server, must include Spotify application client id and
+ * secret.
+ * @param {String} opts.clientId <required> Spotify application client id
+ * @param {String} opts.clientSecret <required> Spotify application client secret
+ * @param {Number|String} opts.port [optional] port for server to run on
+ * @param {String} opts.address [optional] address of the server
  * @returns {Promise<void>} resolves after starting and performing startup post-startup operations,
  * rejects if an error is thrown.
  */
-module.exports.start = () => {
+module.exports.start = ({clientId, clientSecret, port, address}) => {
+    if (!clientId) throw new Error('no client id');
+    else if (!clientSecret) throw new Error('no client secret');
+
+    CLIENT_ID = clientId;
+    CLIENT_SECRET = clientSecret;
+    PORT = port || 3000;
+    ADDRESS = address || 'http://localhost';
+    REDIRECT_URL = `${ADDRESS}:${PORT}`;
+
     return new Promise((resolve, reject) => {
         try {
             server = app.listen(PORT, () => {
@@ -148,7 +161,7 @@ module.exports.close = () => {
  *
  * @returns {string} the redirect uri used
  */
-module.exports.getRedirectURI = () => REDIRECT_URI;
+module.exports.getRedirectURI = () => REDIRECT_URL;
 
 // static files for the server
 app.use(express.static('src/web'));
@@ -288,7 +301,7 @@ app.get('/token', (serverRequest, serverResponse) => {
     let tokenRequestQuery = {
         grant_type: 'authorization_code',
         code: queries.code,
-        redirect_uri: `${REDIRECT_URI}`,
+        redirect_uri: `${REDIRECT_URL}`,
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET
     };

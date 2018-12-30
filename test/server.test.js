@@ -32,12 +32,13 @@ const data = JSON.parse(fs.readFileSync('test/server.test.json'), (key, value) =
 
     return value;
 });
-const hostIp = 'http://localhost';
-const hostAddress = `${hostIp}:${process.env.PORT || 3000}`;
-const mockIp = process.env.TEST_SERVER.endsWith('/')
+const hostAddress = 'http://localhost';
+const hostPort = process.env.PORT || 3000;
+const hostURL = `${hostAddress}:${hostPort}`;
+const mockAddress = process.env.TEST_SERVER.endsWith('/')
     ? process.env.TEST_SERVER.substring(0, process.env.TEST_SERVER.length - 1)
     : process.env.TEST_SERVER;
-const mockAddress = `${mockIp}:${process.env.TEST_PORT}`;
+const mockURL = `${mockAddress}:${process.env.TEST_PORT}`;
 const mainScopes = [
     "streaming",
     "user-modify-playback-state",
@@ -60,13 +61,19 @@ describe('Host Server', async function() {
         // override it now so we make it more stable and predictable for testing
         Date.now = () => fakeDateNow++;
 
-        await hostServer.start();
+        // start up the host and mock servers
+        await hostServer.start({
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            port: hostPort,
+            address: hostAddress
+        });
         await mockServer.start();
 
         // after servers start, generate a 1ms auth code on the mock server
         mockServer.setCodeExpiration(1);
         await request({
-            uri: `${mockAddress}/authorize`,
+            uri: `${mockURL}/authorize`,
             qs: {
                 client_id: process.env.CLIENT_ID,
                 redirect_uri: hostServer.getRedirectURI(),
@@ -78,7 +85,7 @@ describe('Host Server', async function() {
         // then generate a 300000ms (5m) auth code
         mockServer.restoreDefaults();
         await request({
-            uri: `${mockAddress}/authorize`,
+            uri: `${mockURL}/authorize`,
             qs: {
                 client_id: process.env.CLIENT_ID,
                 redirect_uri: hostServer.getRedirectURI(),
@@ -91,7 +98,7 @@ describe('Host Server', async function() {
     describe('/{root}', function() {
         data['{root}'].forEach(function(_test) {
             it(_test.title, async function() {
-                let resp = await request(`${hostAddress}/`);
+                let resp = await request(`${hostURL}/`);
                 resp.should.equal(_test.expected.data);
             });
         });
@@ -100,7 +107,7 @@ describe('Host Server', async function() {
     describe('/index.html', function() {
         data['index.html'].forEach(function(_test) {
             it(_test.title, async function() {
-                let resp = await request(`${hostAddress}/index.html`);
+                let resp = await request(`${hostURL}/index.html`);
                 resp.should.equal(_test.expected.data);
             });
         });
@@ -126,7 +133,7 @@ describe('Host Server', async function() {
             it(_test.title, async function() {
                 try {
                     handleRequest(_test, await request({
-                        uri: `${hostAddress}/token`,
+                        uri: `${hostURL}/token`,
                         qs: _test.args.queries || {}
                     }));
                 } catch (err) {
@@ -141,7 +148,7 @@ describe('Host Server', async function() {
             it(_test.title, async function() {
                 try {
                     handleRequest(_test, await request.post({
-                        uri: `${hostAddress}/refresh`,
+                        uri: `${hostURL}/refresh`,
                         qs: _test.args.queries || {}
                     }));
                 } catch (err) {
@@ -155,7 +162,7 @@ describe('Host Server', async function() {
         data['client_credentials'].forEach(function(_test) {
             it(_test.title, async function() {
                 try {
-                    handleRequest(_test, await request(`${hostAddress}/client_credentials`));
+                    handleRequest(_test, await request(`${hostURL}/client_credentials`));
                 } catch (err) {
                     handleRequest(_test, err);
                 }
@@ -170,7 +177,7 @@ describe('Host Server', async function() {
         async function avgError(_test) {
             function testLocalRequest() {
                 return request.post({
-                    uri: `${hostAddress}/queue/add_after`,
+                    uri: `${hostURL}/queue/add_after`,
                     headers: _test.args.headers || {},
                     qs: { relative_key: 2, new_song_id: 'song_id_1' }
                 });
@@ -205,7 +212,7 @@ describe('Host Server', async function() {
 
             function testLocalRequest() {
                 return request.post({
-                    uri: `${hostAddress}/queue/add_after`,
+                    uri: `${hostURL}/queue/add_after`,
                     headers: _test.args.headers || {},
                     qs: { relative_key: "null", new_song_id: 'song_id_1' }
                 });
@@ -262,7 +269,7 @@ describe('Host Server', async function() {
                     async function queueAddAfterRequest(_test) {
                         try {
                             handleRequest(_test, await request.post({
-                                uri: `${hostAddress}/queue/add_after`,
+                                uri: `${hostURL}/queue/add_after`,
                                 headers: _test.args.headers || {},
                                 qs: _test.args.queries || {}
                             }));
@@ -300,7 +307,7 @@ describe('Host Server', async function() {
                 it(_test.title, async function() {
                     try {
                         handleRequest(_test, await request.delete({
-                            uri: `${hostAddress}/queue/remove`,
+                            uri: `${hostURL}/queue/remove`,
                             headers: _test.args.headers || {},
                             qs: _test.args.queries || {}
                         }))
