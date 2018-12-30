@@ -141,6 +141,10 @@ describe('Mock Server', function() {
         let testSet = data['token'];
 
         testSet.forEach(function(_test) {
+            if (_test.title === '(400) authorization_code: wrong redirect uri') {
+                console.log('WOOHOO');
+            }
+
             it(_test.title, async function() {
                 if (_test.func && mockServer[_test.func.name]) {
                     mockServer[_test.func.name](..._test.func.args);
