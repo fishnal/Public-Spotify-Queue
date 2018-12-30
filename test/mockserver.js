@@ -30,10 +30,9 @@ const RESPONSE_TYPES = [
     'token'
 ];
 const REDIRECT_URIS = [
-    'http://127.0.0.1:3000/',
-    'http://127.0.0.1:3000',
-    'http://localhost:3000/',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://testingurl:3000' // not an actual redict url, used to verify that mock server doesn't
+                             // pass out a token when a code doesn't match it's redirect url passed in
 ];
 const GRANT_TYPES = [
     'client_credentials',
