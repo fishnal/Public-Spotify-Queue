@@ -57,7 +57,6 @@ The priority order is command line, configuration file, and lastly environment v
 arguments specified via the command line always override config files and environment variables, and
 configuration files always override environment variables.
 
-
 ## <a id="auth-proc"></a> Authorization Process
 
 1. Use a cookie to store the current state of the client (that lives for 5 minutes because user should not take more than 5 minutes to authorize); state is randomly generated every 5 minutes

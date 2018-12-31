@@ -23,7 +23,7 @@ commandArgs.version('0.1.0', '-v|--version')
 
         // parse the config lines
         configContents.forEach((line) => {
-            let match = /(?<option>id|secret|domain|port)=(?<value>.*)/.exec(line);
+            let match = /(?<option>clientId|clientSecret|domain|port)=(?<value>.*)/.exec(line);
 
             if (match) {
                 // we have a match, extract captured groups
@@ -65,12 +65,7 @@ commandArgs.version('0.1.0', '-v|--version')
     const server = require('./src/server.js');
 
     try {
-        await server.start({
-            clientId: commandArgs.id,
-            clientSecret: commandArgs.secret,
-            domain: commandArgs.domain,
-            port: commandArgs.port,
-        });
+        await server.start(commandArgs);
     } catch (err) {
         console.error(err.name);
         console.error(err.message);
