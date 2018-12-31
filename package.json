@@ -22,8 +22,10 @@
 		"sprintf-js": "^1.1.1"
 	},
 	"scripts": {
-		"start": "node ./index.js --config production.conf",
-		"test": "cross-env DEBUG=psq:* TEST_SERVER=\"http://localhost\" TEST_PORT=5000 TEST=true CLIENT_ID=clientid CLIENT_SECRET=secret ./node_modules/mocha/bin/_mocha --reporter mochawesome ./test/skiplist.test.js ./test/mockserver.test.js ./test/server.test.js"
+        "start": "node ./index.js --config production.conf",
+        "start:conf": "node ./index.js --config",
+        "start:raw": "node ./index.js",
+		"test": "cross-env TEST_SERVER=\"http://localhost\" TEST_PORT=5000 TEST=true CLIENT_ID=id CLIENT_SECRET=secret mocha --reporter mochawesome ./test/skiplist.test.js ./test/mockserver.test.js ./test/server.test.js"
 	},
 	"devDependencies": {
 		"mocha": "^5.2.0",

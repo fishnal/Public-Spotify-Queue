@@ -5,37 +5,73 @@ const util = require('util');
 
 commandArgs.version('0.1.0', '-v|--version')
     .option('-c|--config <config file>', 'Configuration file that specifies any required and optional arguments. Overrides all other arguments')
-    .option('-i|--id <client id>', 'Spotify Developer Application client ID', /^[a-zA-Z0-9]+$/)
-    .option('-s|--secret <client secret>', 'Spotify Developer Application client secret', /^[a-zA-Z0-9]+$/)
-    .option('-a|--address <server address>', 'Address that server is hosted on', 'http://localhost')
-    .option('-p|--port [port number]', 'Port for the server', /^[0-9]+$/, 3000)
+    .option('-i|--clientId <client id>', 'Spotify Developer Application client ID', /^[a-zA-Z0-9]+$/)
+    .option('-s|--clientSecret <client secret>', 'Spotify Developer Application client secret', /^[a-zA-Z0-9]+$/)
+    .option('-d|--domain [server domain]', 'Domain of the server (default: http://localhost)', 'http://localhost')
+    .option('-p|--port [port number]', 'Port for the server (default: 3000)', /^[0-9]+$/, 3000)
     .parse(process.argv);
 
 (async() => {
+    // args priority: command line -> config file -> environment variables
+
+    // fallback on config file if present
     if (commandArgs.config) {
         // read in config file's contents
         let configContents = await util.promisify(fs.readFile)(path.resolve(commandArgs.config));
         // split into lines
         configContents = configContents.toString().split('\n');
-        let new_options = { };
-        let optionKeys = ['id', 'secret', 'address', 'port'];
 
         // parse the config lines
         configContents.forEach((line) => {
-            let match = /(?<option>id|secret|address|port)=(?<value>.*)/.exec(line);
+            let match = /(?<option>id|secret|domain|port)=(?<value>.*)/.exec(line);
 
             if (match) {
-                new_options[match.groups.option] = match.groups.value === '' ? null : match.groups.value;
+                // we have a match, extract captured groups
+                let {option, value} = match.groups;
+
+                // only include this config file option if it's not already defined
+                if (!commandArgs[option]) {
+                    commandArgs[option] = value === '' ? null : value;
+                }
             }
         });
+    }
 
-        process.argv.splice(2);
-        Object.keys(new_options).forEach((key) => {
-            process.argv.push(`--${key}`);
-            process.argv.push(new_options[key]);
+    // fallback on environment variables
+    {
+        // maps environment variables to respective command line argument variables
+        let envOptions = {
+            CLIENT_ID: 'clientId',
+            CLIENT_SECRET: 'clientSecret',
+            DOMAIN: 'domain',
+            PORT: 'port'
+        };
+
+        Object.keys(envOptions).forEach((envOpt) => {
+            let equivalentCmdOpt = envOptions[envOpt];
+
+            if (!commandArgs[equivalentCmdOpt]) {
+                // since there's no config file or command line defined value for this option,
+                // fallback onto this option's enviroment value
+                commandArgs[equivalentCmdOpt] = process.env[envOpt];
+            }
         });
     }
 
     const server = require('./src/server.js');
-    server.start();
+
+    try {
+        await server.start({
+            clientId: commandArgs.id,
+            clientSecret: commandArgs.secret,
+            domain: commandArgs.domain,
+            port: commandArgs.port,
+        });
+    } catch (err) {
+        console.error(err.name);
+        console.error(err.message);
+        console.error(err.stack);
+
+        await server.close();
+    }
 })();

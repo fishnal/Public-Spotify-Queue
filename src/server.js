@@ -5,11 +5,11 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const { isString } = require('./utils.js');
 const SpotifyQueue = require('./spotify_queue.js');
 
-// port, address, redirect URI, and application credentials; these are initialized when you start
+// port, domain, redirect URI, and application credentials; these are initialized when you start
 // the server by passing in an options argument
 let PORT = null;
-let ADDRESS = null;
-let REDIRECT_URL = null;
+let DOMAIN = null;
+let SERVER_URL = null;
 let CLIENT_ID = null;
 let CLIENT_SECRET = null;
 
@@ -80,20 +80,20 @@ let queues = {};
  * secret.
  * @param {String} opts.clientId <required> Spotify application client id
  * @param {String} opts.clientSecret <required> Spotify application client secret
- * @param {Number|String} opts.port [optional] port for server to run on
- * @param {String} opts.address [optional] address of the server
+ * @param {Number|String} opts.port [optional] port for server to run on, defaults to 3000
+ * @param {String} opts.domain [optional] domain of the server, defaults to http://localhost
  * @returns {Promise<void>} resolves after starting and performing startup post-startup operations,
  * rejects if an error is thrown.
  */
-module.exports.start = ({clientId, clientSecret, port, address}) => {
+module.exports.start = ({clientId, clientSecret, port, domain}) => {
     if (!clientId) throw new Error('no client id');
     else if (!clientSecret) throw new Error('no client secret');
 
     CLIENT_ID = clientId;
     CLIENT_SECRET = clientSecret;
     PORT = port || 3000;
-    ADDRESS = address || 'http://localhost';
-    REDIRECT_URL = `${ADDRESS}:${PORT}`;
+    DOMAIN = domain || 'http://localhost';
+    SERVER_URL = `${DOMAIN}:${PORT}`;
 
     return new Promise((resolve, reject) => {
         try {
@@ -118,11 +118,10 @@ module.exports.start = ({clientId, clientSecret, port, address}) => {
                         clientCredentialsRefresher = setTimeout(getClientCredentialsToken,
                             (tokenResponse.expires_in - 120) * 1000);
 
+                        console.log(`Server started on ${SERVER_URL}`);
                         resolve();
                     }).catch((tokenError) => {
-                        // try again in 60 seconds
-                        clientCredentialsRefresher = setTimeout(getClientCredentialsToken, 60000);
-
+                        console.error('Failed to retrieve client credentials token');
                         reject(tokenError);
                     });
                 } else {
@@ -130,6 +129,7 @@ module.exports.start = ({clientId, clientSecret, port, address}) => {
                 }
             });
         } catch (err) {
+            console.error('Failed to start server');
             reject(err);
         }
     });
@@ -148,6 +148,7 @@ module.exports.close = () => {
         try {
             server.close(() => {
                 clearTimeout(clientCredentialsRefresher);
+                console.log('Server closed');
                 resolve();
             });
         } catch (err) {
@@ -161,7 +162,7 @@ module.exports.close = () => {
  *
  * @returns {string} the redirect uri used
  */
-module.exports.getRedirectURI = () => REDIRECT_URL;
+module.exports.getRedirectURI = () => SERVER_URL;
 
 // static files for the server
 app.use(express.static('src/web'));
@@ -301,7 +302,7 @@ app.get('/token', (serverRequest, serverResponse) => {
     let tokenRequestQuery = {
         grant_type: 'authorization_code',
         code: queries.code,
-        redirect_uri: `${REDIRECT_URL}`,
+        redirect_uri: `${SERVER_URL}`,
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET
     };
