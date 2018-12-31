@@ -58,6 +58,10 @@ commandArgs.version('0.1.0', '-v|--version')
         });
     }
 
+    if (!commandArgs.domain.startsWith('http://')) {
+        commandArgs.domain = 'http://' + commandArgs.domain;
+    }
+
     const server = require('./src/server.js');
 
     try {
