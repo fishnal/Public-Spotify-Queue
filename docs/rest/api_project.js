@@ -13,13 +13,13 @@ define({
     "AddAfter",
     "RemoveSong"
   ],
-  "version": "1.0.0",
+  "version": "0.1.0",
   "sampleUrl": false,
   "defaultVersion": "0.0.0",
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2018-08-29T03:20:07.615Z",
+    "time": "2018-12-31T20:19:08.162Z",
     "url": "http://apidocjs.com",
     "version": "0.17.6"
   }
