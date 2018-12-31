@@ -4,7 +4,7 @@ const path = require('path');
 const util = require('util');
 
 commandArgs.version('0.1.0', '-v|--version')
-    .option('-c|--config <config file>', 'Configuration file that specifies any required and optional arguments. Overrides all other arguments')
+    .option('-c|--config <config file>', 'Configuration file that specifies any required and optional arguments')
     .option('-i|--clientId <client id>', 'Spotify Developer Application client ID', /^[a-zA-Z0-9]+$/)
     .option('-s|--clientSecret <client secret>', 'Spotify Developer Application client secret', /^[a-zA-Z0-9]+$/)
     .option('-d|--domain [server domain]', 'Domain of the server (default: http://localhost)')

@@ -191,7 +191,7 @@ app.get('/client_credentials', (serverRequest, serverResponse) => {
 });
 
 // ==================================================================
-//                                                 CLIENT ENDPOINTS
+//                          CLIENT ENDPOINTS
 // ==================================================================
 
 /**
@@ -199,12 +199,12 @@ app.get('/client_credentials', (serverRequest, serverResponse) => {
  * @apiName GetHome
  * @apiGroup Client
  *
- * @apiExample {curl} cURL
- * curl -i http://localhost:3000/
- * @apiExample {javascript} JavaScript (axios)
+ * @apiExample {shell} cURL
+ * curl http://localhost:3000/
+ * @apiExample {javascript} Axios
  * axios.get('http://localhost:3000/');
  *
- * @apiVersion 1.0.0
+ * @apiVersion 0.1.1
  */
 app.get('/', (serverRequest, serverResponse) => {
     serverResponse.status(200);
@@ -217,19 +217,19 @@ app.get('/', (serverRequest, serverResponse) => {
  * @apiName GetIndex
  * @apiGroup Client
  *
- * @apiExample {curl} cURL
- * curl -i http://localhost:3000/index.html
- * @apiExample {javascript} JavaScript (axios)
+ * @apiExample {shell} cURL
+ * curl http://localhost:3000/index.html
+ * @apiExample {javascript} Axios
  * axios.get('http://localhost:3000/index.html');
  *
- * @apiVersion 1.0.0
+ * @apiVersion 0.1.1
  */
 app.get('/index.html', (serverRequest, serverResponse) => {
     serverResponse.redirect('/');
 });
 
 // ==================================================================
-//                     SPOTIFY AUTHENTICATION ENDPOINTS
+//                  SPOTIFY AUTHENTICATION ENDPOINTS
 // ==================================================================
 
 /**
@@ -251,49 +251,51 @@ app.get('/index.html', (serverRequest, serverResponse) => {
  * server
  *
  * @apiSuccessExample {json} 200 Success-Response
- *         HTTP/1.1 200 OK
- *         {
- *                "access_token": "BQCKsz5Dv...eSNUbbI6w",
- *                "token_type": "Bearer",
- *                "scope": "user-library-read user-library-modify",
- *                "expires_in": 3600,
- *                "refresh_token": "AQBYahCgx...Xa8msLnyA",
- *                "psq_token": "Yy3bxKIYIqzIsy6Oxv2W21"
- *         }
+ *   HTTP/1.1 200 OK
+ *   {
+ *    "access_token": "BQCKsz5Dv...eSNUbbI6w",
+ *    "token_type": "Bearer",
+ *    "scope": "user-library-read user-library-modify",
+ *    "expires_in": 3600,
+ *    "refresh_token": "AQBYahCgx...Xa8msLnyA",
+ *    "psq_token": "Yy3bxKIYIqzIsy6Oxv2W21"
+ *   }
  *
  * @apiError (400) invalid_request `code` isn't supplied for grant type `authorization_code`
  * @apiError (400) invalid_grant `code` doesn't exist or has expired
  *
  * @apiErrorExample {json} 400 No Code
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_request",
- *                 "error_description": "code must be supplied"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_request",
+ *     "error_description": "code must be supplied"
+ *   }
  * @apiErrorExample {json} 400 Invalid Code
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_grant",
- *                 "error_description": "Invalid authorization code"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_grant",
+ *     "error_description": "Invalid authorization code"
+ *   }
  * @apiErrorExample {json} 400 Expired Code
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_grant",
- *                 "error_description": "Authorization code expired"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_grant",
+ *     "error_description": "Authorization code expired"
+ *   }
  *
- * @apiExample {curl} cURL
- * curl -i http://localhost:3000/token
- *            -d code=AQDk2ztJ3...qiNp9WCTI
- * @apiExample {javascript} JavaScript (axios)
- * axios.get('http://localhost:3000/token', {
- *     params: {
- *         code: 'AQDk2ztJ3...qiNp9WCTI'
- *     }
+ * @apiExample {shell} cURL
+ * curl http://localhost:3000/token
+ *   -d code=AQDk2ztJ3...qiNp9WCTI
+ * @apiExample {javascript} Axios
+ * axios({
+ *   url: 'http://localhost:3000/token',
+ *   method: 'get',
+ *   params: {
+ *     code: 'AQDk2ztJ3...qiNp9WCTI'
+ *   }
  * });
  *
- * @apiVersion 1.0.0
+ * @apiVersion 0.1.1
  */
 app.get('/token', (serverRequest, serverResponse) => {
     let queries = serverRequest.query;
@@ -358,43 +360,45 @@ app.get('/token', (serverRequest, serverResponse) => {
  * server
  *
  * @apiSuccessExample {json} 200 Success-Response:
- *         HTTP/1.1 200 OK
- *         {
- *                 "access_token": "CRDLt06Ew...fTOccJ7x",
- *                 "token_type": "Bearer",
- *                 "scope": "user-library-read user-library-modify",
- *                 "expires_in": 3600,
- *                 "refresh_token": <new refresh token string, otherwise undefined>,
- *                 "psq_token": "611lfexq082lfmex934"
- *         }
+ *   HTTP/1.1 200 OK
+ *   {
+ *     "access_token": "CRDLt06Ew...fTOccJ7x",
+ *     "token_type": "Bearer",
+ *     "scope": "user-library-read user-library-modify",
+ *     "expires_in": 3600,
+ *     "refresh_token": <new refresh token string, otherwise undefined>,
+ *     "psq_token": "611lfexq082lfmex934"
+ *   }
  *
  * @apiError (400) invalid_request `psq_token` isn't supplied
  * @apiError (400) invalid_grant `psq_token` doesn't exist
  *
  * @apiErrorExample {json} 400 No PSQ Token
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_request",
- *                 "error_description": "psq_token must be supplied"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_request",
+ *     "error_description": "psq_token must be supplied"
+ *   }
  * @apiErrorExample {json} 400 Invalid PSQ Token
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_grant",
- *                 "error_description": "Invalid PSQ token"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_grant",
+ *     "error_description": "Invalid PSQ token"
+ *   }
  *
- * @apiExample {curl} cURL
+ * @apiExample {shell} cURL
  * curl -X POST http://localhost:3000/refresh
- *            -d psq_token=Yy3bxKIYIqzIsy6Oxv2W21
- * @apiExample {javascript} JavaScript (axios)
- * axios.post('http://localhost:3000/refresh', {
- *     params: {
- *         psq_token: 'Yy3bxKIYIqzIsy6Oxv2W21'
- *     }
+ *      -d psq_token=Yy3bxKIYIqzIsy6Oxv2W21
+ * @apiExample {javascript} Axios
+ * axios({
+ *   url: 'http://localhost:3000/refresh',
+ *   method: 'post',
+ *   params: {
+ *     psq_token: 'Yy3bxKIYIqzIsy6Oxv2W21'
+ *   }
  * });
  *
- * @apiVersion 1.0.0
+ * @apiVersion 0.1.1
  */
 app.post('/refresh', (serverRequest, serverResponse) => {
     let psqToken = serverRequest.query['psq_token'];
@@ -448,7 +452,7 @@ app.post('/refresh', (serverRequest, serverResponse) => {
 });
 
 // ==================================================================
-//                                                    QUEUE ENDPOINTS
+//                          QUEUE ENDPOINTS
 // ==================================================================
 
 /**
@@ -481,9 +485,9 @@ function authQueueAccess(token) {
  * @apiHeader {string} authorization prefixed with `Bearer ` (space-sensitive), contains the user's
  * access token provided by this server.
  * @apiHeaderExample {json} Authorization Header Example
- *         {
- *                 "Authorization": "Bearer some_access_token"
- *         }
+ *   {
+ *     "Authorization": "Bearer <access_token>"
+ *   }
  * @apiParam {number} relative_key the key of the song to add after
  * @apiParam {string} new_song_id the Spotify track id of the new song to add (null to add it before
  * the first song in the queue)
@@ -491,10 +495,10 @@ function authQueueAccess(token) {
  * @apiSuccess (200) {number} new_key the key of the newly added song
  *
  * @apiSuccessExample {json} 200 Success-Response:
- *         HTTP/1.1 200 OK
- *         {
- *                 "new_key": 1
- *         }
+ *   HTTP/1.1 200 OK
+ *   {
+ *     "new_key": 1
+ *   }
  *
  * @apiError (400) invalid_request
  * + `relative_key` is not provided
@@ -510,77 +514,79 @@ function authQueueAccess(token) {
  * @apiError (404) key_not_found `relative_key` could not be found in the queue
  *
  * @apiErrorExample {json} 400 No Relative Key
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_request",
- *                 "error_description": "relative_key must be supplied"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_request",
+ *     "error_description": "relative_key must be supplied"
+ *   }
  * @apiErrorExample {json} 400 Bad Relative Key Type
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_type",
- *                 "error_description": "relative_key must be a number"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_type",
+ *     "error_description": "relative_key must be a number"
+ *   }
  * @apiErrorExample {json} 400 No New Song Id
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_request",
- *                 "error_description": "new_song_id must be supplied"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_request",
+ *     "error_description": "new_song_id must be supplied"
+ *   }
  * @apiErrorExample {json} 401 Invalid Access Token
- *         HTTP/1.1 401 Unauthorized
- *         {
- *                 "error": "invalid_credentials",
- *                 "error_description": "authorization header or access token is invalid"
- *         }
+ *   HTTP/1.1 401 Unauthorized
+ *   {
+ *     "error": "invalid_credentials",
+ *     "error_description": "authorization header or access token is invalid"
+ *   }
  * @apiErrorExample {json} 404 Song Not Found
- *         HTTP/1.1 404 Not Found
- *         {
- *                 "error": "song_not_found",
- *                 "error_description": "song <new_song_id> not found"
- *         }
+ *   HTTP/1.1 404 Not Found
+ *   {
+ *     "error": "song_not_found",
+ *     "error_description": "song <new_song_id> not found"
+ *   }
  * @apiErrorExample {json} 400 Positive Infinity Relative Key
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_request",
- *                "error_description": "relative_key must be less than positive infinity"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_request",
+ *    "error_description": "relative_key must be less than positive infinity"
+ *   }
  * @apiErrorExample {json} 400 Too Much Averaging
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_request",
- *                 "error_description": "too much averaging"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_request",
+ *     "error_description": "too much averaging"
+ *   }
  * @apiErrorExample {json} 400 Unsafe Integer
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_request",
- *                 "error_description": "unsafe integer"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_request",
+ *     "error_description": "unsafe integer"
+ *   }
  * @apiErrorExample {json} 404 Key Not Found
- *         HTTP/1.1 404 Not Found
- *         {
- *                 "error": "key_not_found",
- *                 "error_description": "relative key <relative_key> not found"
- *         }
+ *   HTTP/1.1 404 Not Found
+ *   {
+ *     "error": "key_not_found",
+ *     "error_description": "relative key <relative_key> not found"
+ *   }
  *
- * @apiExample {curl} cURL
+ * @apiExample {shell} cURL
  * curl -X POST http://localhost:3000/queue/add_after
- *             -H "Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21"
- *            -d relative_key=0
- *            -d new_song_id=3L3bIKIYIvzIsR6Obv2WB3
- * @apiExample {javascript} JavaScript (axios)
- * axios.post('http://localhost:3000/queue/add_after', {
- *     headers: {
- *         'Authorization': 'Basic Yy3bxKIYIqzIsy6Oxv2W21'
- *     },
- *     params: {
- *         relative_key: 0,
- *         new_song_id: '3L3bIKIYIvzIsR6Obv2WB3'
- *     }
+ *      -H "Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21"
+ *      -d relative_key=0
+ *      -d new_song_id=3L3bIKIYIvzIsR6Obv2WB3
+ * @apiExample {javascript} Axios
+ * axios({
+ *   url: 'http://localhost:3000/queue/add_after',
+ *   method: 'post',
+ *   headers: {
+ *     'Authorization': 'Basic Yy3bxKIYIqzIsy6Oxv2W21'
+ *   }
+ *   params: {
+ *     relative_key: 0,
+ *     new_song_id: '3L3bIKIYIvzIsR6Obv2WB3'
+ *   }
  * });
  *
- * @apiVersion 1.0.0
+ * @apiVersion 0.1.1
  */
 app.post('/queue/add_after', async(serverRequest, serverResponse) => {
     let headers = serverRequest.headers;
@@ -660,9 +666,9 @@ app.post('/queue/add_after', async(serverRequest, serverResponse) => {
  * @apiHeader {string} authorization prefixed with `Bearer ` (space-sensitive), contains the user's
  * access token provided by this server.
  * @apiHeaderExample {json} Authorization Header Example
- *         {
- *                 "Authorization": "Bearer some_access_token"
- *         }
+ *   {
+ *     "Authorization": "Bearer <access_token>"
+ *   }
  * @apiParam {number} key the song's key
  *
  * @apiError (400) invalid_request
@@ -673,51 +679,53 @@ app.post('/queue/add_after', async(serverRequest, serverResponse) => {
  * @apiError (404) key_not_found `key` was not found in the queue
  *
  * @apiErrorExample {json} 400 No Key
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_request",
- *                 "error_description": "key must be supplied"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_request",
+ *     "error_description": "key must be supplied"
+ *   }
  * @apiErrorExample {json} 400 Bad Key Type
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_type",
- *                 "error_description": "key must be a number"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_type",
+ *     "error_description": "key must be a number"
+ *   }
  * @apiErrorExample {json} 401 Invalid Access Token
- *         HTTP/1.1 401 Unauthorized
- *         {
- *                 "error": "invalid_credentials",
- *                 "error_description": "authorization header or access token is invalid"
- *         }
+ *   HTTP/1.1 401 Unauthorized
+ *   {
+ *     "error": "invalid_credentials",
+ *     "error_description": "authorization header or access token is invalid"
+ *   }
  * @apiErrorExample {json} 400 Infinite Key
- *         HTTP/1.1 400 Bad Request
- *         {
- *                 "error": "invalid_request",
- *                 "error_description": "key must be finite"
- *         }
+ *   HTTP/1.1 400 Bad Request
+ *   {
+ *     "error": "invalid_request",
+ *     "error_description": "key must be finite"
+ *   }
  * @apiErrorExample {json} 404 Key Not Found
- *         HTTP/1.1 404 Not Found
- *         {
- *                 "error": "key_not_found",
- *                 "error_description": "key <key> not found"
- *         }
+ *   HTTP/1.1 404 Not Found
+ *   {
+ *     "error": "key_not_found",
+ *     "error_description": "key <key> not found"
+ *   }
  *
- * @apiExample {curl} cURL
+ * @apiExample {shell} cURL
  * curl -X DELETE http://localhost:3000/queue/remove
- *             -H "Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21"
- *            -d key=0
- * @apiExample {javascript} JavaScript (axios)
- * axios.delete('http://localhost:3000/queue/remove', {
- *     headers: {
- *         'Authorization': 'Bearer Yy3bxKIYIqzIsy6Oxv2W21'
- *     },
- *     params: {
- *         key: 0
- *     }
+ *      -H "Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21"
+ *      -d key=0
+ * @apiExample {javascript} Axios
+ * axios({
+ *   url: 'http://localhost:3000/queue/remove',
+ *   method: 'delete',
+ *   headers: {
+ *     'Authorization': 'Bearer Yy3bxKIYIqzIsy6Oxv2W21'
+ *   },
+ *   params: {
+ *     key: 0
+ *   }
  * });
  *
- * @apiVersion 1.0.0
+ * @apiVersion 0.1.1
  */
 app.delete('/queue/remove', (serverRequest, serverResponse) => {
     let headers = serverRequest.headers;

@@ -35,7 +35,8 @@
 	"apidoc": {
 		"name": "Public Spotify Queue",
 		"description": "REST API endpoints for Public Spotify Queue",
-		"title": "Public Spotify Queue API",
+        "title": "Public Spotify Queue API",
+        "version": "0.1.1",
 		"order": [
 			"Client",
 			"GetHome",

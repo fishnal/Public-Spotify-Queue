@@ -8,19 +8,55 @@
 
 ## Instructions
 
-**Note:** Currently only works on local servers (though could easily be moved to a remote server)
+**Note:** Currently only works on local servers
 
 1. Create a Spotify Developer Application [here](https://developer.spotify.com/dashboard/)
-2. Register `http://127.0.0.1:3000` as a redirect URI in your application
+2. Register `http://localhost:3000` or `http://127.0.0.1:3000` as a redirect URI in your application
 3. Clone or download and extract this repo
 4. Run `npm install` to get the dependencies
-5. Run `npm start CLIENT_ID CLIENT_SECRET`, passing in your application's id and secret credentials as command line arguments
-	+ Alternatively, you can set environment variables for the `CLIENT_ID` and `CLIENT_SECRET` instead of passing in the arguments
-6. Go to http://127.0.0.1:3000
-7. After the page loads, click the `Authorize` button. Should be straight forward from this point
-	+ If the authorization was not complete, make sure you actually authorize the application and you don't take too long to authorize it (read the [authorization process](#auth-proc) to see why)
-	+ Try clearing your cookies (just for this local domain)
-	+ If there is still an issue authorizing, open an issue with any console output, steps taken to reproduce the issue, as well as your web browser and version.
+5. Store your application's id and secret credentials into a file called `production.conf`
+	```bash
+	# production.conf
+	clientId=foobar
+	clientSecret=bazqaz
+	```
+6. Run `npm start`*
+7. Go to http://localhost:3000 (or whatever address your registered)
+8. After the page loads, click the `Authorize` button. Should be straight forward from this point
+    + If the authorization was not complete, make sure you actually authorize the application and
+      you don't take too long to authorize it (read the [authorization process(#auth-proc) to see
+      why)
+    + Try clearing your cookies (just for this local domain)
+    + If there is still an issue authorizing, open an issue with any console output, steps taken to
+      reproduce the issue, as well as your web browser, version, and any command line arguments you
+      used (excluding your Spotify application credentials)
+
+\* Could also run `npm run start:conf <your_settings.conf>` or `npm run start:raw <your_args>` if
+you want to specify your own [arguments](#arguments)
+
+## <a id="arguments"></a> Program Arguments
+
+There are five arguments, two of which are required:
+
++ `i|clientId <string>` the Spotify application client id
++ `s|clientSecret <string>` the Spotify application client Secret
++ `d|domain [string]` the domain of the server (defaults to `http://localhost`)
++ `p|port [integer]` the port of the server (defaults to `3000`)
++ `c|config [file path]` reads in the arguments listed above from a given configuration file
+
+You can specify arguments via the command line, a configuration file, with each line formatted as
+`argument=value`, or with environment variables,
+named below:
+
++ `CLIENT_ID`
++ `CLIENT_SECRET`
++ `DOMAIN`
++ `PORT`
+
+The priority order is command line, configuration file, and lastly environment variables. That is,
+arguments specified via the command line always override config files and environment variables, and
+configuration files always override environment variables.
+
 
 ## <a id="auth-proc"></a> Authorization Process
 
@@ -35,11 +71,8 @@
 
 ## Tests
 
-```shell
-npm test
-```
-
-All tests use the [mocha.js](https://mochajs.org/) unit testing framework.
+Run `npm test` to execute all the tests. All tests use the [mocha.js](https://mochajs.org/) unit
+testing framework.
 
 These tests don't require a valid client id or secret provided by a Spotify developer application. Instead, a local server loosely mocks what Spotify's API endpoints would perform, which `src/server.js` communicates with.
 
