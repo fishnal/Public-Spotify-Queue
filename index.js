@@ -7,8 +7,8 @@ commandArgs.version('0.1.0', '-v|--version')
     .option('-c|--config <config file>', 'Configuration file that specifies any required and optional arguments. Overrides all other arguments')
     .option('-i|--clientId <client id>', 'Spotify Developer Application client ID', /^[a-zA-Z0-9]+$/)
     .option('-s|--clientSecret <client secret>', 'Spotify Developer Application client secret', /^[a-zA-Z0-9]+$/)
-    .option('-d|--domain [server domain]', 'Domain of the server (default: http://localhost)', 'http://localhost')
-    .option('-p|--port [port number]', 'Port for the server (default: 3000)', /^[0-9]+$/, 3000)
+    .option('-d|--domain [server domain]', 'Domain of the server (default: http://localhost)')
+    .option('-p|--port [port number]', 'Port for the server (default: 3000)', /^[0-9]+$/)
     .parse(process.argv);
 
 (async() => {
