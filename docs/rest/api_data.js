@@ -8,16 +8,16 @@ define({ "api": [
     "examples": [
       {
         "title": "cURL",
-        "content": "curl -i http://localhost:3000/",
-        "type": "curl"
+        "content": "curl http://localhost:3000/",
+        "type": "shell"
       },
       {
-        "title": "JavaScript (axios)",
+        "title": "Axios",
         "content": "axios.get('http://localhost:3000/');",
         "type": "javascript"
       }
     ],
-    "version": "1.0.0",
+    "version": "0.1.1",
     "filename": "src/server.js",
     "groupTitle": "Client"
   },
@@ -31,16 +31,16 @@ define({ "api": [
     "examples": [
       {
         "title": "cURL",
-        "content": "curl -i http://localhost:3000/index.html",
-        "type": "curl"
+        "content": "curl http://localhost:3000/index.html",
+        "type": "shell"
       },
       {
-        "title": "JavaScript (axios)",
+        "title": "Axios",
         "content": "axios.get('http://localhost:3000/index.html');",
         "type": "javascript"
       }
     ],
-    "version": "1.0.0",
+    "version": "0.1.1",
     "filename": "src/server.js",
     "groupTitle": "Client"
   },
@@ -66,7 +66,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Authorization Header Example",
-          "content": "{\n        \"Authorization\": \"Bearer some_access_token\"\n}",
+          "content": "{\n  \"Authorization\": \"Bearer <access_token>\"\n}",
           "type": "json"
         }
       ]
@@ -106,7 +106,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n        \"new_key\": 1\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"new_key\": 1\n}",
           "type": "json"
         }
       ]
@@ -153,47 +153,47 @@ define({ "api": [
       "examples": [
         {
           "title": "400 No Relative Key",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_request\",\n        \"error_description\": \"relative_key must be supplied\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_request\",\n  \"error_description\": \"relative_key must be supplied\"\n}",
           "type": "json"
         },
         {
           "title": "400 Bad Relative Key Type",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_type\",\n        \"error_description\": \"relative_key must be a number\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_type\",\n  \"error_description\": \"relative_key must be a number\"\n}",
           "type": "json"
         },
         {
           "title": "400 No New Song Id",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_request\",\n        \"error_description\": \"new_song_id must be supplied\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_request\",\n  \"error_description\": \"new_song_id must be supplied\"\n}",
           "type": "json"
         },
         {
           "title": "401 Invalid Access Token",
-          "content": "HTTP/1.1 401 Unauthorized\n{\n        \"error\": \"invalid_credentials\",\n        \"error_description\": \"authorization header or access token is invalid\"\n}",
+          "content": "HTTP/1.1 401 Unauthorized\n{\n  \"error\": \"invalid_credentials\",\n  \"error_description\": \"authorization header or access token is invalid\"\n}",
           "type": "json"
         },
         {
           "title": "404 Song Not Found",
-          "content": "HTTP/1.1 404 Not Found\n{\n        \"error\": \"song_not_found\",\n        \"error_description\": \"song <new_song_id> not found\"\n}",
+          "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"song_not_found\",\n  \"error_description\": \"song <new_song_id> not found\"\n}",
           "type": "json"
         },
         {
           "title": "400 Positive Infinity Relative Key",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_request\",\n       \"error_description\": \"relative_key must be less than positive infinity\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_request\",\n \"error_description\": \"relative_key must be less than positive infinity\"\n}",
           "type": "json"
         },
         {
           "title": "400 Too Much Averaging",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_request\",\n        \"error_description\": \"too much averaging\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_request\",\n  \"error_description\": \"too much averaging\"\n}",
           "type": "json"
         },
         {
           "title": "400 Unsafe Integer",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_request\",\n        \"error_description\": \"unsafe integer\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_request\",\n  \"error_description\": \"unsafe integer\"\n}",
           "type": "json"
         },
         {
           "title": "404 Key Not Found",
-          "content": "HTTP/1.1 404 Not Found\n{\n        \"error\": \"key_not_found\",\n        \"error_description\": \"relative key <relative_key> not found\"\n}",
+          "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"key_not_found\",\n  \"error_description\": \"relative key <relative_key> not found\"\n}",
           "type": "json"
         }
       ]
@@ -201,16 +201,16 @@ define({ "api": [
     "examples": [
       {
         "title": "cURL",
-        "content": "curl -X POST http://localhost:3000/queue/add_after\n            -H \"Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21\"\n           -d relative_key=0\n           -d new_song_id=3L3bIKIYIvzIsR6Obv2WB3",
-        "type": "curl"
+        "content": "curl -X POST http://localhost:3000/queue/add_after\n     -H \"Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21\"\n     -d relative_key=0\n     -d new_song_id=3L3bIKIYIvzIsR6Obv2WB3",
+        "type": "shell"
       },
       {
-        "title": "JavaScript (axios)",
-        "content": "axios.post('http://localhost:3000/queue/add_after', {\n    headers: {\n        'Authorization': 'Basic Yy3bxKIYIqzIsy6Oxv2W21'\n    },\n    params: {\n        relative_key: 0,\n        new_song_id: '3L3bIKIYIvzIsR6Obv2WB3'\n    }\n});",
+        "title": "Axios",
+        "content": "axios({\n  url: 'http://localhost:3000/queue/add_after',\n  method: 'post',\n  headers: {\n    'Authorization': 'Basic Yy3bxKIYIqzIsy6Oxv2W21'\n  }\n  params: {\n    relative_key: 0,\n    new_song_id: '3L3bIKIYIvzIsR6Obv2WB3'\n  }\n});",
         "type": "javascript"
       }
     ],
-    "version": "1.0.0",
+    "version": "0.1.1",
     "filename": "src/server.js",
     "groupTitle": "Queue"
   },
@@ -236,7 +236,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Authorization Header Example",
-          "content": "{\n        \"Authorization\": \"Bearer some_access_token\"\n}",
+          "content": "{\n  \"Authorization\": \"Bearer <access_token>\"\n}",
           "type": "json"
         }
       ]
@@ -290,27 +290,27 @@ define({ "api": [
       "examples": [
         {
           "title": "400 No Key",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_request\",\n        \"error_description\": \"key must be supplied\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_request\",\n  \"error_description\": \"key must be supplied\"\n}",
           "type": "json"
         },
         {
           "title": "400 Bad Key Type",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_type\",\n        \"error_description\": \"key must be a number\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_type\",\n  \"error_description\": \"key must be a number\"\n}",
           "type": "json"
         },
         {
           "title": "401 Invalid Access Token",
-          "content": "HTTP/1.1 401 Unauthorized\n{\n        \"error\": \"invalid_credentials\",\n        \"error_description\": \"authorization header or access token is invalid\"\n}",
+          "content": "HTTP/1.1 401 Unauthorized\n{\n  \"error\": \"invalid_credentials\",\n  \"error_description\": \"authorization header or access token is invalid\"\n}",
           "type": "json"
         },
         {
           "title": "400 Infinite Key",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_request\",\n        \"error_description\": \"key must be finite\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_request\",\n  \"error_description\": \"key must be finite\"\n}",
           "type": "json"
         },
         {
           "title": "404 Key Not Found",
-          "content": "HTTP/1.1 404 Not Found\n{\n        \"error\": \"key_not_found\",\n        \"error_description\": \"key <key> not found\"\n}",
+          "content": "HTTP/1.1 404 Not Found\n{\n  \"error\": \"key_not_found\",\n  \"error_description\": \"key <key> not found\"\n}",
           "type": "json"
         }
       ]
@@ -318,16 +318,16 @@ define({ "api": [
     "examples": [
       {
         "title": "cURL",
-        "content": "curl -X DELETE http://localhost:3000/queue/remove\n            -H \"Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21\"\n           -d key=0",
-        "type": "curl"
+        "content": "curl -X DELETE http://localhost:3000/queue/remove\n     -H \"Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21\"\n     -d key=0",
+        "type": "shell"
       },
       {
-        "title": "JavaScript (axios)",
-        "content": "axios.delete('http://localhost:3000/queue/remove', {\n    headers: {\n        'Authorization': 'Bearer Yy3bxKIYIqzIsy6Oxv2W21'\n    },\n    params: {\n        key: 0\n    }\n});",
+        "title": "Axios",
+        "content": "axios({\n  url: 'http://localhost:3000/queue/remove',\n  method: 'delete',\n  headers: {\n    'Authorization': 'Bearer Yy3bxKIYIqzIsy6Oxv2W21'\n  },\n  params: {\n    key: 0\n  }\n});",
         "type": "javascript"
       }
     ],
-    "version": "1.0.0",
+    "version": "0.1.1",
     "filename": "src/server.js",
     "groupTitle": "Queue"
   },
@@ -401,7 +401,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Success-Response",
-          "content": "HTTP/1.1 200 OK\n{\n       \"access_token\": \"BQCKsz5Dv...eSNUbbI6w\",\n       \"token_type\": \"Bearer\",\n       \"scope\": \"user-library-read user-library-modify\",\n       \"expires_in\": 3600,\n       \"refresh_token\": \"AQBYahCgx...Xa8msLnyA\",\n       \"psq_token\": \"Yy3bxKIYIqzIsy6Oxv2W21\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n \"access_token\": \"BQCKsz5Dv...eSNUbbI6w\",\n \"token_type\": \"Bearer\",\n \"scope\": \"user-library-read user-library-modify\",\n \"expires_in\": 3600,\n \"refresh_token\": \"AQBYahCgx...Xa8msLnyA\",\n \"psq_token\": \"Yy3bxKIYIqzIsy6Oxv2W21\"\n}",
           "type": "json"
         }
       ]
@@ -426,17 +426,17 @@ define({ "api": [
       "examples": [
         {
           "title": "400 No Code",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_request\",\n        \"error_description\": \"code must be supplied\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_request\",\n  \"error_description\": \"code must be supplied\"\n}",
           "type": "json"
         },
         {
           "title": "400 Invalid Code",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_grant\",\n        \"error_description\": \"Invalid authorization code\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_grant\",\n  \"error_description\": \"Invalid authorization code\"\n}",
           "type": "json"
         },
         {
           "title": "400 Expired Code",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_grant\",\n        \"error_description\": \"Authorization code expired\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_grant\",\n  \"error_description\": \"Authorization code expired\"\n}",
           "type": "json"
         }
       ]
@@ -444,16 +444,16 @@ define({ "api": [
     "examples": [
       {
         "title": "cURL",
-        "content": "curl -i http://localhost:3000/token\n           -d code=AQDk2ztJ3...qiNp9WCTI",
-        "type": "curl"
+        "content": "curl http://localhost:3000/token\n  -d code=AQDk2ztJ3...qiNp9WCTI",
+        "type": "shell"
       },
       {
-        "title": "JavaScript (axios)",
-        "content": "axios.get('http://localhost:3000/token', {\n    params: {\n        code: 'AQDk2ztJ3...qiNp9WCTI'\n    }\n});",
+        "title": "Axios",
+        "content": "axios({\n  url: 'http://localhost:3000/token',\n  method: 'get',\n  params: {\n    code: 'AQDk2ztJ3...qiNp9WCTI'\n  }\n});",
         "type": "javascript"
       }
     ],
-    "version": "1.0.0",
+    "version": "0.1.1",
     "filename": "src/server.js",
     "groupTitle": "SpotifyAuth"
   },
@@ -527,7 +527,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n        \"access_token\": \"CRDLt06Ew...fTOccJ7x\",\n        \"token_type\": \"Bearer\",\n        \"scope\": \"user-library-read user-library-modify\",\n        \"expires_in\": 3600,\n        \"refresh_token\": <new refresh token string, otherwise undefined>,\n        \"psq_token\": \"611lfexq082lfmex934\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"access_token\": \"CRDLt06Ew...fTOccJ7x\",\n  \"token_type\": \"Bearer\",\n  \"scope\": \"user-library-read user-library-modify\",\n  \"expires_in\": 3600,\n  \"refresh_token\": <new refresh token string, otherwise undefined>,\n  \"psq_token\": \"611lfexq082lfmex934\"\n}",
           "type": "json"
         }
       ]
@@ -552,12 +552,12 @@ define({ "api": [
       "examples": [
         {
           "title": "400 No PSQ Token",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_request\",\n        \"error_description\": \"psq_token must be supplied\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_request\",\n  \"error_description\": \"psq_token must be supplied\"\n}",
           "type": "json"
         },
         {
           "title": "400 Invalid PSQ Token",
-          "content": "HTTP/1.1 400 Bad Request\n{\n        \"error\": \"invalid_grant\",\n        \"error_description\": \"Invalid PSQ token\"\n}",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"error\": \"invalid_grant\",\n  \"error_description\": \"Invalid PSQ token\"\n}",
           "type": "json"
         }
       ]
@@ -565,16 +565,16 @@ define({ "api": [
     "examples": [
       {
         "title": "cURL",
-        "content": "curl -X POST http://localhost:3000/refresh\n           -d psq_token=Yy3bxKIYIqzIsy6Oxv2W21",
-        "type": "curl"
+        "content": "curl -X POST http://localhost:3000/refresh\n     -d psq_token=Yy3bxKIYIqzIsy6Oxv2W21",
+        "type": "shell"
       },
       {
-        "title": "JavaScript (axios)",
-        "content": "axios.post('http://localhost:3000/refresh', {\n    params: {\n        psq_token: 'Yy3bxKIYIqzIsy6Oxv2W21'\n    }\n});",
+        "title": "Axios",
+        "content": "axios({\n  url: 'http://localhost:3000/refresh',\n  method: 'post',\n  params: {\n    psq_token: 'Yy3bxKIYIqzIsy6Oxv2W21'\n  }\n});",
         "type": "javascript"
       }
     ],
-    "version": "1.0.0",
+    "version": "0.1.1",
     "filename": "src/server.js",
     "groupTitle": "SpotifyAuth"
   }
