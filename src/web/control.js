@@ -53,8 +53,7 @@ function toBoolean(arg) {
 }
 
 // server information
-const SERVER_PORT = 3000;
-const HOST = `http://localhost:${SERVER_PORT}`;
+const SERVER_URL = window.location.origin;
 // Spotify App Client Id
 const CLIENT_ID = "acd0f18a3e124101af31f9b3582130c6";
 // scopes required for controlling playback and streaming
@@ -139,7 +138,7 @@ $(document).ready(() => {
                 )
 
                 if (toBoolean(options.replace)) {
-                    window.location.replace(`${HOST}/`);
+                    window.location.replace(`${SERVER_URL}/`);
                 } else if (options.cb instanceof Function) {
                     options.cb(tokenData);
                 }
@@ -159,7 +158,7 @@ $(document).ready(() => {
             $("#user-control").append(
                 $("<button>Retry</button>").click((event) => {
                     if (event.button === 0) {
-                        window.location.replace(`${HOST}/`);
+                        window.location.replace(`${SERVER_URL}/`);
                     }
                 })
             );
@@ -207,7 +206,7 @@ $(document).ready(() => {
                     );
 
                     // go to main page, clears up any query parameters present in URL
-                    window.location.replace(`${HOST}/`);
+                    window.location.replace(`${SERVER_URL}/`);
                 }
             });
         }
@@ -246,7 +245,7 @@ $(document).ready(() => {
             let authURL = "https://accounts.spotify.com/authorize" +
                 `?client_id=${CLIENT_ID}` +
                 "&response_type=code" +
-                `&redirect_uri=${HOST}` +
+                `&redirect_uri=${SERVER_URL}` +
                 `&state=${state}` +
                 `&scope=${SCOPES.join("%20")}` +
                 `&show_dialog=false`;
