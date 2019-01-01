@@ -27,11 +27,11 @@ const spotifyApi = new SpotifyWebApi({});
 
 // if we're testing, modify SpotifyWebApi prototype functions to match testing environment
 if (process.env.TEST) {
-    spotifyApi.getTracks = (trackIds) => {
+    spotifyApi.getTrack = (trackId) => {
         return request.get({
-            uri: `${SPOTIFY_API_URL}/tracks`,
+            uri: `${SPOTIFY_API_URL}/track`,
             qs: {
-                ids: trackIds.join(',')
+                id: trackId
             },
             headers: {
                 "Authorization": `Bearer ${spotifyApi.getAccessToken()}`
@@ -630,15 +630,11 @@ app.post('/queue/add_after', async(serverRequest, serverResponse) => {
         params.relative_key = null;
     }
 
-    let trackData = await spotifyApi.getTracks([ params.new_song_id ]);
-    trackData = JSON.parse(trackData);
+    try {
+        let trackData = await spotifyApi.getTrack(params.new_song_id);
 
-    if (!trackData.tracks || trackData.tracks.includes(null)) {
-        serverResponse.status(404).json({
-            error: 'song_not_found',
-            error_description: `song ${params.new_song_id} not found`
-        });
-    } else {
+        trackData = trackData.body;
+
         try {
             let newKey = queue.getData().addAfter(params.relative_key, params.new_song_id);
 
@@ -654,6 +650,11 @@ app.post('/queue/add_after', async(serverRequest, serverResponse) => {
                 error_description: humps.decamelize(err.message)
             });
         }
+    } catch (err) {
+        serverResponse.status(404).json({
+            error: 'song_not_found',
+            error_description: `song ${params.new_song_id} not found`
+        });
     }
 });
 

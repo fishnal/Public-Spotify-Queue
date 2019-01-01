@@ -454,7 +454,7 @@ mockApp.get('/api/me', (mockRequest, mockResponse) => {
     mockResponse.status(200).json({ id: 'fishnal' });
 });
 
-mockApp.get('/api/tracks', (mockRequest, mockResponse) => {
+mockApp.get('/api/track', (mockRequest, mockResponse) => {
     let queries = mockRequest.query || {};
     let headers = mockRequest.headers || {};
 
@@ -474,11 +474,11 @@ mockApp.get('/api/tracks', (mockRequest, mockResponse) => {
                 message: 'Invalid access token'
             }
         });
-    } else if (!queries['ids']) {
+    } else if (!queries['id'] || /^song_id_\d+$/.test(queries['id']) === false) {
         mockResponse.status(400).json({
             error: {
                 status: 400,
-                message: 'invalid id'
+                message: 'Invalid id'
             }
         });
     }
@@ -487,17 +487,7 @@ mockApp.get('/api/tracks', (mockRequest, mockResponse) => {
         return;
     }
 
-    let ids = queries['ids'].split(',');
-    let resp = { tracks: [] };
+    let id = queries['id'];
 
-    ids.forEach((id) => {
-        if (/^song_id_\d+$/.exec(id)) {
-            // matched the id, so let's say this has some data
-            resp.tracks.push({ id });
-        } else {
-            resp.tracks.push(null);
-        }
-    });
-
-    mockResponse.status(200).json(resp);
+    mockResponse.status(200).json({id});
 });
