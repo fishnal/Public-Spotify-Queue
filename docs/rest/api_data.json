@@ -79,14 +79,14 @@
             "type": "number",
             "optional": false,
             "field": "relative_key",
-            "description": "<p>the key of the song to add after</p>"
+            "description": "<p>the key of the song to add after (null to add it before the first song in the queue)</p>"
           },
           {
             "group": "Parameter",
             "type": "string",
             "optional": false,
             "field": "new_song_id",
-            "description": "<p>the Spotify track id of the new song to add (null to add it before the first song in the queue)</p>"
+            "description": "<p>the Spotify track id of the new song to add</p>"
           }
         ]
       }
