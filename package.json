@@ -1,54 +1,55 @@
 {
-	"name": "public-spotify-queue",
-	"description": "Allows Spotify users to broadcast not only their current listening song, but as well as their queues",
-	"contributors": [
-		"Vishal Patel",
-		"Brian Park"
-	],
-	"license": "MIT",
-	"version": "0.1.0",
-	"dependencies": {
-		"body-parser": "^1.18.3",
-		"commander": "^2.19.0",
-		"express": "^4.16.3",
-		"humps": "^2.0.1",
-		"js-cookie": "^2.2.0",
-		"mochawesome": "^3.0.3",
-		"query-string": "^6.1.0",
-		"request": "^2.87.0",
-		"request-promise-native": "^1.0.5",
-		"socket.io": "^2.1.1",
-		"spotify-web-api-node": "^4.0.0",
-		"sprintf-js": "^1.1.1"
-	},
-	"scripts": {
-		"start": "node ./index.js --config production.conf",
-		"start:conf": "node ./index.js --config",
-		"start:raw": "node ./index.js",
-		"start:watch": "nodemon ./index.js",
-		"test": "cross-env TEST_SERVER=\"http://localhost\" TEST_PORT=5000 TEST=true CLIENT_ID=id CLIENT_SECRET=secret mocha --reporter mochawesome ./test/skiplist.test.js ./test/mockserver.test.js ./test/server.test.js"
-	},
-	"devDependencies": {
-		"cross-env": "^5.2.0",
-		"mocha": "^5.2.0",
-		"nodemon": "^1.18.9",
-		"should": "^13.2.3"
-	},
-	"apidoc": {
-		"name": "Public Spotify Queue",
-		"description": "REST API endpoints for Public Spotify Queue",
-		"title": "Public Spotify Queue API",
-		"version": "0.1.1",
-		"order": [
-			"Client",
-			"GetHome",
-			"GetIndex",
-			"SpotifyAuth",
-			"GetTokens",
-			"RefreshToken",
-			"Queue",
-			"AddAfter",
-			"RemoveSong"
-		]
-	}
+  "name": "public-spotify-queue",
+  "description": "Allows Spotify users to broadcast not only their current listening song, but as well as their queues",
+  "contributors": [
+    "Vishal Patel",
+    "Brian Park"
+  ],
+  "license": "MIT",
+  "version": "0.1.0",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "commander": "^2.19.0",
+    "express": "^4.16.3",
+    "humps": "^2.0.1",
+    "js-cookie": "^2.2.0",
+    "mochawesome": "^3.0.3",
+    "query-string": "^6.1.0",
+    "request": "^2.87.0",
+    "request-promise-native": "^1.0.5",
+    "socket.io": "^2.1.1",
+    "spotify-web-api-node": "^4.0.0",
+    "sprintf-js": "^1.1.1"
+  },
+  "scripts": {
+    "start": "node ./index.js --config production.conf",
+    "start:conf": "node ./index.js --config",
+    "start:raw": "node ./index.js",
+    "start:watch": "nodemon ./index.js",
+    "test": "npm run test:file -- ./test/skiplist.test.js ./test/mockserver.test.js ./test/server.test.js",
+    "test:file": "cross-env TEST_SERVER=\"http://localhost\" TEST_PORT=5000 TEST=true CLIENT_ID=id CLIENT_SECRET=secret mocha --reporter mochawesome"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.9",
+    "should": "^13.2.3"
+  },
+  "apidoc": {
+    "name": "Public Spotify Queue",
+    "description": "REST API endpoints for Public Spotify Queue",
+    "title": "Public Spotify Queue API",
+    "version": "0.1.1",
+    "order": [
+      "Client",
+      "GetHome",
+      "GetIndex",
+      "SpotifyAuth",
+      "GetTokens",
+      "RefreshToken",
+      "Queue",
+      "AddAfter",
+      "RemoveSong"
+    ]
+  }
 }

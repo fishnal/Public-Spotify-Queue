@@ -179,7 +179,7 @@ describe('Host Server', async function() {
                 return request.post({
                     uri: `${hostURL}/queue/add_after`,
                     headers: _test.args.headers || {},
-                    qs: { relative_key: 2, new_song_id: 'song_id_1' }
+                    qs: { relative_key: 2, new_song_id: 'foobar' }
                 });
             }
 
@@ -214,7 +214,7 @@ describe('Host Server', async function() {
                 return request.post({
                     uri: `${hostURL}/queue/add_after`,
                     headers: _test.args.headers || {},
-                    qs: { relative_key: "null", new_song_id: 'song_id_1' }
+                    qs: { relative_key: "null", new_song_id: 'foobar' }
                 });
             }
 

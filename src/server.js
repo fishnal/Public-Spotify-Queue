@@ -488,9 +488,9 @@ function authQueueAccess(token) {
  *   {
  *     "Authorization": "Bearer <access_token>"
  *   }
- * @apiParam {number} relative_key the key of the song to add after
- * @apiParam {string} new_song_id the Spotify track id of the new song to add (null to add it before
+ * @apiParam {number} relative_key the key of the song to add after (null to add it before
  * the first song in the queue)
+ * @apiParam {string} new_song_id the Spotify track id of the new song to add
  *
  * @apiSuccess (200) {number} new_key the key of the newly added song
  *
@@ -570,7 +570,7 @@ function authQueueAccess(token) {
  *
  * @apiExample {shell} cURL
  * curl -X POST http://localhost:3000/queue/add_after
- *      -H "Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21"
+ *      -H "Authorization: Bearer Yy3bxKIYIqzIsy6Oxv2W21"
  *      -d relative_key=0
  *      -d new_song_id=3L3bIKIYIvzIsR6Obv2WB3
  * @apiExample {javascript} Axios
@@ -578,7 +578,7 @@ function authQueueAccess(token) {
  *   url: 'http://localhost:3000/queue/add_after',
  *   method: 'post',
  *   headers: {
- *     'Authorization': 'Basic Yy3bxKIYIqzIsy6Oxv2W21'
+ *     'Authorization': 'Bearer Yy3bxKIYIqzIsy6Oxv2W21'
  *   }
  *   params: {
  *     relative_key: 0,
@@ -631,9 +631,17 @@ app.post('/queue/add_after', async(serverRequest, serverResponse) => {
     }
 
     try {
-        let trackData = await spotifyApi.getTrack(params.new_song_id);
+        // if the id is a Spotify track URI, then extract it's track id
+        let uriExtractor = /^spotify:track:(?<uriTrackId>[A-Za-z0-9]+)$/.exec(params.new_song_id);
 
-        trackData = trackData.body;
+        if (uriExtractor) {
+            // it matched the spotify track uri regex, so extract the track id from the uri and use that
+            // as the new song id
+            params.new_song_id = uriExtractor.groups['uriTrackId'];
+        }
+
+        let trackData = await spotifyApi.getTrack(params.new_song_id);
+        trackData = trackData.body; // this is here in case we ever need to use this data
 
         try {
             let newKey = queue.getData().addAfter(params.relative_key, params.new_song_id);
@@ -712,7 +720,7 @@ app.post('/queue/add_after', async(serverRequest, serverResponse) => {
  *
  * @apiExample {shell} cURL
  * curl -X DELETE http://localhost:3000/queue/remove
- *      -H "Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21"
+ *      -H "Authorization: Bearer Yy3bxKIYIqzIsy6Oxv2W21"
  *      -d key=0
  * @apiExample {javascript} Axios
  * axios({

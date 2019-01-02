@@ -474,7 +474,7 @@ mockApp.get('/api/track', (mockRequest, mockResponse) => {
                 message: 'Invalid access token'
             }
         });
-    } else if (!queries['id'] || /^song_id_\d+$/.test(queries['id']) === false) {
+    } else if (!queries['id'] || /^[A-Za-z0-9]+$/.test(queries['id']) === false) {
         mockResponse.status(400).json({
             error: {
                 status: 400,
