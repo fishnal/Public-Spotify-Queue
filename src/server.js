@@ -570,7 +570,7 @@ function authQueueAccess(token) {
  *
  * @apiExample {shell} cURL
  * curl -X POST http://localhost:3000/queue/add_after
- *      -H "Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21"
+ *      -H "Authorization: Bearer Yy3bxKIYIqzIsy6Oxv2W21"
  *      -d relative_key=0
  *      -d new_song_id=3L3bIKIYIvzIsR6Obv2WB3
  * @apiExample {javascript} Axios
@@ -578,7 +578,7 @@ function authQueueAccess(token) {
  *   url: 'http://localhost:3000/queue/add_after',
  *   method: 'post',
  *   headers: {
- *     'Authorization': 'Basic Yy3bxKIYIqzIsy6Oxv2W21'
+ *     'Authorization': 'Bearer Yy3bxKIYIqzIsy6Oxv2W21'
  *   }
  *   params: {
  *     relative_key: 0,
@@ -712,7 +712,7 @@ app.post('/queue/add_after', async(serverRequest, serverResponse) => {
  *
  * @apiExample {shell} cURL
  * curl -X DELETE http://localhost:3000/queue/remove
- *      -H "Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21"
+ *      -H "Authorization: Bearer Yy3bxKIYIqzIsy6Oxv2W21"
  *      -d key=0
  * @apiExample {javascript} Axios
  * axios({

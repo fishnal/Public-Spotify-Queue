@@ -56,8 +56,7 @@ function toBoolean(arg) {
 const SERVER_URL = window.location.origin;
 // Spotify App Client Id
 const CLIENT_ID = "acd0f18a3e124101af31f9b3582130c6";
-// scopes required for controlling playback and streaming
-// thru Spotify API
+// scopes required for controlling playback and streaming thru Spotify API
 const SCOPES = [
     "streaming",
     "user-modify-playback-state",
@@ -268,113 +267,6 @@ $(document).ready(() => {
             }
         });
     } else {
-        // only here if we have all tokens
-        let spotifyApi = new SpotifyWebApi();
-
-        spotifyApi.setAccessToken(tokens.access);
-
-        $("#user-control").append(
-            $("<p>Application authenticated!</p>").css("background-color", "green")
-        );
-
-        // starts/stops recording playback state
-        let recorderBtn = $("<button>Start recording</button>");
-        // displays a simplified playback state
-        let recorderText = $("<p>Not recording.</p>");
-        // whether or not we're processing playback state; this is used to avoid the
-        // current track progress from being displayed after the user requested to
-        // stop recording
-        let processingCurrentTrack = false;
-        // responsible for the current playing track interval
-        let currentTrackRecorder = null;
-        // approx interval time to get current playing track
-        let getInfoIntervalTime = 1000;
-        // gets the current playing track
-        let getCurrentTrack = () => {
-            if (!Cookies.get("access_token")) {
-                // access token cookie expired, time to get a new access token
-                refresh(tokens.psq, {
-                    cb: (req) => {
-                        spotifyApi.setAccessToken(tokens.access);
-                        // immediately get current track info, because maybe we lost time while we
-                        // were waiting for the access token to be refreshed
-                        getCurrentTrack();
-                        currentTrackRecorder = setInterval(getCurrentTrack, getInfoIntervalTime);
-                    },
-                    err: (req) => {
-                        $("#user-control").append(
-                            $("<p>An error occurred, see the console for details</p>")
-                        );
-                        console.log("Couldn't refresh the access token");
-                        console.log(req);
-                    }
-                });
-            } else {
-                // in the case where the access token cookie expires after the above check, we can
-                // still make a valid request with the current token in tokens.access because the
-                // cookie expires 4 minutes earlier than the actual access token
-
-                // processing current track
-                processingCurrentTrack = true;
-
-                spotifyApi.getMyCurrentPlayingTrack().then((stateData) => {
-                    let time = stateData["progress_ms"];
-                    // get mins and secs from ms time
-                    let mins = parseInt(time / 60000);
-                    let secs = parseInt((time - mins * 60000) / 1000);
-                    let track = stateData["item"];
-
-                    // record track name and time elapsed in song
-                    recorderText.text(sprintf("%s - [%d:%02d]", track.name, mins, secs));
-                }).catch((err) => {
-                    // TODO handle errors through error_handler#handleSpotifyError(req)
-                    recorderText.text("Couldn't get playback state, see console for details");
-                    console.log(err);
-                }).finally(() => {
-                    // no longer processing playback state
-                    processingCurrentTrack = false;
-                });
-            }
-        };
-
-        // html attribute indicating whether or not
-        // we're recording the playback state
-        recorderBtn.attr("is-recording", "false");
-        recorderBtn.click((event) => {
-            if (event.button === 0) {
-                // are we currently recording the current track progress?
-                let isRecording = toBoolean(recorderBtn.attr("is-recording"));
-
-                // flip the is-recording attribute, since we
-                // already have the original value
-                recorderBtn.attr("is-recording", !isRecording);
-
-                // if it's currently recording, stop the interval
-                if (isRecording) {
-                    // stop recording the state
-                    clearInterval(currentTrackRecorder);
-                    // wait for the current track to finish being processed
-                    let tmp = setInterval(() => {
-                        if (!processingCurrentTrack) {
-                            // current track has been processed
-                            clearInterval(tmp);
-                            recorderBtn.text("Start recording");
-                            recorderText.text("Not recording");
-                        }
-                    }, 100);
-                } else {
-                    recorderBtn.text("Stop recording");
-                    recorderText.text('Connecting...');
-                    // get the current track progress right now, then start the interval
-                    getCurrentTrack();
-                    // record the current track progress every set amt of ms
-                    currentTrackRecorder = setInterval(getCurrentTrack, getInfoIntervalTime);
-                }
-            }
-        });
-
-        // add elements to display
-        $("#user-control").append(recorderBtn);
-        $("#user-control").append(recorderText);
+        post_auth(tokens);
     }
 });
