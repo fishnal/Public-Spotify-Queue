@@ -32,4 +32,4 @@ module.exports = {
     isString,
     isNumber,
     isFunction
-}
+};

@@ -6,33 +6,41 @@
     "Brian Park"
   ],
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
     "body-parser": "^1.18.3",
     "commander": "^2.19.0",
     "express": "^4.16.3",
     "humps": "^2.0.1",
     "js-cookie": "^2.2.0",
     "mochawesome": "^3.0.3",
-    "query-string": "^6.1.0",
     "request": "^2.87.0",
     "request-promise-native": "^1.0.5",
-    "socket.io": "^2.1.1",
     "spotify-web-api-node": "^4.0.0",
     "sprintf-js": "^1.1.1"
   },
   "scripts": {
-    "start": "node ./index.js --config production.conf",
-    "start:conf": "node ./index.js --config",
-    "start:raw": "node ./index.js",
-    "start:watch": "nodemon ./index.js",
-    "test": "npm run test:file -- ./test/skiplist.test.js ./test/mockserver.test.js ./test/server.test.js",
-    "test:file": "cross-env TEST_SERVER=\"http://localhost\" TEST_PORT=5000 TEST=true CLIENT_ID=id CLIENT_SECRET=secret mocha --reporter mochawesome"
+    "clean": "rimraf node_modules",
+    "prebuild": "gulp makeBuildDir",
+    "build:js": "babel src/js --out-dir ./build/static/js --source-maps",
+    "build": "npm run build:js",
+    "prestart": "npm run build",
+    "start": "node ./build/static/js/index.js --config production.conf",
+    "test": "gulp test"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-react": "^7.0.0",
     "cross-env": "^5.2.0",
+    "gulp": "^4.0.0",
+    "gulp-mocha": "^6.0.0",
+    "mkdirp": "^0.5.1",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.9",
+    "react-dom": "^16.7.0",
     "should": "^13.2.3"
   },
   "apidoc": {

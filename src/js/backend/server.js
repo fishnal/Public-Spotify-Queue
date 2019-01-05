@@ -85,7 +85,7 @@ let queues = {};
  * @returns {Promise<void>} resolves after starting and performing startup post-startup operations,
  * rejects if an error is thrown.
  */
-module.exports.start = ({clientId, clientSecret, port, domain}) => {
+module.exports.start = function({clientId, clientSecret, port, domain}) {
     if (!clientId) throw new Error('no client id');
     else if (!clientSecret) throw new Error('no client secret');
 
@@ -142,7 +142,7 @@ module.exports.start = ({clientId, clientSecret, port, domain}) => {
  * @returns {Promise<void>} resolves after closing and performing cleanup operations, rejects if an
  * error is thrown
  */
-module.exports.close = () => {
+module.exports.close = function() {
     // TODO util.promsifiy?
     return new Promise((resolve, reject) => {
         try {
@@ -162,10 +162,11 @@ module.exports.close = () => {
  *
  * @returns {string} the redirect uri used
  */
-module.exports.getRedirectURI = () => SERVER_URL;
+module.exports.getRedirectURI = function() { return SERVER_URL; };
 
 // static files for the server
-app.use(express.static('src/web'));
+app.use('/public', express.static('./public'));
+app.use('/static', express.static('./build/static'));
 
 // for testing purposes only, ensures that #getClientCredentialsToken(callback) works
 app.get('/client_credentials', (serverRequest, serverResponse) => {
@@ -208,7 +209,7 @@ app.get('/client_credentials', (serverRequest, serverResponse) => {
  */
 app.get('/', (serverRequest, serverResponse) => {
     serverResponse.status(200);
-    serverResponse.sendFile('src/web/index.html', SEND_FILE_OPTS);
+    serverResponse.sendFile('public/html/index.html', SEND_FILE_OPTS);
 });
 
 /**

@@ -1,7 +1,9 @@
+require('@babel/polyfill');
 const commandArgs = require('commander');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
+const readline = require('readline');
 
 commandArgs.version('0.1.0', '-v|--version')
     .option('-c|--config <config file>', 'Configuration file that specifies any required and optional arguments')
@@ -62,10 +64,28 @@ commandArgs.version('0.1.0', '-v|--version')
         commandArgs.domain = 'http://' + commandArgs.domain;
     }
 
-    const server = require('./src/server.js');
+    const server = require('./backend/server.js');
 
     try {
         await server.start(commandArgs);
+
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        rl.on('close', async () => {
+            console.log('Stopping program');
+            await server.close();
+        });
+
+        rl.on('line', (cmd) => {
+            if (cmd === 'stop') {
+                rl.close();
+            } else {
+                console.log(`Unknown command ${cmd}`);
+            }
+        });
     } catch (err) {
         console.error(err.name);
         console.error(err.message);

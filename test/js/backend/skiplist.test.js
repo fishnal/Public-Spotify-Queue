@@ -1,8 +1,8 @@
 const fs = require('fs');
 require('should');
-const SkipList = require('./../src/skiplist.js');
+const SkipList = require('../../../src/js/backend/skiplist.js');
 
-const testData = JSON.parse(fs.readFileSync('test/skiplist.test.json'), (key, value) => {
+const testData = JSON.parse(fs.readFileSync(`${__dirname}/skiplist.test.json`), (key, value) => {
     if (value instanceof Array) {
         // replace stringy Infinity occurrences to their literal counterparts in the array
         value.forEach((elem, ind) => {

@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { isNumber } = require('./../src/utils.js');
+const { isNumber } = require('../../../src/js/backend/utils.js');
 
 /**
  * Returns a generator for mocking auth codes or tokens.

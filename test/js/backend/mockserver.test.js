@@ -8,9 +8,9 @@ const request = require('request-promise-native').defaults({
 });
 require('should');
 const mockServer = require('./mockserver.js');
-const { isString } = require('../src/utils.js');
+const { isString } = require('../../../src/js/backend/utils.js');
 
-const data = JSON.parse(fs.readFileSync('test/mockserver.test.json'), (key, value) => {
+const data = JSON.parse(fs.readFileSync(`${__dirname}/mockserver.test.json`), (key, value) => {
     // evaluate environment client id and client secret strings
     if (isString(value)) {
         value = value.replace('process.env.CLIENT_ID', process.env.CLIENT_ID);

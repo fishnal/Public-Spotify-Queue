@@ -3,5 +3,7 @@
 *.conf
 !.gitignore
 !.eslint*
+!.babelrc
 node_modules/
-mochawesome-report/*
+docs/mocha-report/*
+build/
