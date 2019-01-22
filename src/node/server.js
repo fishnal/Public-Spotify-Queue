@@ -166,7 +166,7 @@ module.exports.getRedirectURI = function() { return SERVER_URL; };
 
 // static files for the server
 app.use('/public', express.static('./public'));
-app.use('/static', express.static('./build/static'));
+app.use('/build', express.static('./build'));
 
 // for testing purposes only, ensures that #getClientCredentialsToken(callback) works
 app.get('/client_credentials', (serverRequest, serverResponse) => {

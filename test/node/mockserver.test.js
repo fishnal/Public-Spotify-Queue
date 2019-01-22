@@ -8,7 +8,7 @@ const request = require('request-promise-native').defaults({
 });
 require('should');
 const mockServer = require('./mockserver.js');
-const { isString } = require('../../../src/js/backend/utils.js');
+const { isString } = require('../../src/node/utils.js');
 
 const data = JSON.parse(fs.readFileSync(`${__dirname}/mockserver.test.json`), (key, value) => {
     // evaluate environment client id and client secret strings

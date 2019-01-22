@@ -1,4 +1,4 @@
-require('@babel/polyfill');
+require("babel-polyfill");
 const commandArgs = require('commander');
 const fs = require('fs');
 const path = require('path');
@@ -64,7 +64,7 @@ commandArgs.version('0.1.0', '-v|--version')
         commandArgs.domain = 'http://' + commandArgs.domain;
     }
 
-    const server = require('./backend/server.js');
+    const server = require('./server.js');
 
     try {
         await server.start(commandArgs);

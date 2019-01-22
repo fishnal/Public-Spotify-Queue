@@ -5,9 +5,9 @@ const request = require('request-promise-native').defaults({
     timeout: process.env.TEST ? null : 2000
 });
 const should = require('should');
-const hostServer = require('../../../src/js/backend/server.js');
+const hostServer = require('../../src/node/server.js');
 const mockServer = require('./mockserver.js');
-const { isString } = require('../../../src/js/backend/utils.js');
+const { isString } = require('../../src/node/utils.js');
 
 const data = JSON.parse(fs.readFileSync(`${__dirname}/server.test.json`), (key, value) => {
     // read in file foo if marked by '${foo}'

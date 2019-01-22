@@ -1,4 +1,6 @@
 .*
+\#*#
+/**/*~
 *.pem
 *.conf
 !.gitignore

@@ -1,6 +1,6 @@
 const fs = require('fs');
 require('should');
-const SkipList = require('../../../src/js/backend/skiplist.js');
+const SkipList = require('../../src/node/skiplist.js');
 
 const testData = JSON.parse(fs.readFileSync(`${__dirname}/skiplist.test.json`), (key, value) => {
     if (value instanceof Array) {
