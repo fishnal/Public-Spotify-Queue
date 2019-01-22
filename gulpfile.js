@@ -77,7 +77,6 @@ gulp.task('sass', async(done) => {
     file: './src/styles/_main.scss',
     outFile: './build/main.css',
     sourceMap: './build/main.css.map',
-    sourceMapRoot: './src/styles',
     sourceComments: true
   };
 
