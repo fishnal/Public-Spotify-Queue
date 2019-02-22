@@ -2,10 +2,9 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import * as SpotifyWebApiExport from 'spotify-web-api-js';
 import * as Cookies from 'js-cookie';
-import { sprintf } from 'sprintf-js';
-import * as axios from 'axios';
-import RecorderText from './RecorderText';
+import TrackDisplay from './TrackDisplay';
 import RecorderButton from './RecorderButton';
+import * as PSQProps from '../../props/psq';
 
 // approx interval time to get current playing track
 const playbackIntervalTime = 1000;
@@ -20,9 +19,10 @@ export default class Recorder extends React.Component {
       tokens: this.props.tokens,
       spotifyApi: new SpotifyWebApi(),
       isRecording: false,
-      text: 'Not recording right now.'
+      displayData: 'Not recording right now'
     };
 
+    this.state.spotifyApi.setAccessToken(this.state.tokens.access);
     this.getCurrentTrack = this.getCurrentTrack.bind(this);
     this.handlePlaybackInfo = this.handlePlaybackInfo.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -35,10 +35,10 @@ export default class Recorder extends React.Component {
 
     return new Promise(function(resolve, reject) {
       if (!Cookies.get('access_token')) {
-        _this.props.refresh(this.state.tokens.psq_token).then(function(resp) {
+        _this.props.refresh(_this.state.tokens.psq_token).then(function(resp) {
           // TODO state here seems skeptical; this resolve callback should be called
           // after setState in the refresh function has completed
-          spotifyApi.setAccessToken(this.state.tokens.access);
+          spotifyApi.setAccessToken(_this.state.tokens.access);
           _this.getCurrentTrack().then(resolve).catch(reject);
         }).catch(function(err) {
           err.isRefreshErr = true;
@@ -54,7 +54,7 @@ export default class Recorder extends React.Component {
     if (!this.state.isRecording) {
       this.setState({
         ...this.state,
-        text: 'Not recording right now'
+        displayData: 'Not recording right now'
       });
 
       return;
@@ -63,36 +63,28 @@ export default class Recorder extends React.Component {
     let _this = this;
 
     let resolveCB = function(playbackData) {
-      let time = Math.max(playbackData['progress_ms'], 0);
-      // get mins and secs from ms time
-      let mins = parseInt(time / 60000);
-      let secs = parseInt((time - mins * 60000) / 1000);
-      let track = playbackData["item"];
-      // parse track name and time elapsed
-      let text = sprintf('%s - [%d:%02d]', track.name, mins, secs);
-
       _this.setState({
         ..._this.state,
-        text
+        displayData: playbackData
       });
     };
 
     let rejectCB = function(err) {
       // TODO properly handle errors here
-      let text = null;
+      let displayData = null;
 
       if (err.isRefreshErr) {
         // error was produced from attempting to refresh our access token
         // TODO display status code and error description here
-        text = `Couldn't refresh access token\n${err}`;
+        displayData = `Couldn't refresh access token\n${err}`;
       } else {
-        text = `Couldn't get playback information\n${err}`;
+        displayData = `Couldn't get playback information\n${err}`;
       }
 
       console.error(err);
       _this.setState({
         ..._this.state,
-        text,
+        displayData,
         err
       });
     };
@@ -117,38 +109,32 @@ export default class Recorder extends React.Component {
       this.setState({
         ...this.state,
         isRecording: false,
-        text: 'Not recording right now'
+        displayData: 'Not recording right now'
       });
     } else {
       // start recording
       this.setState({
         ...this.state,
         isRecording: true,
-        text: 'Connecting...'
+        displayData: 'Connecting...'
       }, this.handlePlaybackInfo);
     }
   }
 
   render() {
-    let { tokens, spotifyApi, isRecording, text } = this.state;
-
-    spotifyApi.setAccessToken(tokens.access);
+    let { isRecording, displayData } = this.state;
 
     return (
     <div>
       <p className="success">Application authenticated!</p>
       <RecorderButton onClick={this.onClick} isRecording={isRecording} />
-      <RecorderText text={text} err={this.state.err} />
+      <TrackDisplay displayData={displayData} err={this.state.err} />
     </div>
     );
   }
 }
 
 Recorder.propTypes = {
-  tokens: PropTypes.shape({
-    access: PropTypes.string,
-    refresh: PropTypes.string,
-    psq: PropTypes.string
-  }).isRequired,
+  tokens: PSQProps.Tokens.isRequired,
   refresh: PropTypes.func.isRequired
 };

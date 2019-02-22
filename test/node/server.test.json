@@ -346,7 +346,7 @@
       },
       {
         "title": "(400) too much averaging (too much inserting)",
-        "test_id": "/queue/add_after/average_error",
+        "test_id": "/api/queue/add_after/average_error",
         "args": {
           "headers": {
             "Authorization": "Bearer fishnal;1;1;1"
@@ -362,7 +362,7 @@
       },
       {
         "title": "(400) unsafe integer (too much appending)",
-        "test_id": "/queue/add_after/unsafe_integer_error",
+        "test_id": "/api/queue/add_after/unsafe_integer_error",
         "args": {
           "headers": {
             "Authorization": "Bearer fishnal;1;1;1"

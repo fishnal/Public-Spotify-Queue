@@ -18,7 +18,7 @@ define({ "api": [
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "Client"
   },
   {
@@ -41,7 +41,7 @@ define({ "api": [
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "Client"
   },
   {
@@ -211,7 +211,7 @@ define({ "api": [
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "Queue"
   },
   {
@@ -328,7 +328,7 @@ define({ "api": [
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "Queue"
   },
   {
@@ -454,7 +454,7 @@ define({ "api": [
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "SpotifyAuth"
   },
   {
@@ -575,7 +575,7 @@ define({ "api": [
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "SpotifyAuth"
   }
 ] });

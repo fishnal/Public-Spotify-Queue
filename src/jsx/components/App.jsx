@@ -9,6 +9,7 @@ import FailedRefresh from './errors/FailedRefresh';
 import Authorizer from './Authorizer';
 import Loading from './Loading';
 import Recorder from './recorder/Recorder';
+import * as PSQProps from '../props/psq';
 import { getServerURL, randString } from './../utils';
 
 const CLIENT_ID = 'acd0f18a3e124101af31f9b3582130c6';
@@ -49,7 +50,7 @@ export default class App extends React.Component {
     let _this = this;
 
     return new Promise(function(resolve, reject) {
-      axios.post(`/refresh?psq_token=${tokens.psq}`).then(function(resp) {
+      axios.post(`/api/refresh?psq_token=${tokens.psq}`).then(function(resp) {
         let { data } = resp;
 
         // store access and refresh tokens in cookies
@@ -84,7 +85,7 @@ export default class App extends React.Component {
     let _this = this;
 
     return new Promise(function(resolve, reject) {
-      axios.get(`/token?code=${code}`).then(function(resp) {
+      axios.get(`/api/token?code=${code}`).then(function(resp) {
         let { data } = resp;
 
         // store access and refresh tokens in cookies
@@ -214,9 +215,5 @@ App.propTypes = {
   code: PropTypes.string,
   queryState: PropTypes.string,
   error: PropTypes.string,
-  tokens: PropTypes.shape({
-    access: PropTypes.string,
-    refresh: PropTypes.string,
-    psq: PropTypes.string
-  }).isRequired
+  tokens: PSQProps.Tokens.isRequired
 };

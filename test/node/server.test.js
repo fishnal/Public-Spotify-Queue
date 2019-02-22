@@ -128,12 +128,12 @@ describe('Host Server', async function() {
         }
     }
 
-    describe('/token', function() {
+    describe('/api/token', function() {
         data['token'].forEach(function(_test) {
             it(_test.title, async function() {
                 try {
                     handleRequest(_test, await request({
-                        uri: `${hostURL}/token`,
+                        uri: `${hostURL}/api/token`,
                         qs: _test.args.queries || {}
                     }));
                 } catch (err) {
@@ -143,12 +143,12 @@ describe('Host Server', async function() {
         });
     });
 
-    describe('/refresh', function() {
+    describe('/api/refresh', function() {
         data['refresh'].forEach(function(_test) {
             it(_test.title, async function() {
                 try {
                     handleRequest(_test, await request.post({
-                        uri: `${hostURL}/refresh`,
+                        uri: `${hostURL}/api/refresh`,
                         qs: _test.args.queries || {}
                     }));
                 } catch (err) {
@@ -158,11 +158,11 @@ describe('Host Server', async function() {
         });
     });
 
-    describe('/client_credentials', function() {
+    describe('/api/client_credentials', function() {
         data['client_credentials'].forEach(function(_test) {
             it(_test.title, async function() {
                 try {
-                    handleRequest(_test, await request(`${hostURL}/client_credentials`));
+                    handleRequest(_test, await request(`${hostURL}/api/client_credentials`));
                 } catch (err) {
                     handleRequest(_test, err);
                 }
@@ -170,14 +170,14 @@ describe('Host Server', async function() {
         });
     });
 
-    describe('/queue', function() {
+    describe('/api/queue', function() {
         let queueTests = data['queue'];
         let specialTests = {};
 
         async function avgError(_test) {
             function testLocalRequest() {
                 return request.post({
-                    uri: `${hostURL}/queue/add_after`,
+                    uri: `${hostURL}/api/queue/add_after`,
                     headers: _test.args.headers || {},
                     qs: { relative_key: 2, new_song_id: 'foobar' }
                 });
@@ -212,7 +212,7 @@ describe('Host Server', async function() {
 
             function testLocalRequest() {
                 return request.post({
-                    uri: `${hostURL}/queue/add_after`,
+                    uri: `${hostURL}/api/queue/add_after`,
                     headers: _test.args.headers || {},
                     qs: { relative_key: "null", new_song_id: 'foobar' }
                 });
@@ -245,8 +245,8 @@ describe('Host Server', async function() {
             }
         }
 
-        specialTests['/queue/add_after/average_error'] = avgError;
-        specialTests['/queue/add_after/unsafe_integer_error'] = unsafeIntError;
+        specialTests['/api/queue/add_after/average_error'] = avgError;
+        specialTests['/api/queue/add_after/unsafe_integer_error'] = unsafeIntError;
 
         function promisify(fn, ...args) {
             return new Promise(function(resolve, reject) {
@@ -258,7 +258,7 @@ describe('Host Server', async function() {
             });
         }
 
-        describe('/add_after', function() {
+        describe('/api/add_after', function() {
             queueTests['add_after'].forEach(function(_test) {
                 it(_test.title, async function() {
                     if (_test.test_id) {
@@ -269,7 +269,7 @@ describe('Host Server', async function() {
                     async function queueAddAfterRequest(_test) {
                         try {
                             handleRequest(_test, await request.post({
-                                uri: `${hostURL}/queue/add_after`,
+                                uri: `${hostURL}/api/queue/add_after`,
                                 headers: _test.args.headers || {},
                                 qs: _test.args.queries || {}
                             }));
@@ -302,12 +302,12 @@ describe('Host Server', async function() {
             });
         });
 
-        describe('/remove', function() {
+        describe('/api/remove', function() {
             queueTests['remove'].forEach(function(_test) {
                 it(_test.title, async function() {
                     try {
                         handleRequest(_test, await request.delete({
-                            uri: `${hostURL}/queue/remove`,
+                            uri: `${hostURL}/api/queue/remove`,
                             headers: _test.args.headers || {},
                             qs: _test.args.queries || {}
                         }))

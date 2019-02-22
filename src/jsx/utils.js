@@ -55,3 +55,23 @@ export function toBoolean(arg) {
 export function getServerURL() {
   return window.location.origin;
 }
+
+/**
+ * Inserts an element between every pair of elements in an array. If the array has 1 or fewer
+ * elements, then the same array is returned.
+ *
+ * @param {Array} arr the array
+ * @param {any} x the element to insert
+ * @return {Array}
+ */
+export function insertBetween(arr, x) {
+  if (arr.length <= 1) return arr;
+
+  let inserted = arr.reduce((acc, e) => [ ...acc, e, x ], []);
+
+  if (inserted.length > 0) {
+    inserted.pop();
+  }
+
+  return inserted;
+}

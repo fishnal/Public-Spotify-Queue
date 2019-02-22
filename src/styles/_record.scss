@@ -1,0 +1,77 @@
+// Mobile view
+.trackDisplay {
+  margin-top: 20px;
+  height: 400px;
+  display: grid;
+  grid-template-columns: 220px 80px;
+  grid-template-rows: 300px 2fr 1fr 1fr;
+  grid-row-gap: 10px;
+}
+
+.cover, .track, .time, .artist, .album {
+  grid-row-end: span 1;
+  grid-column: 1 / span 2;
+
+  > p,a {
+    margin: 0px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  > a:hover {
+    text-decoration-line: underline;
+    text-decoration-color: black;
+  }
+}
+
+.cover {
+  grid-row-start: 1;
+  grid-column: 1 / span 1;
+  max-height: 300px;
+  max-width: 300px;
+}
+
+.track {
+  grid-row-start: 2;
+  grid-column: 1 / span 1;
+
+  > a {
+    font-size: 20px;
+  }
+}
+
+.time {
+  grid-row-start: 2;
+  grid-column: 2 / span 1;
+
+  > p {
+    font-size: 20px;
+    text-align: right;
+    justify-content: center;
+  }
+}
+
+.artist {
+  grid-row-start: 3;
+
+  > a {
+    font-size: 14px;
+  }
+}
+
+.album {
+  grid-row-start: 4;
+
+  > a {
+    font-size: 14px;
+  }
+}
+
+// Desktop view
+/* @media (min-width: 768px) {
+  .trackDisplay {
+    grid-template-columns: 300px 1fr;
+    grid-column-gap: 20px;
+    grid-template-rows: 300px;
+  }
+} */

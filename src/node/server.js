@@ -167,29 +167,29 @@ module.exports.getRedirectURI = function() { return SERVER_URL; };
 // static files for the server
 app.use('/public', express.static('./public'));
 app.use('/build', express.static('./build'));
+app.use('/api', express.static('docs/rest'));
+app.use('/src/styles', express.static('src/styles'));
 
 // for testing purposes only, ensures that #getClientCredentialsToken(callback) works
-app.get('/client_credentials', (serverRequest, serverResponse) => {
-    if (!process.env.TEST) {
-        serverResponse.status(403).end();
-    }
+if (process.env.TEST) {
+    app.get('/api/client_credentials', (serverRequest, serverResponse) => {
+        if (serverResponse.finished) {
+            return;
+        }
 
-    if (serverResponse.finished) {
-        return;
-    }
-
-    getClientCredentialsToken().then((tokenResponse) => {
-        tokenResponse = JSON.parse(tokenResponse);
-        tokenResponse.psq_token = Buffer
-            .from(`;${tokenResponse.access_token};;${Date.now()}`)
-            .toString('base64');
-        serverResponse.status(200).send(tokenResponse);
-        // update spotify api wrapper's token
-        spotifyApi.setAccessToken(tokenResponse.access_token);
-    }).catch((tokenErr) => {
-        serverResponse.status(400).send(tokenErr);
+        getClientCredentialsToken().then((tokenResponse) => {
+            tokenResponse = JSON.parse(tokenResponse);
+            tokenResponse.psq_token = Buffer
+                .from(`;${tokenResponse.access_token};;${Date.now()}`)
+                .toString('base64');
+            serverResponse.status(200).send(tokenResponse);
+            // update spotify api wrapper's token
+            spotifyApi.setAccessToken(tokenResponse.access_token);
+        }).catch((tokenErr) => {
+            serverResponse.status(400).send(tokenErr);
+        });
     });
-});
+}
 
 // ==================================================================
 //                          CLIENT ENDPOINTS
@@ -298,7 +298,7 @@ app.get('/index.html', (serverRequest, serverResponse) => {
  *
  * @apiVersion 0.1.1
  */
-app.get('/token', (serverRequest, serverResponse) => {
+app.get('/api/token', (serverRequest, serverResponse) => {
     let queries = serverRequest.query;
 
     // make POST request to get access token
@@ -401,7 +401,7 @@ app.get('/token', (serverRequest, serverResponse) => {
  *
  * @apiVersion 0.1.1
  */
-app.post('/refresh', (serverRequest, serverResponse) => {
+app.post('/api/refresh', (serverRequest, serverResponse) => {
     let psqToken = serverRequest.query['psq_token'];
     let parsedToken = Buffer.from(psqToken || '', 'base64').toString().split(';');
 
@@ -589,7 +589,7 @@ function authQueueAccess(token) {
  *
  * @apiVersion 0.1.1
  */
-app.post('/queue/add_after', async(serverRequest, serverResponse) => {
+app.post('/api/queue/add_after', async(serverRequest, serverResponse) => {
     let headers = serverRequest.headers;
     let params = serverRequest.query;
 
@@ -737,7 +737,7 @@ app.post('/queue/add_after', async(serverRequest, serverResponse) => {
  *
  * @apiVersion 0.1.1
  */
-app.delete('/queue/remove', (serverRequest, serverResponse) => {
+app.delete('/api/queue/remove', (serverRequest, serverResponse) => {
     let headers = serverRequest.headers;
     let params = serverRequest.query;
     let queue = authQueueAccess(headers['authorization']);

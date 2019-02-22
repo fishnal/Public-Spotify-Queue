@@ -12,7 +12,7 @@ const options = {
     publicUrl: process.env.PUBLIC_URL || '/build',
     outDir: './build',
     outFile: 'bundle.js',
-    minify: true,
+    minify: false,
     watch: commandArgs.watch || false
 };
 

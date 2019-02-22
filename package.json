@@ -10,7 +10,7 @@
     "Brian Park"
   ],
   "license": "MIT",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "axios": "^0.18.0",
@@ -71,9 +71,9 @@
   },
   "nodemonConfig": {
     "watch": [
-      "./src",
-      "./public",
-      "./parcel.config.js",
+      "./src/**",
+      "./public/**",
+      "parcel.config.js",
       ".babelrc"
     ]
   },
