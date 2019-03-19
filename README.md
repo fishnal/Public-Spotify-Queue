@@ -21,20 +21,32 @@
 	clientSecret=bazqaz
 	```
 6. Run `npm start`*
-7. Go to http://localhost:3000 (or whatever address your registered)
+7. Go to http://localhost:3000 (or whatever address you registered)
 8. After the page loads, click the `Authorize` button. Should be straight forward from this point
     + If the authorization was not complete, make sure you actually authorize the application and
-      you don't take too long to authorize it (read the [authorization process(#auth-proc) to see
+      you don't take too long to authorize it (read the [authorization process](#auth-proc) to see
       why)
     + Try clearing your cookies (just for this local domain)
     + If there is still an issue authorizing, open an issue with any console output, steps taken to
       reproduce the issue, as well as your web browser, version, and any command line arguments you
       used (excluding your Spotify application credentials)
 
-\* Could also run `npm run start:conf <your_settings.conf>` or `npm run start:raw <your_args>` if
-you want to specify your own [arguments](#arguments)
+## <a id="npm-scripts"></a> Additional NPM Scripts
 
-## <a id="arguments"></a> Program Arguments
+There are a couple of other npm scripts that you can run:
++ `clean`: cleans the project directory, removing build files and temporary files. See the `gulp`
+script for it's implementation
++ `build`: builds the project, bundling jsx and styles into their own, respective files
++ `dev`: development script that watches both frontend and backend source directories. Watched
+directories and files include:
+	+ `src/`
+	+ `public/`
+	+ `parcel.config.js`
+	+ `.babelrc`
++ `start`: runs the application as if it were in production mode
++ `test`: runs all test scripts, as specified by the `gulp` script
+
+## <a id="arguments"></a> Command Line Arguments
 
 There are five arguments, two of which are required:
 
@@ -77,17 +89,20 @@ These tests don't require a valid client id or secret provided by a Spotify deve
 
 ## Files
 
++ [deprecated/](./deprecated/) contains old, deprecated code for the "public queue" idea, currently being refactored
 + [design/](./design/) contains design docs for most of the implemented/future features for the project
-+ [docs/](./docs/) contains documentation for the source code useful for development (currently only has RESTful documentation)
++ [docs/](./docs/) contains documentation for the source code useful for development.
 	+ [rest/](./design/rest/) RESTful API documentation for `server.js`
 + [src/](./src/) contains main source code
-	+ [deprecated/](./src/deprecated/) contains old, deprecated code for the "public queue" idea, currently being refactored
-	+ [web/](./src/web/) contains front-end code
-		+ [deps/](./src/web/deps/) contains any dependencies that are needed for the frontend (should be ported to some sort of frontend package manager like Yarn)
-		+ [control.js](./src/web/control.js) frontend scripting and communicates with backend server
-		+ [index.html](./src/web/index.html) homepage
-		+ [favicon.ico](./src/web/favicon.ico) website icon (temporary at the moment)
-	+ [server.js](./src/server.js) the backend server; it hosts the website, controls authorization and access token retrieval processes
-	+ [skiplist.js](./src/skiplist.js) skiplist implementation, used internally on the server
-	+ [utils.js](./src/utils.js) small set of utility functions
-+ [index.js](./index.js) what `npm` uses to start the server
+	+ [jsx/](./src/jsx/) contains frontend code
+		+ [components/](./src/jsx/components) contains React Components
+		+ [props/](./src/jsx/props) contains the properties for each React Component
+		+ [control.js](./src/jsx/control.js) frontend scripting and communicates with backend server
+		+ [index.jsx](./src/jsx/index.jsx) entry point
+	+ [node/](./src/node/) contains backend code
+		+ [server.js](./src/server.js) the backend server; it hosts the website, controls authorization and access token retrieval processes
+		+ [skiplist.js](./src/skiplist.js) skiplist implementation, used internally on the server
+		+ [utils.js](./src/utils.js) small set of utility functions
+		+ [index.js](./index.js) what `npm` uses to start the server
+	+ [styles/](./src/styles/) contains styling code for the frontend
++ [test/](./test/) contains files used for testing
