@@ -44,6 +44,8 @@ export default class App extends React.Component {
    * Refreshes/retrieves another access token using an existing refresh token asynchronously.
    *
    * @param {boolean} replace the refresh token to use
+   * @returns {Promise<void>} a Promise for the refresh request made; resolves when it updates this
+   * component's state tokens to the refreshed ones, fails if the request fails
    */
   refresh(replace) {
     let { tokens } = this.state;
@@ -80,6 +82,13 @@ export default class App extends React.Component {
     });
   }
 
+  /**
+   * Gets Spotify API tokens.
+   * @param {String} code the Spotify authentication code
+   * @returns {Promise<void>} a Promise for the request made to retrieve the API token; resolves
+   * when it updates the state of this component to have the valid tokens, and rejects on any errors
+   * that occur while making the request.
+   */
   getTokens(code) {
     let { tokens } = this.state;
     let _this = this;
@@ -204,7 +213,9 @@ export default class App extends React.Component {
       // data in the background
       return (<Loading />);
     } else if (!code && !queryState && !error) {
-      return (<Recorder tokens={tokens} refresh={this.refresh}/>);
+      return (
+        <Recorder tokens={tokens} refresh={this.refresh}/>
+      );
     } else {
       return (<Loading />);
     }

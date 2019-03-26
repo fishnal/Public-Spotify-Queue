@@ -2,7 +2,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import * as SpotifyWebApiExport from 'spotify-web-api-js';
 import * as Cookies from 'js-cookie';
-import TrackDisplay from './TrackDisplay';
+import RecordDisplay from './RecordDisplay';
 import RecorderButton from './RecorderButton';
 import * as PSQProps from '../../props/psq';
 
@@ -125,10 +125,9 @@ export default class Recorder extends React.Component {
     let { isRecording, displayData } = this.state;
 
     return (
-    <div>
-      <p className="success">Application authenticated!</p>
+    <div className="recorder-container">
       <RecorderButton onClick={this.onClick} isRecording={isRecording} />
-      <TrackDisplay displayData={displayData} err={this.state.err} />
+      <RecordDisplay displayData={displayData} err={this.state.err} />
     </div>
     );
   }

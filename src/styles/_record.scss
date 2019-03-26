@@ -8,7 +8,7 @@
   grid-row-gap: 10px;
 }
 
-.cover, .track, .time, .artist, .album {
+.record-cover, .record-track, .record-time, .record-artist, .record-album {
   grid-row-end: span 1;
   grid-column: 1 / span 2;
 
@@ -24,14 +24,16 @@
   }
 }
 
-.cover {
+.record-cover {
   grid-row-start: 1;
   grid-column: 1 / span 1;
+  height: 300px;
+  width: 300px;
   max-height: 300px;
   max-width: 300px;
 }
 
-.track {
+.record-track {
   grid-row-start: 2;
   grid-column: 1 / span 1;
 
@@ -40,7 +42,7 @@
   }
 }
 
-.time {
+.record-time {
   grid-row-start: 2;
   grid-column: 2 / span 1;
 
@@ -51,7 +53,7 @@
   }
 }
 
-.artist {
+.record-artist {
   grid-row-start: 3;
 
   > a {
@@ -59,7 +61,7 @@
   }
 }
 
-.album {
+.record-album {
   grid-row-start: 4;
 
   > a {

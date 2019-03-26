@@ -12,14 +12,19 @@ export default class ArtistsDisplay extends React.Component {
     let artists = this.props.artists;
 
     let artistElems = artists.map((artist, i) => {
-      return (<a key={`artist${i}`} href={artist.uri}>{artist.name}</a>)
+      return (
+        this.props.is_local
+          ? artist.name
+          : <a key={`record-artist${i}`} href={artist.uri}>{artist.name}</a>
+      );
     });
     artistElems = insertBetween(artistElems, ', ');
 
-    return (<div className="artist">{artistElems}</div>);
+    return (<div className="record-artist">{artistElems}</div>);
   }
 }
 
 ArtistsDisplay.propTypes = {
-  artists: PropTypes.arrayOf(SpotifyProps.Artist)
+  artists: PropTypes.arrayOf(SpotifyProps.Artist),
+  is_local: PropTypes.bool.isRequired
 };
