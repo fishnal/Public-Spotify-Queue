@@ -2,7 +2,10 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import * as SpotifyProps from '../../props/spotify';
-import ArtistsDisplay from './ArtistsDisplay';
+import ArtistDisplay from '../song/ArtistDisplay';
+import CoverDisplay from '../song/CoverDisplay';
+import AlbumDisplay from '../song/AlbumDisplay';
+import TrackDisplay from '../song/TrackDisplay';
 
 export default class RecordDisplay extends React.Component {
   constructor(props) {
@@ -24,27 +27,14 @@ export default class RecordDisplay extends React.Component {
       let mins = parseInt(time / 60000);
       let secs = parseInt((time - mins * 60000) / 1000);
       let timeString = sprintf('[%d:%02d]', mins, secs);
-      // TODO pick an actual one, don't just default to the first one
-      // get album cover source
-      let coverUrl = track.is_local ? '/public/assets/local-file.svg' : covers[0].url;
-
-      let albumDisplayElem = <img className="record-cover" src={coverUrl}></img>;
-
-      if (!track.is_local) {
-        albumDisplayElem = <a href={track.uri}>{albumDisplayElem}</a>;
-      }
 
       return (
       <div className="trackDisplay">
-        {albumDisplayElem}
-        <div className="record-track">
-          {track.is_local ? track.name : <a href={track.uri}>{track.name}</a>}
-        </div>
+        <CoverDisplay is_local={track.is_local} covers={covers} link={track.uri} />
+        <TrackDisplay is_local={track.is_local} name={track.name} link={track.uri} />
         <div className="record-time"><p>{timeString}</p></div>
-        <ArtistsDisplay is_local={track.is_local} artists={artists} />
-        <div className="record-album">
-          {track.is_local ? album.name : <a href={album.uri}>{album.name}</a>}
-        </div>
+        <ArtistDisplay is_local={track.is_local} artists={artists} />
+        <AlbumDisplay is_local={track.is_local} name={album.name} link={album.uri} />
       </div>
       );
     }

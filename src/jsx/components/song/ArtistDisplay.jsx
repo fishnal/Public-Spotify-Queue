@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import * as SpotifyProps from '../../props/spotify';
 import { insertBetween } from '../../utils';
 
-export default class ArtistsDisplay extends React.Component {
+export default class ArtistDisplay extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -14,17 +14,21 @@ export default class ArtistsDisplay extends React.Component {
     let artistElems = artists.map((artist, i) => {
       return (
         this.props.is_local
-          ? artist.name
+          ? <div key={`record-artist${i}`}>{artist.name}</div>
           : <a key={`record-artist${i}`} href={artist.uri}>{artist.name}</a>
       );
     });
     artistElems = insertBetween(artistElems, ', ');
 
+    if (artistElems.length == 0) {
+      artistElems = 'Local Artist'
+    }
+
     return (<div className="record-artist">{artistElems}</div>);
   }
 }
 
-ArtistsDisplay.propTypes = {
+ArtistDisplay.propTypes = {
   artists: PropTypes.arrayOf(SpotifyProps.Artist),
   is_local: PropTypes.bool.isRequired
 };
