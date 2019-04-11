@@ -1,7 +1,10 @@
+@import 'libs/$libs.scss';
 @import 'fonts';
 @import 'errors';
 @import 'success';
 @import 'record';
+@import 'queue';
+@import 'playlist';
 
 * {
   font-family: 'Monsterrat', sans-serif;

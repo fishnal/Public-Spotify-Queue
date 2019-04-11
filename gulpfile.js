@@ -74,7 +74,7 @@ gulp.task('sass', async(done) => {
   let opts = {
     includePaths: [ './src/styles' ],
     outputStyle: 'compressed',
-    file: './src/styles/_main.scss',
+    file: './src/styles/main.scss',
     outFile: './build/main.css',
     sourceMap: './build/main.css.map',
     sourceComments: true

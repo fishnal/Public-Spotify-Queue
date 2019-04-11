@@ -1,0 +1,45 @@
+div.queue-container {
+  width: 800px;
+  max-width: 800px;
+  height: 300px;
+  max-height: 300px;
+  border: 1px solid black;
+  background-color: #c2a4a4;
+}
+
+.queue-item {
+  display: grid;
+  grid-template-columns: [track-start] 4fr [artist-start] 3fr [album-start] 2fr;
+  grid-column-gap: 10px;
+  height: 40px;
+  border-bottom: 1px solid gray;
+}
+
+.queue-item:last-child {
+  border-bottom: none;
+}
+
+.queue-item > * {
+  display: flex;
+  align-items: center;
+  color: #e8e8e8;
+  margin: 0px 5px;
+  font-size: 1em;
+}
+
+.queue-item.header {
+  font-weight: bold;
+  font-size: .75em;
+}
+
+.queue-item > .queue-track {
+  grid-column: track-start / span 1;
+}
+
+.queue-item > .queue-artist {
+  grid-column: artist-start / span 1;
+}
+
+.queue-item > .queue-album {
+  grid-column: album-start / span 1;
+}

@@ -1,28 +1,25 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import * as SpotifyWebApiExport from 'spotify-web-api-js';
 import * as Cookies from 'js-cookie';
+import * as SpotifyWebApiExport from 'spotify-web-api-js';
 import RecordDisplay from './RecordDisplay';
 import RecorderButton from './RecorderButton';
-import * as PSQProps from '../../props/psq';
+import AsyncController from './../../async_controller';
+
+const SpotifyWebApi = SpotifyWebApiExport.default;
 
 // approx interval time to get current playing track
 const playbackIntervalTime = 1000;
-// couldn't import the default export, so doing it here manually
-const SpotifyWebApi = SpotifyWebApiExport.default;
 
 export default class Recorder extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      tokens: this.props.tokens,
-      spotifyApi: new SpotifyWebApi(),
       isRecording: false,
       displayData: 'Not recording right now'
     };
 
-    this.state.spotifyApi.setAccessToken(this.state.tokens.access);
     this.getCurrentTrack = this.getCurrentTrack.bind(this);
     this.handlePlaybackInfo = this.handlePlaybackInfo.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -30,24 +27,9 @@ export default class Recorder extends React.Component {
 
   // gets the current playing track
   getCurrentTrack() {
-    let { spotifyApi } = this.state;
-    let _this = this;
+    let spotifyApi = this.props.spotifyApi;
 
-    return new Promise(function(resolve, reject) {
-      if (!Cookies.get('access_token')) {
-        _this.props.refresh(_this.state.tokens.psq_token).then(function(resp) {
-          // TODO state here seems skeptical; this resolve callback should be called
-          // after setState in the refresh function has completed
-          spotifyApi.setAccessToken(_this.state.tokens.access);
-          _this.getCurrentTrack().then(resolve).catch(reject);
-        }).catch(function(err) {
-          err.isRefreshErr = true;
-          reject(err);
-        });
-      } else {
-        spotifyApi.getMyCurrentPlayingTrack().then(resolve).catch(resolve);
-      }
-    });
+    return this.props.asyncController.enqueue(spotifyApi.getMyCurrentPlayingTrack, spotifyApi);
   }
 
   handlePlaybackInfo() {
@@ -134,6 +116,6 @@ export default class Recorder extends React.Component {
 }
 
 Recorder.propTypes = {
-  tokens: PSQProps.Tokens.isRequired,
-  refresh: PropTypes.func.isRequired
+  spotifyApi: PropTypes.instanceOf(SpotifyWebApi).isRequired,
+  asyncController: PropTypes.instanceOf(AsyncController).isRequired
 };

@@ -11,6 +11,11 @@ import Loading from './Loading';
 import Recorder from './recorder/Recorder';
 import * as PSQProps from '../props/psq';
 import { getServerURL, randString } from './../utils';
+import AsyncController from './../async_controller';
+import PlaylistSelector from './selector/PlaylistSelector';
+import * as SpotifyWebApiExport from 'spotify-web-api-js';
+
+const SpotifyWebApi = SpotifyWebApiExport.default;
 
 const CLIENT_ID = 'acd0f18a3e124101af31f9b3582130c6';
 const SCOPES = [
@@ -29,21 +34,28 @@ const CODES = {
   FAILED_REFRESH: 4
 }
 
-// TODO figure out how success and error responses are formatted from axios requests
+function refreshCheck() {
+  return !Cookies.get('access_token') || !Cookies.get('psq_token');
+}
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { tokens: this.props.tokens };
     this.refresh = this.refresh.bind(this);
     this.getTokens = this.getTokens.bind(this);
+
+    this.state = {
+      tokens: this.props.tokens,
+      spotifyApi: new SpotifyWebApi({}),
+      asyncController: new AsyncController(this.refresh, refreshCheck)
+    };
   }
 
   /**
    * Refreshes/retrieves another access token using an existing refresh token asynchronously.
    *
-   * @param {boolean} replace the refresh token to use
+   * @param {boolean} replace an indicator to resolve with null, which indicates to refresh the page
    * @returns {Promise<void>} a Promise for the refresh request made; resolves when it updates this
    * component's state tokens to the refreshed ones, fails if the request fails
    */
@@ -70,11 +82,12 @@ export default class App extends React.Component {
           {expires: 365 }
         );
 
+        _this.state.spotifyApi.setAccessToken(tokens.access);
+
         _this.setState({ tokens }, function() {
           if (replace) {
             resolve(null);
           } else {
-            // TODO return new token data
             resolve(resp);
           }
         });
@@ -120,6 +133,8 @@ export default class App extends React.Component {
           tokens.psq = data.psq_token,
           { expires: 365 }
         );
+
+        _this.state.spotifyApi.setAccessToken(tokens.access);
 
         _this.setState({ tokens }, resolve);
       }).catch(reject);
@@ -213,8 +228,12 @@ export default class App extends React.Component {
       // data in the background
       return (<Loading />);
     } else if (!code && !queryState && !error) {
+      this.state.spotifyApi.setAccessToken(tokens.access);
       return (
-        <Recorder tokens={tokens} refresh={this.refresh}/>
+        <div>
+          <Recorder spotifyApi={this.state.spotifyApi} asyncController={this.state.asyncController} />
+          <PlaylistSelector spotifyApi={this.state.spotifyApi} asyncController={this.state.asyncController} />
+        </div>
       );
     } else {
       return (<Loading />);
