@@ -25,6 +25,7 @@ export function randString(amt) {
 export function getParameterByName(name, url) {
   // https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
   if (!url) {
+    // eslint-disable-next-line no-undef
     url = window.location.href;
   }
 
@@ -52,7 +53,13 @@ export function toBoolean(arg) {
   return arg === true || arg === "true" || arg === 1;
 }
 
+/**
+ * Gets the URL for this server, which is just based off the origin of the window's location
+ *
+ * @returns {String} base url for server
+ */
 export function getServerURL() {
+  // eslint-disable-next-line no-undef
   return window.location.origin;
 }
 
@@ -62,7 +69,7 @@ export function getServerURL() {
  *
  * @param {Array} arr the array
  * @param {any} x the element to insert
- * @return {Array}
+ * @returns {Array}
  */
 export function insertBetween(arr, x) {
   if (arr.length <= 1) return arr;

@@ -16,28 +16,28 @@ let CLIENT_SECRET = null;
 // These URLs are dynamic for testing purposxes. A mock test server is used in place of the actual
 // Spotify web servers so we can have predictable outputs.
 let SPOTIFY_ACCOUNTS_URL = process.env.TEST
-    ? `${process.env.TEST_SERVER}:${process.env.TEST_PORT}`
-    : 'https://accounts.spotify.com/api';
+  ? `${process.env.TEST_SERVER}:${process.env.TEST_PORT}`
+  : 'https://accounts.spotify.com/api';
 let SPOTIFY_API_URL = process.env.TEST
-    ? `${process.env.TEST_SERVER}:${process.env.TEST_PORT}/api`
-    : 'https://api.spotify.com/v1';
+  ? `${process.env.TEST_SERVER}:${process.env.TEST_PORT}/api`
+  : 'https://api.spotify.com/v1';
 
 // for verifying track ids
 const spotifyApi = new SpotifyWebApi({});
 
 // if we're testing, modify SpotifyWebApi prototype functions to match testing environment
 if (process.env.TEST) {
-    spotifyApi.getTrack = (trackId) => {
-        return request.get({
-            uri: `${SPOTIFY_API_URL}/track`,
-            qs: {
-                id: trackId
-            },
-            headers: {
-                "Authorization": `Bearer ${spotifyApi.getAccessToken()}`
-            }
-        });
-    }
+  spotifyApi.getTrack = (trackId) => {
+    return request.get({
+      uri: `${SPOTIFY_API_URL}/track`,
+      qs: {
+        id: trackId
+      },
+      headers: {
+        "Authorization": `Bearer ${spotifyApi.getAccessToken()}`
+      }
+    });
+  };
 }
 
 // a timer for getting a client credentials access token
@@ -49,21 +49,21 @@ let clientCredentialsRefresher = null;
  * @returns {Promise<any>}
  */
 function getClientCredentialsToken() {
-    return request.post(`${SPOTIFY_ACCOUNTS_URL}/token`, {
-        qs: {
-            grant_type: 'client_credentials',
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET
-        },
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    });
+  return request.post(`${SPOTIFY_ACCOUNTS_URL}/token`, {
+    qs: {
+      grant_type: 'client_credentials',
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET
+    },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
 }
 
 // options for serving static content
 const SEND_FILE_OPTS = {
-    root: `${process.cwd()}`
+  root: `${process.cwd()}`
 };
 
 // express.js variables
@@ -76,7 +76,7 @@ let queues = {};
 /**
  * Starts the mock server.
  *
- * @param opts options for the server, must include Spotify application client id and
+ * @param {Object} opts options for the server, must include Spotify application client id and
  * secret.
  * @param {String} opts.clientId <required> Spotify application client id
  * @param {String} opts.clientSecret <required> Spotify application client secret
@@ -85,55 +85,55 @@ let queues = {};
  * @returns {Promise<void>} resolves after starting and performing startup post-startup operations,
  * rejects if an error is thrown.
  */
-module.exports.start = function({clientId, clientSecret, port, domain}) {
-    if (!clientId) throw new Error('no client id');
-    else if (!clientSecret) throw new Error('no client secret');
+module.exports.start = function({ clientId, clientSecret, port, domain }) {
+  if (!clientId) throw new Error('no client id');
+  else if (!clientSecret) throw new Error('no client secret');
 
-    CLIENT_ID = clientId;
-    CLIENT_SECRET = clientSecret;
-    PORT = port || 3000;
-    DOMAIN = domain || 'http://localhost';
-    SERVER_URL = `${DOMAIN}:${PORT}`;
+  CLIENT_ID = clientId;
+  CLIENT_SECRET = clientSecret;
+  PORT = port || 3000;
+  DOMAIN = domain || 'http://localhost';
+  SERVER_URL = `${DOMAIN}:${PORT}`;
 
-    return new Promise((resolve, reject) => {
-        try {
-            server = app.listen(PORT, () => {
-                // only retrieve client credentials token if we're not testing
-                if (!process.env.TEST) {
-                    getClientCredentialsToken().then((tokenResponse) => {
-                        tokenResponse = JSON.parse(tokenResponse);
+  return new Promise((resolve, reject) => {
+    try {
+      server = app.listen(PORT, () => {
+        // only retrieve client credentials token if we're not testing
+        if (!process.env.TEST) {
+          getClientCredentialsToken().then((tokenResponse) => {
+            tokenResponse = JSON.parse(tokenResponse);
 
-                        // set server-side spotify api wrapper's access token so we can verify track
-                        // ids later on
-                        spotifyApi.setAccessToken(tokenResponse.access_token);
+            // set server-side spotify api wrapper's access token so we can verify track
+            // ids later on
+            spotifyApi.setAccessToken(tokenResponse.access_token);
 
-                        // make psq token without user id and refresh token
-                        tokenResponse.psq_token = Buffer
-                            .from(`;${tokenResponse.access_token};;${Date.now()}`)
-                            .toString('base64');
+            // make psq token without user id and refresh token
+            tokenResponse.psq_token = Buffer
+              .from(`;${tokenResponse.access_token};;${Date.now()}`)
+              .toString('base64');
 
-                        // set a timer to get another client credentials token based on expiration
-                        // date of current token (make it get another token 2 minutes before actual
-                        // expiration date)
-                        clientCredentialsRefresher = setTimeout(getClientCredentialsToken,
-                            (tokenResponse.expires_in - 120) * 1000);
+            // set a timer to get another client credentials token based on expiration
+            // date of current token (make it get another token 2 minutes before actual
+            // expiration date)
+            clientCredentialsRefresher = setTimeout(getClientCredentialsToken,
+              (tokenResponse.expires_in - 120) * 1000);
 
-                        console.log(`Server started on ${SERVER_URL}`);
-                        resolve();
-                    }).catch((tokenError) => {
-                        console.error('Failed to retrieve client credentials token');
-                        reject(tokenError);
-                    });
-                } else {
-                    resolve();
-                }
-            });
-        } catch (err) {
-            console.error('Failed to start server');
-            reject(err);
+            console.log(`Server started on ${SERVER_URL}`);
+            resolve();
+          }).catch((tokenError) => {
+            console.error('Failed to retrieve client credentials token');
+            reject(tokenError);
+          });
+        } else {
+          resolve();
         }
-    });
-}
+      });
+    } catch (err) {
+      console.error('Failed to start server');
+      reject(err);
+    }
+  });
+};
 
 /**
  * Stops the mock server, restoring default settings, clearing any timers, and deleting
@@ -143,19 +143,19 @@ module.exports.start = function({clientId, clientSecret, port, domain}) {
  * error is thrown
  */
 module.exports.close = function() {
-    // TODO util.promsifiy?
-    return new Promise((resolve, reject) => {
-        try {
-            server.close(() => {
-                clearTimeout(clientCredentialsRefresher);
-                console.log('Server closed');
-                resolve();
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
-}
+  // TODO util.promsifiy?
+  return new Promise((resolve, reject) => {
+    try {
+      server.close(() => {
+        clearTimeout(clientCredentialsRefresher);
+        console.log('Server closed');
+        resolve();
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
 
 /**
  * Gets the redirect URI that this server uses in it's spotify application.
@@ -172,23 +172,23 @@ app.use('/src/styles', express.static('src/styles'));
 
 // for testing purposes only, ensures that #getClientCredentialsToken(callback) works
 if (process.env.TEST) {
-    app.get('/api/client_credentials', (serverRequest, serverResponse) => {
-        if (serverResponse.finished) {
-            return;
-        }
+  app.get('/api/client_credentials', (_serverRequest, serverResponse) => {
+    if (serverResponse.finished) {
+      return;
+    }
 
-        getClientCredentialsToken().then((tokenResponse) => {
-            tokenResponse = JSON.parse(tokenResponse);
-            tokenResponse.psq_token = Buffer
-                .from(`;${tokenResponse.access_token};;${Date.now()}`)
-                .toString('base64');
-            serverResponse.status(200).send(tokenResponse);
-            // update spotify api wrapper's token
-            spotifyApi.setAccessToken(tokenResponse.access_token);
-        }).catch((tokenErr) => {
-            serverResponse.status(400).send(tokenErr);
-        });
+    getClientCredentialsToken().then((tokenResponse) => {
+      tokenResponse = JSON.parse(tokenResponse);
+      tokenResponse.psq_token = Buffer
+        .from(`;${tokenResponse.access_token};;${Date.now()}`)
+        .toString('base64');
+      serverResponse.status(200).send(tokenResponse);
+      // update spotify api wrapper's token
+      spotifyApi.setAccessToken(tokenResponse.access_token);
+    }).catch((tokenErr) => {
+      serverResponse.status(400).send(tokenErr);
     });
+  });
 }
 
 // ==================================================================
@@ -207,9 +207,9 @@ if (process.env.TEST) {
  *
  * @apiVersion 0.1.1
  */
-app.get('/', (serverRequest, serverResponse) => {
-    serverResponse.status(200);
-    serverResponse.sendFile('public/html/index.html', SEND_FILE_OPTS);
+app.get('/', (_serverRequest, serverResponse) => {
+  serverResponse.status(200);
+  serverResponse.sendFile('public/html/index.html', SEND_FILE_OPTS);
 });
 
 /**
@@ -225,8 +225,8 @@ app.get('/', (serverRequest, serverResponse) => {
  *
  * @apiVersion 0.1.1
  */
-app.get('/index.html', (serverRequest, serverResponse) => {
-    serverResponse.redirect('/');
+app.get('/index.html', (_serverRequest, serverResponse) => {
+  serverResponse.redirect('/');
 });
 
 // ==================================================================
@@ -299,47 +299,47 @@ app.get('/index.html', (serverRequest, serverResponse) => {
  * @apiVersion 0.1.1
  */
 app.get('/api/token', (serverRequest, serverResponse) => {
-    let queries = serverRequest.query;
+  let queries = serverRequest.query;
 
-    // make POST request to get access token
-    let tokenRequestQuery = {
-        grant_type: 'authorization_code',
-        code: queries.code,
-        redirect_uri: `${SERVER_URL}`,
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET
-    };
+  // make POST request to get access token
+  let tokenRequestQuery = {
+    grant_type: 'authorization_code',
+    code: queries.code,
+    redirect_uri: `${SERVER_URL}`,
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET
+  };
 
-    request.post(`${SPOTIFY_ACCOUNTS_URL}/token`, {
-        qs: tokenRequestQuery,
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    }).then(async(tokenResponse) => {
-        // parse response
-        tokenResponse = JSON.parse(tokenResponse);
+  request.post(`${SPOTIFY_ACCOUNTS_URL}/token`, {
+    qs: tokenRequestQuery,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }).then(async(tokenResponse) => {
+    // parse response
+    tokenResponse = JSON.parse(tokenResponse);
 
-        // get user's id
-        let profile = JSON.parse(await request(
-            `${SPOTIFY_API_URL}/me`,
-            { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
-        ));
+    // get user's id
+    let profile = JSON.parse(await request(
+      `${SPOTIFY_API_URL}/me`,
+      { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
+    ));
 
-        // add psq token to the response
-        tokenResponse.psq_token = Buffer
-            .from(`${profile.id};`
+    // add psq token to the response
+    tokenResponse.psq_token = Buffer
+      .from(`${profile.id};`
                 + `${tokenResponse.access_token};`
                 + `${tokenResponse.refresh_token || ''};`
                 + `${Date.now()}`)
-            .toString('base64');
+      .toString('base64');
 
-        // make the queue
-        queues[profile.id] = queues[profile.id] || new SpotifyQueue(profile.id);
+    // make the queue
+    queues[profile.id] = queues[profile.id] || new SpotifyQueue(profile.id);
 
-        serverResponse.status(200).json(tokenResponse);
-    }).catch((tokenError) => {
-        serverResponse.status(tokenError.statusCode).send(tokenError.error);
-    });
+    serverResponse.status(200).json(tokenResponse);
+  }).catch((tokenError) => {
+    serverResponse.status(tokenError.statusCode).send(tokenError.error);
+  });
 });
 
 /**
@@ -402,54 +402,54 @@ app.get('/api/token', (serverRequest, serverResponse) => {
  * @apiVersion 0.1.1
  */
 app.post('/api/refresh', (serverRequest, serverResponse) => {
-    let psqToken = serverRequest.query['psq_token'];
-    let parsedToken = Buffer.from(psqToken || '', 'base64').toString().split(';');
+  let psqToken = serverRequest.query['psq_token'];
+  let parsedToken = Buffer.from(psqToken || '', 'base64').toString().split(';');
 
-    if (!psqToken) {
-        serverResponse.status(400).json({
-            error: 'invalid_request',
-            error_description: 'psq_token must be supplied'
-        });
-    } else if (parsedToken.length !== 4 || !parsedToken[2].length) {
-        serverResponse.status(400).json({
-            error: 'invalid_grant',
-            error_description: 'Invalid PSQ token'
-        });
+  if (!psqToken) {
+    serverResponse.status(400).json({
+      error: 'invalid_request',
+      error_description: 'psq_token must be supplied'
+    });
+  } else if (parsedToken.length !== 4 || !parsedToken[2].length) {
+    serverResponse.status(400).json({
+      error: 'invalid_grant',
+      error_description: 'Invalid PSQ token'
+    });
+  }
+
+  if (serverResponse.finished) {
+    return;
+  }
+
+  // make POST request to get a new access token
+  request.post(`${SPOTIFY_ACCOUNTS_URL}/token`, {
+    qs: {
+      grant_type: 'refresh_token',
+      refresh_token: parsedToken[2],
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET
+    },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
     }
-
-    if (serverResponse.finished) {
-        return;
-    }
-
-    // make POST request to get a new access token
-    request.post(`${SPOTIFY_ACCOUNTS_URL}/token`, {
-        qs: {
-            grant_type: 'refresh_token',
-            refresh_token: parsedToken[2],
-            client_id: CLIENT_ID,
-            client_secret: CLIENT_SECRET
-        },
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    }).then((tokenResponse) => {
-        // parse response
-        tokenResponse = JSON.parse(tokenResponse);
-        // store psq token into response
-        tokenResponse.psq_token = Buffer
-            .from(`${parsedToken[0]};`
+  }).then((tokenResponse) => {
+    // parse response
+    tokenResponse = JSON.parse(tokenResponse);
+    // store psq token into response
+    tokenResponse.psq_token = Buffer
+      .from(`${parsedToken[0]};`
                 + `${tokenResponse.access_token};`
                 + `${tokenResponse.refresh_token || parsedToken[2]};`
                 + `${Date.now()}`)
-            .toString('base64');
+      .toString('base64');
 
-        serverResponse.status(200).json(tokenResponse);
-    }).catch((tokenError) => {
-        serverResponse.status(400).json({
-            error: 'invalid_grant',
-            error_description: 'Invalid PSQ token'
-        });
+    serverResponse.status(200).json(tokenResponse);
+  }).catch((_tokenError) => {
+    serverResponse.status(400).json({
+      error: 'invalid_grant',
+      error_description: 'Invalid PSQ token'
     });
+  });
 });
 
 // ==================================================================
@@ -463,18 +463,18 @@ app.post('/api/refresh', (serverRequest, serverResponse) => {
  * @returns {SpotifyQueue} null if the request was denied; otherwise the user's queue.
  */
 function authQueueAccess(token) {
-    if (!isString(token) || !token.startsWith('Bearer ')) {
-        return null;
-    }
+  if (!isString(token) || !token.startsWith('Bearer ')) {
+    return null;
+  }
 
-    // user_id;spotify_access_token;spotify_refresh_token;time_granted
-    let parsedToken = Buffer.from(token.split(' ')[1], 'base64').toString().split(';');
+  // user_id;spotify_access_token;spotify_refresh_token;time_granted
+  let parsedToken = Buffer.from(token.split(' ')[1], 'base64').toString().split(';');
 
-    if (parsedToken.length !== 4) {
-        return null;
-    }
+  if (parsedToken.length !== 4) {
+    return null;
+  }
 
-    return queues[parsedToken[0]];
+  return queues[parsedToken[0]];
 }
 
 /**
@@ -590,81 +590,81 @@ function authQueueAccess(token) {
  * @apiVersion 0.1.1
  */
 app.post('/api/queue/add_after', async(serverRequest, serverResponse) => {
-    let headers = serverRequest.headers;
-    let params = serverRequest.query;
+  let headers = serverRequest.headers;
+  let params = serverRequest.query;
 
-    let queue = authQueueAccess(headers['authorization']);
+  let queue = authQueueAccess(headers['authorization']);
 
-    if (!queue) {
-        // bad credentials
-        serverResponse.status(401).json({
-            error: 'invalid_credentials',
-            error_description: "authorization header or access token is invalid"
-        });
-    } else if (!params.relative_key) {
-        // no relative key
-        serverResponse.status(400).json({
-            error: 'invalid_request',
-            error_description: 'relative_key must be supplied'
-        });
-    } else if (params.relative_key !== 'null'
+  if (!queue) {
+    // bad credentials
+    serverResponse.status(401).json({
+      error: 'invalid_credentials',
+      error_description: "authorization header or access token is invalid"
+    });
+  } else if (!params.relative_key) {
+    // no relative key
+    serverResponse.status(400).json({
+      error: 'invalid_request',
+      error_description: 'relative_key must be supplied'
+    });
+  } else if (params.relative_key !== 'null'
             && Number.isNaN(params.relative_key = Number(params.relative_key))) {
-        // bad type relative key (not "null" or a number)
-        serverResponse.status(400).json({
-            error: 'invalid_type',
-            error_description: 'relative_key must be a number or "null"'
-        });
-    } else if (!params.new_song_id) {
-        // no new song id
-        serverResponse.status(400).json({
-            error: 'invalid_request',
-            error_description: 'new_song_id must be supplied'
-        });
+    // bad type relative key (not "null" or a number)
+    serverResponse.status(400).json({
+      error: 'invalid_type',
+      error_description: 'relative_key must be a number or "null"'
+    });
+  } else if (!params.new_song_id) {
+    // no new song id
+    serverResponse.status(400).json({
+      error: 'invalid_request',
+      error_description: 'new_song_id must be supplied'
+    });
+  }
+
+  if (serverResponse.finished) {
+    return;
+  }
+
+  if (params.relative_key === 'null') {
+    // convert to null
+    params.relative_key = null;
+  }
+
+  try {
+    // if the id is a Spotify track URI, then extract it's track id
+    let uriExtractor = /^spotify:track:(?<uriTrackId>[A-Za-z0-9]+)$/.exec(params.new_song_id);
+
+    if (uriExtractor) {
+      // it matched the spotify track uri regex, so extract the track id from the uri and use that
+      // as the new song id
+      params.new_song_id = uriExtractor.groups['uriTrackId'];
     }
 
-    if (serverResponse.finished) {
-        return;
-    }
-
-    if (params.relative_key === 'null') {
-        // convert to null
-        params.relative_key = null;
-    }
+    let _trackData = await spotifyApi.getTrack(params.new_song_id);
+    _trackData = _trackData.body; // this is here in case we ever need to use this data
 
     try {
-        // if the id is a Spotify track URI, then extract it's track id
-        let uriExtractor = /^spotify:track:(?<uriTrackId>[A-Za-z0-9]+)$/.exec(params.new_song_id);
+      let newKey = queue.getData().addAfter(params.relative_key, params.new_song_id);
 
-        if (uriExtractor) {
-            // it matched the spotify track uri regex, so extract the track id from the uri and use that
-            // as the new song id
-            params.new_song_id = uriExtractor.groups['uriTrackId'];
-        }
-
-        let trackData = await spotifyApi.getTrack(params.new_song_id);
-        trackData = trackData.body; // this is here in case we ever need to use this data
-
-        try {
-            let newKey = queue.getData().addAfter(params.relative_key, params.new_song_id);
-
-            // send the key of the newly added song back, client should appropriately add this
-            // song to the display
-            serverResponse.status(200).json({ new_key: newKey });
-        } catch (err) {
-            // check errors
-            let statusCode = err instanceof RangeError ? 400 : 404;
-
-            serverResponse.status(statusCode).json({
-                error: statusCode === 400 ? 'invalid_request' : 'key_not_found',
-                error_description: humps.decamelize(err.message)
-            });
-        }
+      // send the key of the newly added song back, client should appropriately add this
+      // song to the display
+      serverResponse.status(200).json({ new_key: newKey });
     } catch (err) {
-        serverResponse.status(404).json({
-            error: 'song_not_found',
-            error_description: `song ${params.new_song_id} not found`
-        });
+      // check errors
+      let statusCode = err instanceof RangeError ? 400 : 404;
+
+      serverResponse.status(statusCode).json({
+        error: statusCode === 400 ? 'invalid_request' : 'key_not_found',
+        error_description: humps.decamelize(err.message)
+      });
     }
+  } catch (err) {
+    serverResponse.status(404).json({
+      error: 'song_not_found',
+      error_description: `song ${params.new_song_id} not found`
+    });
+  }
 });
 
 /**
@@ -738,49 +738,49 @@ app.post('/api/queue/add_after', async(serverRequest, serverResponse) => {
  * @apiVersion 0.1.1
  */
 app.delete('/api/queue/remove', (serverRequest, serverResponse) => {
-    let headers = serverRequest.headers;
-    let params = serverRequest.query;
-    let queue = authQueueAccess(headers['authorization']);
+  let headers = serverRequest.headers;
+  let params = serverRequest.query;
+  let queue = authQueueAccess(headers['authorization']);
 
-    if (!queue) {
-        // bad credentials
-        serverResponse.status(401).json({
-            error: 'invalid_credentials',
-            error_description: "authorization header or access token is invalid"
-        });
-    } else if (!params.key) {
-        serverResponse.status(400).json({
-            error: 'invalid_request',
-            error_description: 'key must be supplied'
-        });
-    } else if (Number.isNaN(params.key = Number(params.key))) {
-        serverResponse.status(400).json({
-            error: 'invalid_type',
-            error_description: 'key must be a number'
-        });
+  if (!queue) {
+    // bad credentials
+    serverResponse.status(401).json({
+      error: 'invalid_credentials',
+      error_description: "authorization header or access token is invalid"
+    });
+  } else if (!params.key) {
+    serverResponse.status(400).json({
+      error: 'invalid_request',
+      error_description: 'key must be supplied'
+    });
+  } else if (Number.isNaN(params.key = Number(params.key))) {
+    serverResponse.status(400).json({
+      error: 'invalid_type',
+      error_description: 'key must be a number'
+    });
+  }
+
+  if (serverResponse.finished) {
+    return;
+  }
+
+  try {
+    let removed = queue.getData().remove(params.key);
+
+    if (!removed) {
+      serverResponse.status(404).json({
+        error: "key_not_found",
+        error_description: `key ${params.key} not found`
+      });
+    } else {
+      serverResponse.status(200).end();
     }
-
-    if (serverResponse.finished) {
-        return;
+  } catch (queueErr) {
+    if (queueErr instanceof RangeError) {
+      serverResponse.status(400).json({
+        error: 'invalid_request',
+        error_description: humps.decamelize(queueErr.message)
+      });
     }
-
-    try {
-        let removed = queue.getData().remove(params.key);
-
-        if (!removed) {
-            serverResponse.status(404).json({
-                error: "key_not_found",
-                error_description: `key ${params.key} not found`
-            });
-        } else {
-            serverResponse.status(200).end();
-        }
-    } catch (queueErr) {
-        if (queueErr instanceof RangeError) {
-            serverResponse.status(400).json({
-                error: 'invalid_request',
-                error_description: humps.decamelize(queueErr.message)
-            });
-        }
-    }
+  }
 });

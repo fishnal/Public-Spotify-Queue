@@ -28,6 +28,7 @@
  *
  * @param {Function} refresher function that refreshes tokens when needed
  * @param {Function} refreshChecker syncrhonous function that checks if a refresh is needed
+ * @returns {AsyncController} an asynchronous controller
  */
 function AsyncController(refresher, refreshChecker) {
   let active = false;
@@ -36,6 +37,8 @@ function AsyncController(refresher, refreshChecker) {
   /**
    * Attempts to start the next promise. If a promise is currently running, then the next promise
    * in queue must wait for the current one to finish.
+   *
+   * @returns {void}
    */
   function nextPromise() {
     if (!active) {
@@ -49,12 +52,13 @@ function AsyncController(refresher, refreshChecker) {
    * @param {Function} reqFunc a function that returns a promise
    * @param {Object} thisArg context object for the request function
    * @param {Array} reqArgs an array of arguments that are applied to the request function
-   * @return {Promise<any>} a promise that resolves/rejects when the requesting function
+   * @returns {Promise<any>} a promise that resolves/rejects when the requesting function
    * resolves/rejects.
    */
   this.enqueue = function(reqFunc, thisArg, reqArgs) {
     reqArgs = reqArgs || [];
     return new Promise((callerResolve, callerReject) => {
+      // eslint-disable-next-line func-style
       const wrapFunc = async function() {
         try {
           // Indicate a promise is currently pending
@@ -75,7 +79,8 @@ function AsyncController(refresher, refreshChecker) {
           let promise = reqFunc.call(thisArg, ...reqArgs);
           if (!(promise instanceof Promise)) {
             // Request function didn't return a promise
-            throw new TypeError(`expected function to return Promise, instead got ${promise.constructor.name}`);
+            throw new TypeError(`expected function to return Promise, instead got
+              ${promise.constructor.name}`);
           }
           callerResolve(await promise);
         } catch (err) {
@@ -90,12 +95,12 @@ function AsyncController(refresher, refreshChecker) {
         if (queue.length > 0) {
           queue.shift()();
         }
-      }
+      };
 
       queue.push(wrapFunc);
       nextPromise();
     });
-  }
+  };
 }
 
-module.exports = AsyncController
+module.exports = AsyncController;
