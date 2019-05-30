@@ -5,6 +5,7 @@ const url = require('url');
 const path = require('path');
 const fs = require('fs-extra');
 const util = require('util');
+
 const glob = util.promisify(require('glob'));
 const mkdirp = util.promisify(require('mkdirp'));
 const remove = util.promisify(fs.remove);
@@ -15,6 +16,13 @@ const nodeTests = [
   'server.test.js'
 ].map((testPath) => `${process.env.NODE_TEST_DIR}/${testPath}`);
 
+/**
+ * Runs a set of test files using Mocha.JS (with a mochawesome reporter).
+ *
+ * @param {Array} testFiles the array of test files
+ * @param {Function} done callback function
+ * @returns {void}
+ */
 function testRunner(testFiles, done) {
   process.env = {
     ...process.env,
@@ -27,17 +35,15 @@ function testRunner(testFiles, done) {
     }
   };
 
-  gulp.src(testFiles, {read: false})
-  .pipe(mocha({
-    reporter: 'mochawesome',
-    reporterOptions: {
-      reportDir: "docs/mocha-report"
-    }
-  }))
-  .once('end', () => { process.exit(1) })
-  .on('error', () => { console.error(err); });
-
-  done();
+  gulp.src(testFiles, { read: false })
+    .pipe(mocha({
+      reporter: 'mochawesome',
+      reporterOptions: {
+        reportDir: "docs/mocha-report"
+      }
+    }))
+    .once('end', done)
+    .on('error', (err) => { console.error(err); });
 }
 
 gulp.task('test', testRunner.bind(null, nodeTests));
@@ -60,10 +66,10 @@ gulp.task('makeBuildDir', async(done) => {
 gulp.task('clean', async(done) => {
   let files = await glob('**/@(#*#|*~)', {
     nodir: true,
-    ignore: ['node_modules/**/*', '.cache/**/*', 'build/**/*']
+    ignore: [ 'node_modules/**/*', '.cache/**/*', 'build/**/*' ]
   });
 
-  files.forEach(async(f) => await remove(f));
+  files.forEach(async(f) => remove(f));
   remove('./build');
 
   done();
@@ -96,8 +102,8 @@ gulp.task('sass', async(done) => {
         let mapUrlLength = cssBuf.length - mapUrlIndex;
         let lengthDiff = newMapUrl.length - mapUrlLength;
 
-        // if the new url length is more than current url length, then concat this buffer with another
-        // buffer that accounts for the missing bytes
+        // if the new url length is more than current url length, then concat this buffer with
+        // another buffer that accounts for the missing bytes
         // if it's less, then write to the original buffer, and slice off the bytes we don't need
         // if it's the same, just use the same buffer
 
