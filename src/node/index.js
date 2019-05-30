@@ -95,4 +95,7 @@ commandArgs.version('0.1.0', '-v|--version')
 
     await server.close();
   }
-})();
+})().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

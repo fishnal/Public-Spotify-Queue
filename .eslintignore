@@ -1,4 +1,5 @@
 src/web/deps
 node_modules/
 src/styles/libs
+*.jsx
 .*

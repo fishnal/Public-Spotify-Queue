@@ -328,9 +328,9 @@ app.get('/api/token', (serverRequest, serverResponse) => {
     // add psq token to the response
     tokenResponse.psq_token = Buffer
       .from(`${profile.id};`
-                + `${tokenResponse.access_token};`
-                + `${tokenResponse.refresh_token || ''};`
-                + `${Date.now()}`)
+        + `${tokenResponse.access_token};`
+        + `${tokenResponse.refresh_token || ''};`
+        + `${Date.now()}`)
       .toString('base64');
 
     // make the queue
@@ -438,9 +438,9 @@ app.post('/api/refresh', (serverRequest, serverResponse) => {
     // store psq token into response
     tokenResponse.psq_token = Buffer
       .from(`${parsedToken[0]};`
-                + `${tokenResponse.access_token};`
-                + `${tokenResponse.refresh_token || parsedToken[2]};`
-                + `${Date.now()}`)
+        + `${tokenResponse.access_token};`
+        + `${tokenResponse.refresh_token || parsedToken[2]};`
+        + `${Date.now()}`)
       .toString('base64');
 
     serverResponse.status(200).json(tokenResponse);
@@ -608,7 +608,7 @@ app.post('/api/queue/add_after', async(serverRequest, serverResponse) => {
       error_description: 'relative_key must be supplied'
     });
   } else if (params.relative_key !== 'null'
-            && Number.isNaN(params.relative_key = Number(params.relative_key))) {
+      && Number.isNaN(params.relative_key = Number(params.relative_key))) {
     // bad type relative key (not "null" or a number)
     serverResponse.status(400).json({
       error: 'invalid_type',

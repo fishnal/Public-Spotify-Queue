@@ -19,54 +19,54 @@ class SkipNode {
     }
 
     /**
-         * The next node.
-         *
-         * @type {SkipNode}
-         */
+     * The next node.
+     *
+     * @type {SkipNode}
+     */
     this.next = null;
 
     /**
-         * The previous node.
-         *
-         * @type {SkipNode}
-         */
+     * The previous node.
+     *
+     * @type {SkipNode}
+     */
     this.prev = null;
 
     /**
-         * The above node (should have the same key and value as this node).
-         *
-         * @type {SkipNode}
-         */
+     * The above node (should have the same key and value as this node).
+     *
+     * @type {SkipNode}
+     */
     this.above = null;
 
     /**
-         * The below node (should have the same key and value as this node).
-         *
-         * @type {SkipNode}
-         */
+     * The below node (should have the same key and value as this node).
+     *
+     * @type {SkipNode}
+     */
     this.below = null;
 
     /**
-         * The key of this node.
-         *
-         * @type {number}
-         */
+     * The key of this node.
+     *
+     * @type {number}
+     */
     this.key = key;
 
     /**
-         * The value of this node.
-         *
-         * @type {any}
-         */
+     * The value of this node.
+     *
+     * @type {any}
+     */
     this.value = value;
 
     /**
-         * Updates a property for this node and the ones above and below this node.
-         *
-         * @param {string} property property to change
-         * @param {any} newValue the new value for the property
-         * @returns {void}
-         */
+     * Updates a property for this node and the ones above and below this node.
+     *
+     * @param {string} property property to change
+     * @param {any} newValue the new value for the property
+     * @returns {void}
+     */
     this.update = (property, newValue) => {
       let node = this;
       let goDown = true;
@@ -90,10 +90,10 @@ class SkipNode {
     };
 
     /**
-         * Unlinks this node from it's surrounding nodes.
-         *
-         * @returns {void}
-         */
+     * Unlinks this node from it's surrounding nodes.
+     *
+     * @returns {void}
+     */
     this.unlink = () => {
       if (this.prev) {
         this.prev.next = this.next;
@@ -113,17 +113,17 @@ class SkipNode {
     };
 
     /**
-         * Copy the key and value of this node into a new node. Does not copy the links.
-         *
-         * @returns {SkipNode} the copied node.
-         */
+     * Copy the key and value of this node into a new node. Does not copy the links.
+     *
+     * @returns {SkipNode} the copied node.
+     */
     this.copy = () => new SkipNode(this.key, this.value);
 
     /**
-         * Returns a string representation of the node in the format `key=value`
-         *
-         * @returns {string} string representation of this node.
-         */
+     * Returns a string representation of the node in the format `key=value`
+     *
+     * @returns {string} string representation of this node.
+     */
     this.toString = () => `${this.key}=${this.value}`;
   }
 }
@@ -138,41 +138,41 @@ const NEG_INF_NODE = new SkipNode(Number.NEGATIVE_INFINITY, null);
  */
 class SortedLinkedList {
   /**
-     * Constructs a sorted linked list.
-     */
+   * Constructs a sorted linked list.
+   */
   constructor() {
     /**
-         * The head/first element of the list.
-         *
-         * @type {SkipNode}
-         */
+     * The head/first element of the list.
+     *
+     * @type {SkipNode}
+     */
     this.head = NEG_INF_NODE.copy();
 
     /**
-         * The tail/last element of the list.
-         *
-         * @type {SkipNode}
-         */
+     * The tail/last element of the list.
+     *
+     * @type {SkipNode}
+     */
     this.tail = POS_INF_NODE.copy();
 
     this.head.next = this.tail;
     this.tail.prev = this.head;
 
     /**
-         * Size of the list. Publicly accessible property for use with `SkipList`
-         *
-         * @type {number}
-         */
+     * Size of the list. Publicly accessible property for use with `SkipList`
+     *
+     * @type {number}
+     */
     this.size = 0;
 
     /**
-         * Iterates over all the elements in this list.
-         *
-         * @param {function} callback the operation to perform on each element, takes in two
-         * arguments, the key and the value.
-         * @param {object} thisArg `this` object that the callback function can refer to.
-         * @returns {void}
-         */
+     * Iterates over all the elements in this list.
+     *
+     * @param {function} callback the operation to perform on each element, takes in two
+     * arguments, the key and the value.
+     * @param {object} thisArg `this` object that the callback function can refer to.
+     * @returns {void}
+     */
     this.forEach = (callback, thisArg) => {
       let node = this.head.next;
 
@@ -184,15 +184,15 @@ class SortedLinkedList {
     };
 
     /**
-         * Adds an element to the skip list, keeping elements in order. If the key already exists,
-         * it updates the value of that key.
-         *
-         * @param {number} key the element's key.
-         * @param {object} value the element's value.
-         * @returns {SkipNode} the newly added node or the updated node; returned node can be used
-         * for updating it's `aboveNode` and `belowNode` fields.
-         * @throws {RangeError} if the key is infinite
-         */
+     * Adds an element to the skip list, keeping elements in order. If the key already exists,
+     * it updates the value of that key.
+     *
+     * @param {number} key the element's key.
+     * @param {object} value the element's value.
+     * @returns {SkipNode} the newly added node or the updated node; returned node can be used
+     * for updating it's `aboveNode` and `belowNode` fields.
+     * @throws {RangeError} if the key is infinite
+     */
     this.add = (key, value) => {
       if (!Number.isFinite(key)) {
         throw new RangeError('key must be finite');
@@ -236,12 +236,12 @@ class SortedLinkedList {
     };
 
     /**
-         * Gets the value associated with the key.
-         *
-         * @param {number} key the key to find.
-         * @returns {any} null if the key doesn't exist; otherwise the value for the key (note this
-         * value can be null)
-         */
+     * Gets the value associated with the key.
+     *
+     * @param {number} key the key to find.
+     * @returns {any} null if the key doesn't exist; otherwise the value for the key (note this
+     * value can be null)
+     */
     this.get = (key) => {
       let curr = this.head;
 
@@ -257,11 +257,11 @@ class SortedLinkedList {
     };
 
     /**
-         * Removes a key from the list.
-         *
-         * @param {number} key the key to remove
-         * @returns {boolean} true if the key was sucessfully removed.
-         */
+     * Removes a key from the list.
+     *
+     * @param {number} key the key to remove
+     * @returns {boolean} true if the key was sucessfully removed.
+     */
     this.remove = (key) => {
       let curr = this.head;
 
@@ -280,10 +280,10 @@ class SortedLinkedList {
     };
 
     /**
-         * Parses this list's nodes to an array-like string.
-         *
-         * @returns {string} a readable string of the list.
-         */
+     * Parses this list's nodes to an array-like string.
+     *
+     * @returns {string} a readable string of the list.
+     */
     this.toString = () => {
       let str = "[";
       let node = this.head.next;
@@ -310,48 +310,48 @@ class SortedLinkedList {
  */
 class SkipList {
   /**
-     * Constructs a skip list, with the bottom list being empty.
-     */
+   * Constructs a skip list, with the bottom list being empty.
+   */
   constructor() {
     const BOTTOM_INDEX = 0;
     const RANDOM_THRESHOLD = 0.5;
 
     /**
-         * Ordered lists contained in this skip list. The first element is always the bottom-most
-         * list in the skip list. The top-most list is the last element in this array.
-         */
+     * Ordered lists contained in this skip list. The first element is always the bottom-most
+     * list in the skip list. The top-most list is the last element in this array.
+     */
     const lists = [ new SortedLinkedList() ];
     const bottomList = lists[BOTTOM_INDEX];
 
     /**
-         * Gets the size of the list.
-         *
-         * @returns {number} the size.
-         */
+     * Gets the size of the list.
+     *
+     * @returns {number} the size.
+     */
     this.size = () => lists[BOTTOM_INDEX].size;
 
     /**
-         * Iterates over all the elements in this skip list (does not iterate over every single
-         * node, but rather all the elements that appear in the bottom-list).
-         *
-         * @param {function} callback the operation to perform on each element, takes in two
-         * arguments, the key and the value.
-         * @param {object} thisArg `this` object that the callback function can refer to
-         * @returns {void}
-         */
+     * Iterates over all the elements in this skip list (does not iterate over every single
+     * node, but rather all the elements that appear in the bottom-list).
+     *
+     * @param {function} callback the operation to perform on each element, takes in two
+     * arguments, the key and the value.
+     * @param {object} thisArg `this` object that the callback function can refer to
+     * @returns {void}
+     */
     this.forEach = (callback, thisArg) => {
       lists[BOTTOM_INDEX].forEach(callback, thisArg);
     };
 
     /**
-         * Iterates over all the lists in the skip list, thus over EVERY node present in the skip
-         * list. Starts with the top-most list.
-         *
-         * @param {function} callback the operation to perform on each list, takes in one
-         * argument, which is an array of the keys and values of iterating list's nodes.
-         * @param {object} thisArg `this` object that the callback function can refer to
-         * @returns {void}
-         */
+     * Iterates over all the lists in the skip list, thus over EVERY node present in the skip
+     * list. Starts with the top-most list.
+     *
+     * @param {function} callback the operation to perform on each list, takes in one
+     * argument, which is an array of the keys and values of iterating list's nodes.
+     * @param {object} thisArg `this` object that the callback function can refer to
+     * @returns {void}
+     */
     this.forEachList = (callback, thisArg) => {
       for (let i = lists.length - 1; i > -1; i--) {
         let safeList = [];
@@ -365,18 +365,18 @@ class SkipList {
     };
 
     /**
-         * Recursively searches for a node based on it's key. Additionally, an options object can
-         * be provided, which will perform certain operations:
-         *
-         * + `stopImmediately`: indicates to return target node when found instead of traversing
-         * downwards to find it's bottom-most counter part (this is good for when the links of the
-         * nodes aren't needed)
-         *
-         * @param {number} key the node's key
-         * @param {SkipNode} node the current iterating node
-         * @param {object} opts specifies certain operations to perform
-         * @returns {SkipNode} null if the element wasn't found; otherwise the element
-         */
+     * Recursively searches for a node based on it's key. Additionally, an options object can
+     * be provided, which will perform certain operations:
+     *
+     * + `stopImmediately`: indicates to return target node when found instead of traversing
+     * downwards to find it's bottom-most counter part (this is good for when the links of the
+     * nodes aren't needed)
+     *
+     * @param {number} key the node's key
+     * @param {SkipNode} node the current iterating node
+     * @param {object} opts specifies certain operations to perform
+     * @returns {SkipNode} null if the element wasn't found; otherwise the element
+     */
     function getNode(key, node, opts) {
       // base case
       if (!node) {
@@ -407,14 +407,14 @@ class SkipList {
     }
 
     /**
-         * Gets the element based on it's key.
-         *
-         * @param {number} key the element's key
-         * @returns {any} null if the element wasn't found; otherwise the element's value (which
-         * could also be null).
-         * @throws {RangeError} if the key is infinite
-         * @throws {TypeError} if the key is not a number
-         */
+     * Gets the element based on it's key.
+     *
+     * @param {number} key the element's key
+     * @returns {any} null if the element wasn't found; otherwise the element's value (which
+     * could also be null).
+     * @throws {RangeError} if the key is infinite
+     * @throws {TypeError} if the key is not a number
+     */
     this.get = (key) => {
       if (!isNumber(key)) {
         throw new TypeError('key must be a number');
@@ -426,11 +426,11 @@ class SkipList {
     };
 
     /**
-         * Promotes a node to lists other than the bottom one.
-         *
-         * @param {SkipNode} node the node to promote
-         * @returns {void}
-         */
+     * Promotes a node to lists other than the bottom one.
+     *
+     * @param {SkipNode} node the node to promote
+     * @returns {void}
+     */
     function promote(node) {
       let prevPromoted = null;
       let currPromoted = node;
@@ -459,33 +459,33 @@ class SkipList {
     }
 
     /**
-         * Adds an element after a certain (relative) key. The key for the new element is determined
-         * based on neighboring keys. If the relative key doesn't exist, then the element is not
-         * added.
-         *
-         * Special cases:
-         *
-         * 1. If the list has no elements, the relative key is ignored, and the new element's key
-         * will be 0
-         * 2. If the relative key is undefined or negative infinity, then the element will be
-         * inserted before the first element in this list. The new element's key will be the floor
-         * of the first element's key
-         * 3. If the relative key is the last element, then the new element's will be the ceiling of
-         * the last element's key
-         * 4. If the relative key is not the first or last element, then we let the relative key's
-         * element be `a`, and it's next linked element be `b`. Our new element's key will
-         * be an average of `a`s and `b`s keys. In the case where too many elements are inserted
-         * after one particular element, say `a`, then the average of the keys can end up being
-         * the same number. In which case, a `RangeError` is thrown.
-         *
-         * @param {number} relativeKey the key to add the new element after
-         * @param {any} newValue the value of the new element
-         * @returns {number} the key of the new element added
-         * @throws {ReferenceError} if the relativeKey doesn't exist in the list
-         * @throws {RangeError} if the relativeKey is positive infinity or if there is no suitable
-         * new key
-         * @throws {TypeError} if the relativeKey isn't a number or null/undefined
-         */
+     * Adds an element after a certain (relative) key. The key for the new element is determined
+     * based on neighboring keys. If the relative key doesn't exist, then the element is not
+     * added.
+     *
+     * Special cases:
+     *
+     * 1. If the list has no elements, the relative key is ignored, and the new element's key
+     * will be 0
+     * 2. If the relative key is undefined or negative infinity, then the element will be
+     * inserted before the first element in this list. The new element's key will be the floor
+     * of the first element's key
+     * 3. If the relative key is the last element, then the new element's will be the ceiling of
+     * the last element's key
+     * 4. If the relative key is not the first or last element, then we let the relative key's
+     * element be `a`, and it's next linked element be `b`. Our new element's key will
+     * be an average of `a`s and `b`s keys. In the case where too many elements are inserted
+     * after one particular element, say `a`, then the average of the keys can end up being
+     * the same number. In which case, a `RangeError` is thrown.
+     *
+     * @param {number} relativeKey the key to add the new element after
+     * @param {any} newValue the value of the new element
+     * @returns {number} the key of the new element added
+     * @throws {ReferenceError} if the relativeKey doesn't exist in the list
+     * @throws {RangeError} if the relativeKey is positive infinity or if there is no suitable
+     * new key
+     * @throws {TypeError} if the relativeKey isn't a number or null/undefined
+     */
     this.addAfter = (relativeKey, newValue) => {
       if (!isNumber(relativeKey) && relativeKey != null) {
         throw new TypeError('relativeKey must be a number or null/undefined');
@@ -575,14 +575,14 @@ class SkipList {
     };
 
     /**
-         * Updates a key's value.
-         *
-         * @param {number} key the key to update
-         * @param {any} newValue the new value for the key
-         * @returns {boolean} true if the key was found and updated
-         * @throws {TypeError} if key is not a number
-         * @throws {RangeError} if key is not finite
-         */
+     * Updates a key's value.
+     *
+     * @param {number} key the key to update
+     * @param {any} newValue the new value for the key
+     * @returns {boolean} true if the key was found and updated
+     * @throws {TypeError} if key is not a number
+     * @throws {RangeError} if key is not finite
+     */
     this.set = (key, newValue) => {
       if (!isNumber(key)) {
         throw new TypeError('key must be a number');
@@ -602,13 +602,13 @@ class SkipList {
     };
 
     /**
-         * Removes a key from the list.
-         *
-         * @param {number} key the key to remove
-         * @returns {boolean} true if the key was found and removed
-         * @throws {TypeError} if key is not a number
-         * @throws {RangeError} if key isn't finite
-         */
+     * Removes a key from the list.
+     *
+     * @param {number} key the key to remove
+     * @returns {boolean} true if the key was found and removed
+     * @throws {TypeError} if key is not a number
+     * @throws {RangeError} if key isn't finite
+     */
     this.remove = (key) => {
       if (!isNumber(key)) {
         throw new TypeError('key must be a number');
@@ -649,10 +649,10 @@ class SkipList {
     };
 
     /**
-         * Parses each element in the bottom list into a string.
-         *
-         * @returns {string} string representation of this skip list.
-         */
+     * Parses each element in the bottom list into a string.
+     *
+     * @returns {string} string representation of this skip list.
+     */
     this.toString = () => bottomList.toString();
   }
 }
