@@ -1,0 +1,34 @@
+@import 'mixins';
+
+.pt-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 20px;
+}
+
+.playlist-item {
+  @include list-item(60px);
+}
+
+.playlist-cover {
+  grid-row: 1 / span 1;
+  grid-column: 1 / span 1;
+  height: 40px;
+  width: 40px;
+}
+
+.playlist-name {
+  grid-row: 1 / span 1;
+  grid-column: 2 / span 1;
+}
+
+.song-item {
+  @include list-item(30px)
+}
+
+.song-name {
+  grid-row: 1 / span 1;
+  grid-column: 1 / span 2;
+}

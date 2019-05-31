@@ -4,6 +4,7 @@ import * as PSQProps from '../../props/psq';
 import SimpleBar from 'simplebar-react';
 import * as SpotifyWebApiExport from 'spotify-web-api-js';
 import Loading from '../Loading';
+import SongSelector from './SongSelector';
 
 const SpotifyWebApi = SpotifyWebApiExport.default;
 
@@ -13,22 +14,33 @@ export default class PlaylistSelector extends React.Component {
 
     // access tokens passed in as props, make call to get playlists here
     this.state = {
-      playlists: null,
+      playlistElems: [],
       finishedGrabbing: false,
       offset: 0,
-      err: null
+      err: null,
+      selectedId: null
     }
 
     this.getPlaylists = this.getPlaylists.bind(this);
+    this.displaySongs = this.displaySongs.bind(this);
   }
 
   getPlaylists() {
-    let currentPlaylists = this.state.playlists || [];
-
     this.props.spotifyApi.getUserPlaylists({offset: this.state.offset, limit: 50}).then((data) => {
+      let newPlaylistElems = data.items.map((playlist, i) => {
+        let coverUrl = playlist.images.length > 0 ? playlist.images[0].url : '/public/assets/local-file.svg';
+        let name = playlist.name;
+
+        let coverElem = <img className="playlist-cover" src={coverUrl}/>
+        let nameElem = <div className="playlist-name">{name}</div>
+        let itemElem = <a key={`playlist-item-${i}`} onClick={this.displaySongs.bind(null, playlist.id)} className="playlist-item">{coverElem}{nameElem}</a>
+
+        return itemElem;
+      });
       let newOffset = this.state.offset + data.items.length;
+
       this.setState({
-        playlists: currentPlaylists.concat(data.items),
+        playlistElems: this.state.playlistElems.concat(newPlaylistElems),
         offset: newOffset,
         finishedGrabbing: newOffset === data.total
       });
@@ -40,30 +52,38 @@ export default class PlaylistSelector extends React.Component {
     });
   }
 
+  displaySongs(selectedId, event) {
+    if (event.button === 0) {
+      this.setState({
+        ...this.state,
+        selectedId
+      });
+    }
+  }
+
   render() {
     if (this.state.err) {
       return (<p className="error">{`Error in retrieving playlists: ${this.state.err}`}</p>);
-    } if (!this.state.finishedGrabbing) {
-      this.getPlaylists();
-      return (<Loading msg="playlists" />);
+    } else if (this.state.selectedId) {
+      return (<SongSelector spotifyApi={this.props.spotifyApi} playlistId={this.state.selectedId} />);
     } else {
-      let playlistElems = this.state.playlists.map((playlist,i) => {
-        let coverUrl = playlist.images.length > 0 ? playlist.images[0].url : '/public/assets/local-file.svg';
-        let name = playlist.name;
-        let url = playlist.uri;
+      if (!this.state.finishedGrabbing) {
+        this.getPlaylists();
+      }
 
-        let coverElem = <img className="playlist-cover" src={coverUrl}/>
-        let nameElem = <div className="playlist-name">{name}</div>
-        let itemElem = <a key={`playlist-item${i}`} href={url} className="playlist-item">{coverElem}{nameElem}</a>
-
-        return itemElem;
-      });
-
-      return (
-      <SimpleBar className="playlist-container">
-        {playlistElems}
-      </SimpleBar>
-      );
+      if (this.state.playlistElems.length === 0) {
+        return (
+        <div className="list-container pt-message">
+          {this.state.finishedGrabbing ? 'No playlists' : 'Retrieving playlists'}
+        </div>
+        );
+      } else {
+        return (
+        <SimpleBar className="list-container">
+          {this.state.playlistElems}
+        </SimpleBar>
+        );
+      }
     }
   }
 }
