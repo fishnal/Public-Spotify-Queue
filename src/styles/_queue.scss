@@ -1,0 +1,52 @@
+$queue-border-color: black;
+$queue-bg-color: #c2a4a4;
+$queue-item-separator-color: gray;
+$queue-item-color: #e8e8e8;
+
+div {
+  .queue-container {
+    border: 1px solid $queue-border-color;
+    background-color: $queue-bg-color;
+    width: 800px;
+    max-width: 800px;
+    height: 300px;
+    max-height: 300px;
+  }
+}
+
+.queue-item {
+  display: grid;
+  border-bottom: 1px solid $queue-item-separator-color;
+  height: 40px;
+  grid-template-columns: [track-start] 4fr [artist-start] 3fr [album-start] 2fr;
+  grid-column-gap: 10px;
+
+  > * {
+    display: flex;
+    align-items: center;
+    margin: 0px 5px;
+    color: $queue-item-color;
+    font-size: 1em;
+  }
+
+  :last-child {
+    border-bottom: none;
+  }
+
+  .header {
+    font-size: 0.75em;
+    font-weight: bold;
+  }
+
+  > .queue-track {
+    grid-column: track-start / span 1;
+  }
+
+  > .queue-artist {
+    grid-column: artist-start / span 1;
+  }
+
+  > .queue-album {
+    grid-column: album-start / span 1;
+  }
+}

@@ -1,0 +1,74 @@
+$record-hover-decoration-color: black;
+
+// Mobile view
+.track-display {
+  display: grid;
+  margin-top: 20px;
+  height: 400px;
+  grid-template-columns: 220px 80px;
+  grid-template-rows: 300px 2fr 1fr 1fr;
+  grid-row-gap: 10px;
+}
+
+.record-cover, .record-track, .record-time, .record-artist, .record-album {
+  grid-row-end: span 1;
+  grid-column: 1 / span 2;
+
+  > p, a {
+    margin: 0px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  > a {
+    :hover {
+      text-decoration-line: underline;
+      text-decoration-color: $record-hover-decoration-color;
+    }
+  }
+}
+
+.record-cover {
+  width: 300px;
+  max-width: 300px;
+  height: 300px;
+  max-height: 300px;
+  grid-row-start: 1;
+  grid-column: 1 / span 1;
+}
+
+.record-track {
+  grid-row-start: 2;
+  grid-column: 1 / span 1;
+
+  > a {
+    font-size: 20px;
+  }
+}
+
+.record-time {
+  grid-row-start: 2;
+  grid-column: 2 / span 1;
+
+  > p {
+    justify-content: center;
+    text-align: right;
+    font-size: 20px;
+  }
+}
+
+.record-artist {
+  grid-row-start: 3;
+
+  > a {
+    font-size: 14px;
+  }
+}
+
+.record-album {
+  grid-row-start: 4;
+
+  > a {
+    font-size: 14px;
+  }
+}

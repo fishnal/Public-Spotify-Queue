@@ -1,7 +1,12 @@
 .*
+\#*#
+/**/*~
 *.pem
 *.conf
 !.gitignore
 !.eslint*
+!.sasslint*
+!.babelrc
 node_modules/
-mochawesome-report/*
+docs/mocha-report/*
+build/

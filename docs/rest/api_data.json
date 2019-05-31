@@ -18,7 +18,7 @@
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "Client"
   },
   {
@@ -41,7 +41,7 @@
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "Client"
   },
   {
@@ -79,14 +79,14 @@
             "type": "number",
             "optional": false,
             "field": "relative_key",
-            "description": "<p>the key of the song to add after</p>"
+            "description": "<p>the key of the song to add after (null to add it before the first song in the queue)</p>"
           },
           {
             "group": "Parameter",
             "type": "string",
             "optional": false,
             "field": "new_song_id",
-            "description": "<p>the Spotify track id of the new song to add (null to add it before the first song in the queue)</p>"
+            "description": "<p>the Spotify track id of the new song to add</p>"
           }
         ]
       }
@@ -201,17 +201,17 @@
     "examples": [
       {
         "title": "cURL",
-        "content": "curl -X POST http://localhost:3000/queue/add_after\n     -H \"Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21\"\n     -d relative_key=0\n     -d new_song_id=3L3bIKIYIvzIsR6Obv2WB3",
+        "content": "curl -X POST http://localhost:3000/queue/add_after\n     -H \"Authorization: Bearer Yy3bxKIYIqzIsy6Oxv2W21\"\n     -d relative_key=0\n     -d new_song_id=3L3bIKIYIvzIsR6Obv2WB3",
         "type": "shell"
       },
       {
         "title": "Axios",
-        "content": "axios({\n  url: 'http://localhost:3000/queue/add_after',\n  method: 'post',\n  headers: {\n    'Authorization': 'Basic Yy3bxKIYIqzIsy6Oxv2W21'\n  }\n  params: {\n    relative_key: 0,\n    new_song_id: '3L3bIKIYIvzIsR6Obv2WB3'\n  }\n});",
+        "content": "axios({\n  url: 'http://localhost:3000/queue/add_after',\n  method: 'post',\n  headers: {\n    'Authorization': 'Bearer Yy3bxKIYIqzIsy6Oxv2W21'\n  }\n  params: {\n    relative_key: 0,\n    new_song_id: '3L3bIKIYIvzIsR6Obv2WB3'\n  }\n});",
         "type": "javascript"
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "Queue"
   },
   {
@@ -318,7 +318,7 @@
     "examples": [
       {
         "title": "cURL",
-        "content": "curl -X DELETE http://localhost:3000/queue/remove\n     -H \"Authorization: Basic Yy3bxKIYIqzIsy6Oxv2W21\"\n     -d key=0",
+        "content": "curl -X DELETE http://localhost:3000/queue/remove\n     -H \"Authorization: Bearer Yy3bxKIYIqzIsy6Oxv2W21\"\n     -d key=0",
         "type": "shell"
       },
       {
@@ -328,7 +328,7 @@
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "Queue"
   },
   {
@@ -454,7 +454,7 @@
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "SpotifyAuth"
   },
   {
@@ -575,7 +575,7 @@
       }
     ],
     "version": "0.1.1",
-    "filename": "src/server.js",
+    "filename": "src/node/server.js",
     "groupTitle": "SpotifyAuth"
   }
 ]

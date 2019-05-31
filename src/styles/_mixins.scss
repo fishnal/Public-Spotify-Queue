@@ -1,0 +1,39 @@
+$list-item-color: white;
+$list-separator-color: gray;
+$list-item-hover-decoration-color: white;
+$list-hover-bg-color: #2d2d2d;
+
+@mixin list-container($width: 500px, $height: 300px, $background-color: #4f5051) {
+  background-color: $background-color;
+  width: $width;
+  max-width: $width;
+  height: $height;
+  max-height: $height;
+}
+
+@mixin list-item($height: 70px) {
+  display: grid;
+  align-items: center;
+  transition: background 250ms ease 0ms;
+  border-bottom: 1px solid $list-separator-color;
+  background-color: inherit;
+  padding: 0px 10px;
+  width: inherit;
+  height: $height;
+  text-decoration: none;
+  color: $list-item-color;
+  grid-template-columns: 50px auto;
+  grid-template-rows: 1fr;
+  grid-column-gap: 10px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    transition: background 250ms ease 0ms;
+    background-color: $list-hover-bg-color;
+    text-decoration-line: underline;
+    text-decoration-color: $list-item-hover-decoration-color;
+  }
+}

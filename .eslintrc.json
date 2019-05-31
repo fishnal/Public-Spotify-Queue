@@ -8,6 +8,7 @@
 		"humps": true
 	},
 	"rules": {
+		"semi": "error",
 		"for-direction": "error",
 		"getter-return": "error",
 		"no-await-in-loop": "error",
@@ -45,10 +46,10 @@
 			"warn",
 			{
 				"preferType": {
-					"String": "string",
-					"Object": "object",
-					"Number": "number",
-					"Boolean": "boolean"
+					"String": "String",
+					"Object": "Object",
+					"Number": "Number",
+					"Boolean": "Boolean"
 				},
 				"requireParamType": true,
 				"matchDescription": ".+",
@@ -171,7 +172,8 @@
 		"no-unused-vars": [
 			"warn",
 			{
-				"args": "all"
+				"varsIgnorePattern": "^_",
+				"argsIgnorePattern": "^_"
 			}
 		],
 		"no-use-before-define": [
@@ -208,7 +210,13 @@
 			"consistent"
 		],
 		"block-spacing": "warn",
-		"brace-style": "warn",
+		"brace-style": [
+			"warn",
+			"1tbs",
+			{
+				"allowSingleLine": true
+			}
+		],
 		"comma-dangle": "warn",
 		"comma-spacing": "warn",
 		"comma-style": "warn",
@@ -228,12 +236,11 @@
 		],
 		"implicit-arrow-linebreak": "warn",
 		"indent": [
-			"warn",
-			"tab"
+			"error",
+			2
 		],
 		"key-spacing": "warn",
 		"keyword-spacing": "warn",
-		"linebreak-style": "warn",
 		"lines-between-class-members": "warn",
 		"max-depth": "warn",
 		"max-len": [
@@ -289,7 +296,6 @@
 		],
 		"no-nested-ternary": "warn",
 		"no-trailing-spaces": "warn",
-		"no-underscore-dangle": "warn",
 		"no-unneeded-ternary": "warn",
 		"no-whitespace-before-property": "warn",
 		"nonblock-statement-body-position": "warn",
