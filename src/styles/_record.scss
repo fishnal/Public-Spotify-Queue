@@ -1,8 +1,10 @@
+$record-hover-decoration-color: black;
+
 // Mobile view
-.trackDisplay {
+.track-display {
+  display: grid;
   margin-top: 20px;
   height: 400px;
-  display: grid;
   grid-template-columns: 220px 80px;
   grid-template-rows: 300px 2fr 1fr 1fr;
   grid-row-gap: 10px;
@@ -12,25 +14,27 @@
   grid-row-end: span 1;
   grid-column: 1 / span 2;
 
-  > p,a {
+  > p, a {
     margin: 0px;
-    color: inherit;
     text-decoration: none;
+    color: inherit;
   }
 
-  > a:hover {
-    text-decoration-line: underline;
-    text-decoration-color: black;
+  > a {
+    :hover {
+      text-decoration-line: underline;
+      text-decoration-color: $record-hover-decoration-color;
+    }
   }
 }
 
 .record-cover {
+  width: 300px;
+  max-width: 300px;
+  height: 300px;
+  max-height: 300px;
   grid-row-start: 1;
   grid-column: 1 / span 1;
-  height: 300px;
-  width: 300px;
-  max-height: 300px;
-  max-width: 300px;
 }
 
 .record-track {
@@ -47,9 +51,9 @@
   grid-column: 2 / span 1;
 
   > p {
-    font-size: 20px;
-    text-align: right;
     justify-content: center;
+    text-align: right;
+    font-size: 20px;
   }
 }
 
@@ -68,12 +72,3 @@
     font-size: 14px;
   }
 }
-
-// Desktop view
-/* @media (min-width: 768px) {
-  .trackDisplay {
-    grid-template-columns: 300px 1fr;
-    grid-column-gap: 20px;
-    grid-template-rows: 300px;
-  }
-} */

@@ -29,7 +29,7 @@ export default class RecordDisplay extends React.Component {
       let timeString = sprintf('[%d:%02d]', mins, secs);
 
       return (
-      <div className="trackDisplay">
+      <div className="track-display">
         <CoverDisplay is_local={track.is_local} covers={covers} link={track.uri} />
         <TrackDisplay is_local={track.is_local} name={track.name} link={track.uri} />
         <div className="record-time"><p>{timeString}</p></div>

@@ -5,6 +5,7 @@
 *.conf
 !.gitignore
 !.eslint*
+!.sasslint*
 !.babelrc
 node_modules/
 docs/mocha-report/*

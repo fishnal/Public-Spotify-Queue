@@ -1,10 +1,12 @@
 @import 'mixins';
 
+$pt-message-color: white;
+
 .pt-message {
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: white;
+  justify-content: center;
+  color: $pt-message-color;
   font-size: 20px;
 }
 
@@ -13,10 +15,10 @@
 }
 
 .playlist-cover {
+  width: 40px;
+  height: 40px;
   grid-row: 1 / span 1;
   grid-column: 1 / span 1;
-  height: 40px;
-  width: 40px;
 }
 
 .playlist-name {

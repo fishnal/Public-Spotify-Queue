@@ -1,4 +1,6 @@
+$error-color: #f44336;
+
 .error {
+  color: $error-color;
   font-weight: bold;
-  color: #f44336;
 }

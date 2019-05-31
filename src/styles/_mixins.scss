@@ -1,34 +1,39 @@
-@mixin list-container($width: 500px, $height:300px, $background-color: #4f5051) {
-  width: $width;
-  height: $height;
-  max-width: $width;
-  max-height: $height;
+$list-item-color: white;
+$list-separator-color: gray;
+$list-item-hover-decoration-color: white;
+$list-hover-bg-color: #2d2d2d;
+
+@mixin list-container($width: 500px, $height: 300px, $background-color: #4f5051) {
   background-color: $background-color;
+  width: $width;
+  max-width: $width;
+  height: $height;
+  max-height: $height;
 }
 
 @mixin list-item($height: 70px) {
-  color: white;
   display: grid;
   align-items: center;
-  height: $height;
+  transition: background 250ms ease 0ms;
+  border-bottom: 1px solid $list-separator-color;
+  background-color: inherit;
+  padding: 0px 10px;
   width: inherit;
+  height: $height;
+  text-decoration: none;
+  color: $list-item-color;
   grid-template-columns: 50px auto;
   grid-template-rows: 1fr;
   grid-column-gap: 10px;
-  border-bottom: 1px solid gray;
-  padding: 0px 10px;
-  text-decoration: none;
-  transition: background 250ms ease 0ms;
-  background-color: inherit;
 
   &:last-child {
     border-bottom: none;
   }
 
   &:hover {
-    text-decoration-line: underline;
-    text-decoration-color: white;
     transition: background 250ms ease 0ms;
-    background-color: #2d2d2d;
+    background-color: $list-hover-bg-color;
+    text-decoration-line: underline;
+    text-decoration-color: $list-item-hover-decoration-color;
   }
 }
