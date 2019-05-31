@@ -18,7 +18,7 @@
     "commander": "^2.19.0",
     "express": "^4.16.3",
     "humps": "^2.0.1",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.0",
     "js-cookie": "^2.2.0",
     "node-sass": "^4.11.0",
     "rea": "0.0.1",
