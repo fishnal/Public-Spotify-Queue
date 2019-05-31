@@ -42,8 +42,10 @@ function testRunner(testFiles, done) {
         reportDir: "docs/mocha-report"
       }
     }))
-    .once('end', done)
+    .on('end', () => process.exit(1))
     .on('error', (err) => { console.error(err); });
+
+  done();
 }
 
 gulp.task('test', testRunner.bind(null, nodeTests));
