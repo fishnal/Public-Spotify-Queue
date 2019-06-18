@@ -1,9 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import * as PSQProps from '../../props/psq';
 import SimpleBar from 'simplebar-react';
 import * as SpotifyWebApiExport from 'spotify-web-api-js';
-import Loading from '../Loading';
 import SongSelector from './SongSelector';
 
 const SpotifyWebApi = SpotifyWebApiExport.default;
