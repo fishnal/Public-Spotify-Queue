@@ -1,18 +1,24 @@
 $record-hover-decoration-color: black;
+$record-container-std: 300px;
+$record-container-margin: 20px;
 
-// Mobile view
+.recorder-container {
+  width: $record-container-std;
+  margin-bottom: $record-container-margin;
+  margin-right: $record-container-margin;
+}
+
 .track-display {
   display: grid;
+  width: $record-container-std;
   margin-top: 20px;
-  height: 400px;
-  grid-template-columns: 220px 80px;
-  grid-template-rows: 300px 2fr 1fr 1fr;
+  grid-template-columns: (11/15*$record-container-std) (4/15*$record-container-std);
+  grid-template-rows: 300px 2fr auto auto;
   grid-row-gap: 10px;
 }
 
 .record-cover, .record-track, .record-time, .record-artist, .record-album {
   grid-row-end: span 1;
-  grid-column: 1 / span 2;
 
   > p, a {
     margin: 0px;
@@ -20,21 +26,18 @@ $record-hover-decoration-color: black;
     color: inherit;
   }
 
-  > a {
-    :hover {
-      text-decoration-line: underline;
-      text-decoration-color: $record-hover-decoration-color;
-    }
+  > a:hover[href] {
+    // Linked anchored tags should underline when hovered
+    text-decoration-line: underline;
+    text-decoration-color: $record-hover-decoration-color;
   }
 }
 
 .record-cover {
-  width: 300px;
-  max-width: 300px;
-  height: 300px;
-  max-height: 300px;
+  width: $record-container-std;
+  height: $record-container-std;
   grid-row-start: 1;
-  grid-column: 1 / span 1;
+  grid-column: 1 / span 2;
 }
 
 .record-track {
@@ -58,7 +61,9 @@ $record-hover-decoration-color: black;
 }
 
 .record-artist {
+  height: auto;
   grid-row-start: 3;
+  grid-column: 1 / span 1;
 
   > a {
     font-size: 14px;
@@ -66,7 +71,9 @@ $record-hover-decoration-color: black;
 }
 
 .record-album {
+  height: auto;
   grid-row-start: 4;
+  grid-column: 1 / span 1;
 
   > a {
     font-size: 14px;
