@@ -1,4 +1,6 @@
-{
+/* eslint-disable max-lines */
+/* eslint-disable max-len */
+module.exports = {
   "authorize": [
     {
       "title": "(400) missing client id",
@@ -24,7 +26,7 @@
       "title": "(400) missing response type",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID"
+          "client_id": process.env.CLIENT_ID
         }
       },
       "expected": {
@@ -36,7 +38,7 @@
       "title": "(400) wrong response type",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "bad response type"
         }
       },
@@ -49,7 +51,7 @@
       "title": "(400) missing redirect uri",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "code"
         }
       },
@@ -62,7 +64,7 @@
       "title": "(400) wrong redirect uri",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "code",
           "redirect_uri": "http://badredirect`.com"
         }
@@ -76,7 +78,7 @@
       "title": "(302) code with no state",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "code",
           "redirect_uri": "http://testingurl:3000"
         }
@@ -93,7 +95,7 @@
       "title": "(302) code with state",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "code",
           "redirect_uri": "http://localhost:3000",
           "state": "my state"
@@ -112,7 +114,7 @@
       "title": "(302) token with no state",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "token",
           "redirect_uri": "http://localhost:3000"
         }
@@ -131,7 +133,7 @@
       "title": "(302) token with state",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "token",
           "redirect_uri": "http://localhost:3000",
           "state": "my state"
@@ -152,7 +154,7 @@
       "title": "(302) with redirect http://localhost:3000",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "code",
           "redirect_uri": "http://localhost:3000",
           "state": "my state"
@@ -171,7 +173,7 @@
       "title": "(302) code with scopes [user-read-email, user-read-private, streaming]",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "code",
           "redirect_uri": "http://localhost:3000",
           "scope": "user-read-email user-read-private streaming"
@@ -189,7 +191,7 @@
       "title": "(302) token with scopes [user-read-email, user-read-private, streaming]",
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "token",
           "redirect_uri": "http://localhost:3000",
           "scope": "user-read-email user-read-private streaming"
@@ -209,13 +211,11 @@
       "title": "(302) code, but it expires in 1ms",
       "func": {
         "name": "setCodeExpiration",
-        "args": [
-          1
-        ]
+        "args": [ 1 ]
       },
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "code",
           "redirect_uri": "http://localhost:3000"
         }
@@ -232,13 +232,11 @@
       "title": "(302) token, but it expires in 1ms",
       "func": {
         "name": "setAccessTokenExpiration",
-        "args": [
-          1
-        ]
+        "args": [ 1 ]
       },
       "args": {
         "queries": {
-          "client_id": "process.env.CLIENT_ID",
+          "client_id": process.env.CLIENT_ID,
           "response_type": "token",
           "redirect_uri": "http://localhost:3000"
         }
@@ -285,7 +283,7 @@
       "title": "(415) missing Content-Type header",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET"
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64')
         }
       },
       "expected": {
@@ -300,7 +298,7 @@
       "title": "(415) wrong Content-Type header",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "not the right one"
         }
       },
@@ -316,7 +314,7 @@
       "title": "(400) missing grant type parameter",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         }
       },
@@ -332,7 +330,7 @@
       "title": "(400) wrong grant type parameter",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -351,7 +349,7 @@
       "title": "(400) authorization_code: missing code parameter",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -370,7 +368,7 @@
       "title": "(400) authorization_code: wrong code parameter",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -390,7 +388,7 @@
       "title": "(400) authorization_code: auth code expired",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -410,7 +408,7 @@
       "title": "(400) authorization_code: missing redirect uri",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -430,7 +428,7 @@
       "title": "(400) authorization_code: wrong redirect uri",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -451,7 +449,7 @@
       "title": "(400) refresh_token: missing refresh token",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -470,7 +468,7 @@
       "title": "(400) refresh_token: bad refresh token",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -490,7 +488,7 @@
       "title": "(200) client_credentials: ok",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -511,7 +509,7 @@
       "title": "(200) authorization_code: ok, no scopes",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -535,7 +533,7 @@
       "title": "(200) authorization_code: ok, with scopes",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -559,13 +557,11 @@
       "title": "(200) authorization_code: ok but token expires in 1ms",
       "func": {
         "name": "setAccessTokenExpiration",
-        "args": [
-          1
-        ]
+        "args": [ 1 ]
       },
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -589,13 +585,11 @@
       "title": "(200) refresh_token: ok, new token expires in 60000ms",
       "func": {
         "name": "setAccessTokenExpiration",
-        "args": [
-          60000
-        ]
+        "args": [ 60000 ]
       },
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -617,7 +611,7 @@
       "title": "(200) refresh_token: generates new refresh token",
       "args": {
         "headers": {
-          "Authorization": "Basic process.env.CLIENT_ID:process.env.CLIENT_SECRET",
+          "Authorization": Buffer.from(`Basic ${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'),
           "Content-Type": "application/x-www-form-urlencoded"
         },
         "queries": {
@@ -637,4 +631,4 @@
       }
     }
   ]
-}
+};

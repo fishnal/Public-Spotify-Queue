@@ -9,31 +9,31 @@ const request = require('request-promise-native').defaults({
 require('should');
 const mockServer = require('./mockserver.js');
 const { isString } = require('../../src/node/utils.js');
+const data = require('./mockserver.test.data.js');
 
-const data = JSON.parse(fs.readFileSync(`${__dirname}/mockserver.test.json`), (key, value) => {
-  // evaluate environment client id and client secret strings
-  if (isString(value)) {
-    value = value.replace('process.env.CLIENT_ID', process.env.CLIENT_ID);
-    value = value.replace('process.env.CLIENT_SECRET', process.env.CLIENT_SECRET);
-  }
-
-  if (key === 'Authorization' && isString(value)) {
-    // parse authorization header into base64
-    value = Buffer.from(value).toString('base64');
-  } else if (key === 'scope' && isString(value)) {
-    // sort scope fields (either from parameters or an expected data set) by splitting them into
-    // an array, sorting them, and then joining them (delimited by spaces)
-    // this lets us declare our scope fields in any valid proper, but when used in comparisons,
-    // their alphabetical order is used
-    value = value.split(' ').sort().join(' ');
-  }
-
-  return value;
-});
 const mockIp = process.env.TEST_SERVER.endsWith('/')
   ? process.env.TEST_SERVER.substring(0, process.env.TEST_SERVER.length - 1)
   : process.env.TEST_SERVER;
 const mockAddress = `${mockIp}:${process.env.TEST_PORT}`;
+
+// sort the "scope" query parameter, if present, in all tests
+Object.keys(data).forEach((testKey) => {
+  data[testKey].forEach((_test) => {
+    function sortScope(obj) {
+      let scope = obj.scope;
+      scope = scope.split(' ').sort().join(' ');
+      obj.scope = scope;
+    }
+
+    if (_test.args.queries && isString(_test.args.queries.scope)) {
+      sortScope(_test.args.queries);
+    }
+
+    if (_test.expected && _test.expected.data && isString(_test.expected.data.scope)) {
+      sortScope(_test.expected.data);
+    }
+  });
+});
 
 /**
  * Parses the hash fragments of a URL object.

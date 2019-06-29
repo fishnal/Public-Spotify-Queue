@@ -1,4 +1,3 @@
-const fs = require('fs');
 require('should');
 const SkipList = require('../../src/node/skiplist.js');
 const testData = require('./skiplist.test.data');
