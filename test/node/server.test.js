@@ -1,4 +1,3 @@
-const fs = require('fs');
 const request = require('request-promise-native').defaults({
   json: true,
   // if in debug mode, turn off timeout, otherwise keep it to 2 seconds
