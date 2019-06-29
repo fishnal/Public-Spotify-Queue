@@ -1,22 +1,7 @@
 const fs = require('fs');
 require('should');
 const SkipList = require('../../src/node/skiplist.js');
-
-const testData = JSON.parse(fs.readFileSync(`${__dirname}/skiplist.test.json`), (key, value) => {
-  if (value instanceof Array) {
-    // replace stringy Infinity occurrences to their literal counterparts in the array
-    value.forEach((elem, ind) => {
-      if ((/[+-]Infinity/).test(elem)) {
-        value[ind] = Number(elem);
-      }
-    });
-  } else if (key === 'error') {
-    // convert stringy error to it's class counterpart
-    value = global[value];
-  }
-
-  return value;
-});
+const testData = require('./skiplist.test.data');
 
 /**
  * Gets all the lists involved in a skip list.
