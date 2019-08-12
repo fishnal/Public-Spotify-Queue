@@ -12,6 +12,7 @@ $pt-message-color: white;
 
 .playlist-item {
   @include list-item(60px);
+  cursor: pointer;
 }
 
 .playlist-cover {
@@ -27,7 +28,8 @@ $pt-message-color: white;
 }
 
 .song-item {
-  @include list-item(30px)
+  @include list-item(30px);
+  cursor: pointer;
 }
 
 .song-name {

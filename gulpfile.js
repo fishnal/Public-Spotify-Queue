@@ -111,7 +111,7 @@ gulp.task('sass', async(done) => {
 
         if (lengthDiff > 0) {
           // make a new buffer that has as many bytes as this difference
-          cssBuf = Buffer.concat([cssBuf, Buffer.alloc(lengthDiff)]);
+          cssBuf = Buffer.concat([ cssBuf, Buffer.alloc(lengthDiff) ]);
         } else {
           // slice off the portions we don't need
           cssBuf = cssBuf.slice(0, cssBuf.length - Math.abs(lengthDiff));

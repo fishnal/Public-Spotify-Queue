@@ -18,6 +18,11 @@ const mockAddress = `${mockIp}:${process.env.TEST_PORT}`;
 // sort the "scope" query parameter, if present, in all tests
 Object.keys(data).forEach((testKey) => {
   data[testKey].forEach((_test) => {
+    /**
+     * Sorts the scope property for the given object.
+     * @param {Object} obj object to modify.
+     * @returns {void}
+     */
     function sortScope(obj) {
       let scope = obj.scope;
       scope = scope.split(' ').sort().join(' ');
@@ -73,7 +78,7 @@ function getSearchParams(urlObj) {
 describe('Mock Server', function() {
   let tempHost = null;
 
-  this.beforeAll(async function() {
+  this.beforeAll(async() => {
     await mockServer.start();
     tempHost = await express().listen(3000);
   });
@@ -81,6 +86,12 @@ describe('Mock Server', function() {
   describe('/authorize', function() {
     let testSet = data['authorize'];
 
+    /**
+     * Handles assertions for the /authorize endpoint
+     * @param {Object} _test Test object to act and assert.
+     * @param {Object} resp actual response from server.
+     * @returns {void}
+     */
     function authHandler(_test, resp) {
       resp.statusCode.should.equal(_test.expected.code);
 
@@ -103,8 +114,8 @@ describe('Mock Server', function() {
       }
     }
 
-    testSet.forEach(function(_test) {
-      it(_test.title, async function() {
+    testSet.forEach((_test) => {
+      it(_test.title, async() => {
         if (_test.func && mockServer[_test.func.name]) {
           mockServer[_test.func.name](..._test.func.args);
         }
@@ -121,12 +132,18 @@ describe('Mock Server', function() {
       });
     });
 
-    this.afterAll(function() {
+    this.afterAll(() => {
       mockServer.restoreDefaults();
     });
   });
 
   describe('/token', function() {
+    /**
+     * Handles assertions for the /token endpoint
+     * @param {Object} _test Test object to act and assert.
+     * @param {Object} resp actual response from server.
+     * @returns {void}
+     */
     function tokenHandler(_test, resp) {
       // should only get a status code if it wasn't 200
       if (resp.statusCode) {
@@ -139,8 +156,8 @@ describe('Mock Server', function() {
 
     let testSet = data['token'];
 
-    testSet.forEach(function(_test) {
-      it(_test.title, async function() {
+    testSet.forEach((_test) => {
+      it(_test.title, async() => {
         if (_test.func && mockServer[_test.func.name]) {
           mockServer[_test.func.name](..._test.func.args);
         }
@@ -157,12 +174,12 @@ describe('Mock Server', function() {
       });
     });
 
-    this.afterAll(function() {
+    this.afterAll(() => {
       mockServer.restoreDefaults();
     });
   });
 
-  this.afterAll(async function() {
+  this.afterAll(async() => {
     await tempHost.close();
     await mockServer.close();
   });

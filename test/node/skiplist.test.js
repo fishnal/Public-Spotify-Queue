@@ -58,24 +58,24 @@ function overrideMathRandom(...promotionValues) {
   };
 }
 
-describe('SkipList', function() {
+describe('SkipList', () => {
   const list = new SkipList();
 
-  describe('empty', function() {
-    testData['empty'].forEach(function(_test) {
-      it(_test.title, function() {
+  describe('empty', () => {
+    testData['empty'].forEach((_test) => {
+      it(_test.title, () => {
         list[_test.func](..._test.args).should.equal(_test.expected);
       });
     });
   });
 
-  describe('addAfter', function() {
+  describe('addAfter', () => {
     overrideMathRandom(
       2, 1, 0, 0, 3,
       0, 2, 3, 0, 0
     );
 
-    testData['addAfter'].forEach(function(_test) {
+    testData['addAfter'].forEach((_test) => {
       if (_test.test_id === 'addAfter_key_avg') {
         let overriddenRand = Math.random;
         let tmpList = new SkipList();
@@ -119,7 +119,7 @@ describe('SkipList', function() {
         Math.random = overriddenRand;
         Number.isSafeInteger = isSafeIntegerImpl;
       } else {
-        it(_test.title, function() {
+        it(_test.title, () => {
           if (_test.expected.error) {
             (() => list.addAfter(..._test.args)).should.throw(_test.expected.error, {
               message: _test.expected.message
@@ -133,9 +133,9 @@ describe('SkipList', function() {
     });
   });
 
-  describe('get', function() {
-    testData['get'].forEach(function(_test) {
-      it(_test.title, function() {
+  describe('get', () => {
+    testData['get'].forEach((_test) => {
+      it(_test.title, () => {
         if (_test.expected.error) {
           (() => list.get(..._test.args)).should.throw(_test.expected.error, {
             message: _test.expected.message
@@ -147,17 +147,17 @@ describe('SkipList', function() {
     });
   });
 
-  describe('non-empty', function() {
-    testData['non-empty'].forEach(function(_test) {
-      it(_test.title, function() {
+  describe('non-empty', () => {
+    testData['non-empty'].forEach((_test) => {
+      it(_test.title, () => {
         list[_test.func](..._test.args).should.equal(_test.expected);
       });
     });
   });
 
-  describe('set', function() {
-    testData['set'].forEach(function(_test) {
-      it(_test.title, function() {
+  describe('set', () => {
+    testData['set'].forEach((_test) => {
+      it(_test.title, () => {
         if (_test.expected.error) {
           (() => list.set(..._test.args)).should.throw(_test.expected.error, {
             message: _test.expected.message
@@ -170,9 +170,9 @@ describe('SkipList', function() {
     });
   });
 
-  describe('remove', function() {
-    testData['remove'].forEach(function(_test) {
-      it(_test.title, function() {
+  describe('remove', () => {
+    testData['remove'].forEach((_test) => {
+      it(_test.title, () => {
         if (_test.expected.error) {
           (() => list.remove(..._test.args)).should.throw(_test.expected.error, {
             message: _test.expected.message

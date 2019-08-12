@@ -60,7 +60,7 @@ describe('Host Server', async function() {
   let fakeDateNow = 1;
 
   // before we start any tests, have mock server generate an auth code
-  this.beforeAll(async function() {
+  this.beforeAll(async() => {
     // save proper implementation of Date.now()
     dateNowImpl = Date.now;
     // override it now so we make it more stable and predictable for testing
@@ -100,18 +100,18 @@ describe('Host Server', async function() {
     });
   });
 
-  describe('/{root}', function() {
-    data['{root}'].forEach(function(_test) {
-      it(_test.title, async function() {
+  describe('/{root}', () => {
+    data['{root}'].forEach((_test) => {
+      it(_test.title, async() => {
         let resp = await request(`${hostURL}/`);
         resp.should.equal(_test.expected.data);
       });
     });
   });
 
-  describe('/index.html', function() {
-    data['index.html'].forEach(function(_test) {
-      it(_test.title, async function() {
+  describe('/index.html', () => {
+    data['index.html'].forEach((_test) => {
+      it(_test.title, async() => {
         let resp = await request(`${hostURL}/index.html`);
         resp.should.equal(_test.expected.data);
       });
@@ -133,9 +133,9 @@ describe('Host Server', async function() {
     }
   }
 
-  describe('/api/token', function() {
-    data['token'].forEach(function(_test) {
-      it(_test.title, async function() {
+  describe('/api/token', () => {
+    data['token'].forEach((_test) => {
+      it(_test.title, async() => {
         try {
           handleRequest(_test, await request({
             uri: `${hostURL}/api/token`,
@@ -148,9 +148,9 @@ describe('Host Server', async function() {
     });
   });
 
-  describe('/api/refresh', function() {
-    data['refresh'].forEach(function(_test) {
-      it(_test.title, async function() {
+  describe('/api/refresh', () => {
+    data['refresh'].forEach((_test) => {
+      it(_test.title, async() => {
         try {
           handleRequest(_test, await request.post({
             uri: `${hostURL}/api/refresh`,
@@ -163,9 +163,9 @@ describe('Host Server', async function() {
     });
   });
 
-  describe('/api/client_credentials', function() {
-    data['client_credentials'].forEach(function(_test) {
-      it(_test.title, async function() {
+  describe('/api/client_credentials', () => {
+    data['client_credentials'].forEach((_test) => {
+      it(_test.title, async() => {
         try {
           handleRequest(_test, await request(`${hostURL}/api/client_credentials`));
         } catch (err) {
@@ -175,7 +175,7 @@ describe('Host Server', async function() {
     });
   });
 
-  describe('/api/queue', function() {
+  describe('/api/queue', () => {
     let queueTests = data['queue'];
     let specialTests = {};
 
@@ -254,7 +254,7 @@ describe('Host Server', async function() {
     specialTests['/api/queue/add_after/unsafe_integer_error'] = unsafeIntError;
 
     function promisify(fn, ...args) {
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve, reject) => {
         try {
           resolve(fn(...args));
         } catch (err) {
@@ -263,9 +263,9 @@ describe('Host Server', async function() {
       });
     }
 
-    describe('/api/add_after', function() {
-      queueTests['add_after'].forEach(function(_test) {
-        it(_test.title, async function() {
+    describe('/api/add_after', () => {
+      queueTests['add_after'].forEach((_test) => {
+        it(_test.title, async() => {
           if (_test.test_id) {
             await promisify(specialTests[_test.test_id], _test);
             return;
@@ -307,9 +307,9 @@ describe('Host Server', async function() {
       });
     });
 
-    describe('/api/remove', function() {
-      queueTests['remove'].forEach(function(_test) {
-        it(_test.title, async function() {
+    describe('/api/remove', () => {
+      queueTests['remove'].forEach((_test) => {
+        it(_test.title, async() => {
           try {
             handleRequest(_test, await request.delete({
               uri: `${hostURL}/api/queue/remove`,
@@ -324,7 +324,7 @@ describe('Host Server', async function() {
     });
   });
 
-  this.afterAll(async function() {
+  this.afterAll(async() => {
     Date.now = dateNowImpl;
 
     await mockServer.close();

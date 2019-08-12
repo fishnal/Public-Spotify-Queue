@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import SimpleBar from 'simplebar-react';
 import * as SpotifyWebApiExport from 'spotify-web-api-js';
+import PlaylistSelector from './PlaylistSelector';
 
 const SpotifyWebApi = SpotifyWebApiExport.default;
 
@@ -9,14 +10,28 @@ export default class SongSelector extends React.Component {
   constructor(props) {
     super(props);
 
+    this.getSongs = this.getSongs.bind(this);
+    this.goBack = this.goBack.bind(this);
+
+    let backButton = (
+    <div key="back-button" onClick={this.goBack} className="back-button">
+      <div className="song-name">BACK</div>
+    </div>);
+
     this.state = {
-      songElems: [],
+      songElems: [ backButton ],
       finishedGrabbing: false,
       offset: 0,
-      err: null
+      err: null,
+      goBack: false
     }
+  }
 
-    this.getSongs = this.getSongs.bind(this);
+  goBack() {
+    this.setState({
+      ...this.state,
+      goBack: true
+    });
   }
 
   getSongs() {
@@ -54,7 +69,9 @@ export default class SongSelector extends React.Component {
         this.getSongs();
       }
 
-      if (this.state.songElems.length === 0) {
+      if (this.state.goBack) {
+        return (<PlaylistSelector spotifyApi={this.props.spotifyApi} asyncController={null} />);
+      } else if (this.state.songElems.length === 0) {
         return (
         <div className="list-container pt-message">
           {this.state.finishedGrabbing ? 'No songs in playlist' : 'Retrieving songs'}
