@@ -7,3 +7,7 @@
 .list-item {
   @include list-item();
 }
+
+.back-button {
+  @include back-button-list-item(30px);
+}

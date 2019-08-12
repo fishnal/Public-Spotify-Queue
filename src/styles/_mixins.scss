@@ -2,6 +2,7 @@ $list-item-color: white;
 $list-separator-color: gray;
 $list-item-hover-decoration-color: white;
 $list-hover-bg-color: #2d2d2d;
+$def-list-item-height: 70px;
 
 @mixin list-container($width: 500px, $height: 300px, $background-color: #4f5051) {
   background-color: $background-color;
@@ -11,7 +12,7 @@ $list-hover-bg-color: #2d2d2d;
   max-height: $height;
 }
 
-@mixin list-item($height: 70px) {
+@mixin list-item($height: $def-list-item-height) {
   display: grid;
   align-items: center;
   transition: background 250ms ease 0ms;
@@ -36,4 +37,15 @@ $list-hover-bg-color: #2d2d2d;
     text-decoration-line: underline;
     text-decoration-color: $list-item-hover-decoration-color;
   }
+}
+
+@mixin back-button-list-item($height: $def-list-item-height)
+{
+  @include list-item($height);
+
+  &:hover {
+    transition: none;
+  }
+
+  background-color: $list-hover-bg-color;
 }
