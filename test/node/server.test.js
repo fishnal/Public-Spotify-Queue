@@ -1,4 +1,3 @@
-const fs = require('fs');
 const request = require('request-promise-native').defaults({
   json: true,
   // if in debug mode, turn off timeout, otherwise keep it to 2 seconds
@@ -8,30 +7,8 @@ const should = require('should');
 const hostServer = require('../../src/node/server.js');
 const mockServer = require('./mockserver.js');
 const { isString } = require('../../src/node/utils.js');
+const data = require('./server.test.data.js');
 
-const data = JSON.parse(fs.readFileSync(`${__dirname}/server.test.json`), (key, value) => {
-  // read in file foo if marked by '${foo}'
-  if (isString(value)) {
-    let match = String(value).match(/\$\{(.+)\}/);
-
-    if (match) {
-      value = fs.readFileSync(match[match.index + 1]).toString();
-    }
-  }
-
-  if (key === 'scope') {
-    // sorting scope field by splitting it into an array and joining the elements back together
-    value = value.split(' ').sort().join(' ');
-  } else if (key === 'psq_token') {
-    value = Buffer.from(value).toString('base64');
-  } else if (key === 'Authorization' && isString(value) && value.startsWith('Bearer ')) {
-    value = value.split(' ');
-    value[1] = Buffer.from(value[1]).toString('base64');
-    value = value.join(' ');
-  }
-
-  return value;
-});
 const hostAddress = 'http://localhost';
 const hostPort = process.env.PORT || 3000;
 const hostURL = `${hostAddress}:${hostPort}`;
@@ -48,6 +25,34 @@ const mainScopes = [
   "user-read-email",
   "user-read-private"
 ].sort(); // sorting list for comparisons
+
+// sorting scope query parameters
+Object.keys(data).forEach((testKey) => {
+  function testLooper(_test) {
+    function sortScope(obj) {
+      let scope = obj.scope;
+      scope = scope.split(' ').sort().join(' ');
+      obj.scope = scope;
+    }
+
+    if (_test.args.queries && isString(_test.args.queries.scope)) {
+      sortScope(_test.args.queries);
+    }
+
+    if (_test.expected && _test.expected.data && isString(_test.expected.data.scope)) {
+      sortScope(_test.expected.data);
+    }
+  }
+
+  // some keys aren't arrays, but instead include more test sets
+  if (data[testKey] instanceof Array) {
+    data[testKey].forEach(testLooper);
+  } else {
+    Object.keys(data[testKey]).forEach((subKey) => {
+      data[testKey][subKey].forEach(testLooper);
+    });
+  }
+});
 
 describe('Host Server', async function() {
   // used for faking the current date in ms

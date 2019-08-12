@@ -97,7 +97,7 @@ These tests don't require a valid client id or secret provided by a Spotify deve
 	+ [jsx/](./src/jsx/) contains frontend code
 		+ [components/](./src/jsx/components) contains React Components
 		+ [props/](./src/jsx/props) contains the properties for each React Component
-		+ [control.js](./src/jsx/control.js) frontend scripting and communicates with backend server
+		+ [async_controller.cs](./src/jsx/async_controller.js) is used to process spotify requests before they are made
 		+ [index.jsx](./src/jsx/index.jsx) entry point
 	+ [node/](./src/node/) contains backend code
 		+ [server.js](./src/server.js) the backend server; it hosts the website, controls authorization and access token retrieval processes
