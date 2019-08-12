@@ -43,6 +43,8 @@ $def-list-item-height: 70px;
 {
   @include list-item($height);
   cursor: pointer;
+  position: sticky;
+  top: 0px;
 
   &:hover {
     transition: none;
