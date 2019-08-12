@@ -1,4 +1,7 @@
 node_modules/
+build/
+deprecated/
+docs/
 src/styles/libs
 *.jsx
 .*

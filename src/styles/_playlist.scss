@@ -27,7 +27,7 @@ $pt-message-color: white;
 }
 
 .song-item {
-  @include list-item(30px)
+  @include list-item(30px);
 }
 
 .song-name {

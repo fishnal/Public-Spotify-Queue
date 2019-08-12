@@ -9,7 +9,7 @@ export let Artist = PropTypes.shape({
 export let Image = PropTypes.shape({
   url: PropTypes.string,
   width: PropTypes.number,
-  height: PropTypes.number,
+  height: PropTypes.number
 });
 
 export let Album = PropTypes.shape({
