@@ -34,6 +34,7 @@
   },
   "scripts": {
     "clean": "gulp clean",
+    "docs": "apidoc -i src/ -o docs/rest/",
     "prebuild": "gulp makeBuildDir",
     "build": "cross-env PUBLIC_URL=/build npm-run-all -p build:*",
     "build:js": "node parcel.config.js",
