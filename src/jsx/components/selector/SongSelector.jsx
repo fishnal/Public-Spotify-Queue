@@ -12,14 +12,21 @@ export default class SongSelector extends React.Component {
 
     this.getSongs = this.getSongs.bind(this);
     this.goBack = this.goBack.bind(this);
+    this.play = this.play.bind(this);
 
     let backButton = (
     <div key="back-button" onClick={this.goBack} className="back-button">
       <div className="song-name">BACK</div>
     </div>);
 
+    let playButton = (
+    <div key="play-button" onClick={this.play} className="play-button">
+      <div className="song-name">PLAY</div>
+    </div>
+    );
+
     this.state = {
-      songElems: [ backButton ],
+      songElems: [ backButton, playButton ],
       finishedGrabbing: false,
       offset: 0,
       err: null,
@@ -31,6 +38,17 @@ export default class SongSelector extends React.Component {
     this.setState({
       ...this.state,
       goBack: true
+    });
+  }
+
+  play() {
+    this.props.spotifyApi.play({
+      context_uri: this.props.playlistUri
+    }).catch((err) => {
+      console.error(err);
+      this.setState({
+        err
+      });
     });
   }
 
@@ -89,6 +107,7 @@ export default class SongSelector extends React.Component {
 }
 
 SongSelector.propTypes = {
+  playlistUri: PropTypes.string.isRequired,
   spotifyApi: PropTypes.instanceOf(SpotifyWebApi).isRequired,
   playlistId: PropTypes.string.isRequired
 }

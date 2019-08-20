@@ -31,7 +31,7 @@ export default class PlaylistSelector extends React.Component {
 
         let coverElem = <img className="playlist-cover" src={coverUrl}/>
         let nameElem = <div className="playlist-name">{name}</div>
-        let itemElem = <a key={`playlist-item-${i}`} onClick={this.displaySongs.bind(null, playlist.id)} className="playlist-item">{coverElem}{nameElem}</a>
+        let itemElem = <a key={`playlist-item-${i}`} onClick={this.displaySongs.bind(null, playlist.id, playlist.uri)} className="playlist-item">{coverElem}{nameElem}</a>
 
         return itemElem;
       });
@@ -50,11 +50,12 @@ export default class PlaylistSelector extends React.Component {
     });
   }
 
-  displaySongs(selectedId, event) {
+  displaySongs(selectedId, playlistUri, event) {
     if (event.button === 0) {
       this.setState({
         ...this.state,
-        selectedId
+        selectedId,
+        playlistUri
       });
     }
   }
@@ -63,7 +64,7 @@ export default class PlaylistSelector extends React.Component {
     if (this.state.err) {
       return (<p className="error">{`Error in retrieving playlists: ${this.state.err}`}</p>);
     } else if (this.state.selectedId) {
-      return (<SongSelector spotifyApi={this.props.spotifyApi} playlistId={this.state.selectedId} />);
+      return (<SongSelector spotifyApi={this.props.spotifyApi} playlistId={this.state.selectedId} playlistUri={this.state.playlistUri}/>);
     } else {
       if (!this.state.finishedGrabbing) {
         this.getPlaylists();
