@@ -39,11 +39,9 @@ $def-list-item-height: 70px;
   }
 }
 
-@mixin back-button-list-item($height: $def-list-item-height) {
+@mixin button-list-item($height: $def-list-item-height) {
   @include list-item($height);
   cursor: pointer;
-  position: sticky;
-  top: 0px;
 
   &:hover {
     transition: none;

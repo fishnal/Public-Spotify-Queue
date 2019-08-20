@@ -8,6 +8,11 @@
   @include list-item();
 }
 
+.play-button, .back-button {
+  @include button-list-item(30px);
+}
+
 .back-button {
-  @include back-button-list-item(30px);
+  position: sticky;
+  top: 0px;
 }
