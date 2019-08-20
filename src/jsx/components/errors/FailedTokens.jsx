@@ -13,10 +13,10 @@ export default class FailedTokens extends React.Component {
   }
 }
 
-/* Failedtokens.propTypes = {
+FailedTokens.propTypes = {
   status_code: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
   ]).isRequired,
   error_description: PropTypes.string.isRequired
-}; */
+};

@@ -13,10 +13,10 @@ export default class FailedRefresh extends React.Component {
   }
 }
 
-/* FailedRefresh.propTypes = {
+FailedRefresh.propTypes = {
   status_code: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
   ]).isRequired,
   error_description: PropTypes.string.isRequired
-}; */
+};
