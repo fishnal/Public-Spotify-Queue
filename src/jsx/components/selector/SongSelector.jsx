@@ -47,7 +47,7 @@ export default class SongSelector extends React.Component {
     }).catch((err) => {
       console.error(err);
       this.setState({
-        err
+        err: err
       });
     });
   }
@@ -74,7 +74,7 @@ export default class SongSelector extends React.Component {
     }).catch((err) => {
       console.error(err);
       this.setState({
-        err
+        err: err
       });
     });
   }

@@ -16,7 +16,8 @@ export default class PlaylistSelector extends React.Component {
       finishedGrabbing: false,
       offset: 0,
       err: null,
-      selectedPlaylistId: null
+      selectedPlaylistId: null,
+      selectedPlaylistUri: null
     }
 
     this.getPlaylists = this.getPlaylists.bind(this);
@@ -45,17 +46,17 @@ export default class PlaylistSelector extends React.Component {
     }).catch((err) => {
       console.error(err);
       this.setState({
-        err
+        err: err
       });
     });
   }
 
-  displaySongs(selectedPlaylistId, selectedPlaylistUri, event) {
+  displaySongs(id, uri, event) {
     if (event.button === 0) {
       this.setState({
         ...this.state,
-        selectedPlaylistId,
-        selectedPlaylistUri
+        selectedPlaylistId : id,
+        selectedPlaylistUri: uri
       });
     }
   }
