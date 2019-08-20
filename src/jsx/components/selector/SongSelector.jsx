@@ -43,7 +43,7 @@ export default class SongSelector extends React.Component {
 
   play() {
     this.props.spotifyApi.play({
-      context_uri: this.props.playlistUri
+      context_uri: this.props.contextUri
     }).catch((err) => {
       console.error(err);
       this.setState({
@@ -107,7 +107,7 @@ export default class SongSelector extends React.Component {
 }
 
 SongSelector.propTypes = {
-  playlistUri: PropTypes.string.isRequired,
+  contextUri: PropTypes.string.isRequired,
   spotifyApi: PropTypes.instanceOf(SpotifyWebApi).isRequired,
   playlistId: PropTypes.string.isRequired
 }

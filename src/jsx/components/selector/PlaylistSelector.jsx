@@ -64,7 +64,7 @@ export default class PlaylistSelector extends React.Component {
     if (this.state.err) {
       return (<p className="error">{`Error in retrieving playlists: ${this.state.err}`}</p>);
     } else if (this.state.selectedPlaylistId) {
-      return (<SongSelector spotifyApi={this.props.spotifyApi} playlistId={this.state.selectedPlaylistId} playlistUri={this.state.selectedPlaylistUri}/>);
+      return (<SongSelector spotifyApi={this.props.spotifyApi} playlistId={this.state.selectedPlaylistId} contextUri={this.state.selectedPlaylistUri}/>);
     } else {
       if (!this.state.finishedGrabbing) {
         this.getPlaylists();
