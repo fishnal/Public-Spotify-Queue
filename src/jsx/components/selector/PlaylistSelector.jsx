@@ -16,7 +16,7 @@ export default class PlaylistSelector extends React.Component {
       finishedGrabbing: false,
       offset: 0,
       err: null,
-      selectedId: null
+      selectedPlaylistId: null
     }
 
     this.getPlaylists = this.getPlaylists.bind(this);
@@ -50,12 +50,12 @@ export default class PlaylistSelector extends React.Component {
     });
   }
 
-  displaySongs(selectedId, playlistUri, event) {
+  displaySongs(selectedPlaylistId, selectedPlaylistUri, event) {
     if (event.button === 0) {
       this.setState({
         ...this.state,
-        selectedId,
-        playlistUri
+        selectedPlaylistId,
+        selectedPlaylistUri
       });
     }
   }
@@ -63,8 +63,8 @@ export default class PlaylistSelector extends React.Component {
   render() {
     if (this.state.err) {
       return (<p className="error">{`Error in retrieving playlists: ${this.state.err}`}</p>);
-    } else if (this.state.selectedId) {
-      return (<SongSelector spotifyApi={this.props.spotifyApi} playlistId={this.state.selectedId} playlistUri={this.state.playlistUri}/>);
+    } else if (this.state.selectedPlaylistId) {
+      return (<SongSelector spotifyApi={this.props.spotifyApi} playlistId={this.state.selectedPlaylistId} playlistUri={this.state.selectedPlaylistUri}/>);
     } else {
       if (!this.state.finishedGrabbing) {
         this.getPlaylists();
